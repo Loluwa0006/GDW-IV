@@ -22,6 +22,7 @@ public class FlyingState : EchoBaseState
     [SerializeField] protected float promixityMultiplier;
     [SerializeField] protected float minProximityDistance;
     [SerializeField] protected float maxProximityDistance;
+    [SerializeField] protected float minSpeedFactor = 0.7f;
 
     [Header("Colors")]
     [SerializeField] Material normalColor;
@@ -133,9 +134,19 @@ public class FlyingState : EchoBaseState
 
         if (IsGrounded()) newDir.y = Mathf.Max(0, newDir.y); //don't go down if grounded
 
-        var currentSpeed = echo.velocityManager.GetTotalSpeed().magnitude;
+        float currentSpeed = echo.GetSpeed();
 
-        echo.velocityManager.OverwriteInternalSpeed(newDir * currentSpeed);
+        float speedFactor = 1 - proximityFactor;
+        if (speedFactor < minSpeedFactor) speedFactor = minSpeedFactor;
+        currentSpeed *= speedFactor;
+
+        Vector3 externalSpeeds = Vector3.zero;
+         foreach (var speed in echo.velocityManager.GetAllExternalSpeed())
+        {
+            externalSpeeds += speed.Value;
+        }
+
+        echo.velocityManager.OverwriteInternalSpeed((newDir * currentSpeed) + externalSpeeds);
 
        // Debug.Log("Distance to target is " + distanceToTarget + " with proximity factor of " + proximityFactor);
     }

@@ -10595,11 +10595,12 @@ MonoBehaviour:
     m_Bits: 264384
   echoData: {fileID: 11400000, guid: 67b22bfc8406f474cb44d828733bdbba, type: 2}
   _rb: {fileID: 9064068066324509259}
-  minSteerForce: 0.35
+  minSteerForce: 0.45
   maxSteerForce: 1.3
-  promixityMultiplier: 4.75
-  minProximityDistance: 3
-  maxProximityDistance: 25
+  promixityMultiplier: 75
+  minProximityDistance: 0.25
+  maxProximityDistance: 5
+  minSpeedFactor: 0.7
   normalColor: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
   igniteColor: {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
   echoTrail: {fileID: 617450825031257723}

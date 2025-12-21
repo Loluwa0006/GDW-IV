@@ -34,4 +34,7 @@ MonoBehaviour:
   - skillName: 5
     skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
     skillIcon: {fileID: 2800000, guid: 28c2f66f43822b6489bc30ba5b797094, type: 3}
+  - skillName: 6
+    skillPrefab: {fileID: 999454113503776721, guid: aba795a7a2f7af747b6322198dd3fc60, type: 3}
+    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
   gameLength: 60
