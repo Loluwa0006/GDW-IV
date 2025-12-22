@@ -373,7 +373,7 @@ public class PreGameSelectionManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        SceneManager.LoadScene(SceneRegistry.MainMenu_Test.ToString());
+        SceneManager.LoadScene(SceneRegistry.MainMenu.ToString());
     }
 }
 public enum SelectionScreen
