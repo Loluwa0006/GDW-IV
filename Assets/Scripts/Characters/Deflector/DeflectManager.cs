@@ -30,7 +30,7 @@ public class DeflectManager : MonoBehaviour
     [SerializeField] Material failedDeflect;
 
 
-    public UnityEvent<BaseEcho, bool> deflectedBall;
+    public UnityEvent<BaseEcho, bool, bool> deflectedBall;
 
     [HideInInspector] public bool stateAllowsDeflect = true;
 
@@ -180,11 +180,11 @@ public class DeflectManager : MonoBehaviour
         isDeflecting = enabled;
     }
 
-    public IEnumerator OnSuccessfulDeflect(BaseEcho ball) 
+    public IEnumerator OnSuccessfulDeflect(BaseEcho ball, bool usedSkill) 
     {
         bool wasPartial = IsPartialDeflect();
         deflectPerformed.Invoke(character, wasPartial, deflectDuration - deflectTracker);
-        deflectedBall.Invoke(ball, IsPartialDeflect());
+        deflectedBall.Invoke(ball, IsPartialDeflect(), usedSkill);
         SetDeflectEnabled(false);
         yield return null;
         cooldownTracker = 0.0f;

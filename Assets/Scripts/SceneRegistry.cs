@@ -3,7 +3,7 @@ using UnityEngine.UI;
 [System.Serializable]
 public enum SceneRegistry
 {
-    MainMenu_Test,
+    MainMenu,
     GameSelection,
     Tutorial,
     Training

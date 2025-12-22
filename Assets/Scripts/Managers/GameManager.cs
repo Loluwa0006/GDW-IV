@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
         if (HUDAnimator != null)
         {
             character.healthComponent.entityDamaged.AddListener(HUDAnimator.OnSpeakerStruck);
-            character.deflectManager.deflectedBall.AddListener(HUDAnimator.OnEchoDeflected);
+            character.deflectManager.deflectedBall.AddListener( (echo, partial, usedSkill) => HUDAnimator.OnEchoDeflected());
         }
         if (camManager != null)
         {
@@ -496,6 +496,6 @@ public class GameManager : MonoBehaviour
     public void ReturnToMainMenu()
     {
         Time.timeScale = 1.0f;
-        SceneManager.LoadScene(SceneRegistry.MainMenu_Test.ToString());
+        SceneManager.LoadScene(SceneRegistry.MainMenu.ToString());
     }
 }

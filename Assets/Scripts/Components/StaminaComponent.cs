@@ -137,7 +137,7 @@ public class StaminaComponent : MonoBehaviour
 
     }
 
-    public void HandleBallDeflect(BaseEcho ball, bool partialDeflect)
+    public void HandleBallDeflect(BaseEcho ball, bool partialDeflect, bool usedSkill)
     {
         if (!partialDeflect)
         {
@@ -145,7 +145,7 @@ public class StaminaComponent : MonoBehaviour
             stamina += grayStamina; // since we had gray while we deflected, we convert gray stamina to usable stamina
             grayStamina = 0.0f; // then clear it 
             stamina = Mathf.Clamp(stamina, 1, maxStamina);
-            EnableForesight();
+            if (!usedSkill) EnableForesight();
         }
         else
         {
@@ -193,6 +193,12 @@ public class StaminaComponent : MonoBehaviour
         stamina = 100;
         maxStamina = 100;
         grayStamina = 0;
+    }
+
+    public void RegenMaxStamina(int amount)
+    {
+        maxStamina += amount;
+        maxStamina = Mathf.Clamp(maxStamina, 1, 100);
     }
     public float GetStamina()
     {
