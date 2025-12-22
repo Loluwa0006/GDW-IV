@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1044641081565545957}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.375, z: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 1.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4964,7 +4964,7 @@ ParticleSystem:
     vectorLabel1_3: W
 --- !u!199 &4578682697458077028
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5010,6 +5010,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -5041,7 +5042,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1 &8742609169160082196
 GameObject:
   m_ObjectHideFlags: 0
@@ -5092,26 +5092,23 @@ MonoBehaviour:
   character: {fileID: 0}
   hasInactiveProcess: 1
   hasInactivePhysicsProcess: 1
-  deflectAllowed: 0
   skillUsed:
     m_PersistentCalls:
       m_Calls: []
   skillName: 5
   staminaCost: 30
+  speaker: {fileID: 0}
   whiffDuration: 0.9
-  yoyoDuration: 2
   holdStaminaDrainRate: 8
   decelRate: 0.9
   tacklePushback: 8
   staminaFreeHoldFrames: 12
-  yoyoCost: 8
   ballHolder: {fileID: 585141929474522712}
   catchParticle: {fileID: 671634154379870470}
   throwParticle: {fileID: 6488898101463656346}
   catchAttemptParticle: {fileID: 836703652909392521}
   catchSFX: {fileID: 8300000, guid: a7577bd14c654dd4183176499a9fad81, type: 3}
   throwSFX: {fileID: 8300000, guid: 39a860e37237b9648bec2445c196f631, type: 3}
-  yoyoLine: {fileID: 0}
   catchAvailableColor: {r: 0.91302955, g: 0.9360591, b: 0.93962264, a: 0.8}
   whiffedCatchColor: {r: 0.9411765, g: 0.14901961, b: 0.14901961, a: 0.8}
 --- !u!1 &8800133262627770351
@@ -10046,7 +10043,7 @@ ParticleSystem:
     vectorLabel1_3: W
 --- !u!199 &3534937299398602502
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -10092,6 +10089,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -10123,7 +10121,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1001 &6886500679830101932
 PrefabInstance:
   m_ObjectHideFlags: 0

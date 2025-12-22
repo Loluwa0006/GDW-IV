@@ -205,12 +205,18 @@ public class Takeback : SpeakerBaseSkill
     void EnterThrowState()
     {
         if (heldBall == null) return;
+        heldBall.transform.parent = null;
+        heldBall.characterStateMachine.TransitionTo<FlyingState>();
         character.unscaledAudioSource.PlayOneShot(throwSFX);
         EnableHeldEcho();
         heldBall.FindNewTarget(speaker.transform);
         
         currentState = TakebackState.Throwing;
         heldBall.UpdateSpeed(previousEchoSpeed);
+        Vector3 throwDir = GetMovementDir();
+        if (throwDir.magnitude <= MOVE_DEADZONE) throwDir = (enemySpeaker.transform.position - heldBall.transform.position).normalized;
+
+        heldBall.velocityManager.OverwriteInternalSpeed(throwDir * previousEchoSpeed);
         staminaComponent.ConsumeForesight();
         RemoveSignals();
         if (throwParticle != null)
@@ -246,7 +252,7 @@ public class Takeback : SpeakerBaseSkill
     public void EnableHeldEcho()
     {
         heldBall.transform.parent = null;
-        heldBall.EnableProjectile();
+        heldBall.ResumeProjectile();
         character.SetLookTarget(heldBall.transform);
         speaker.healthComponent.RemoveStatusEffect("TakebackCatch");
     }
@@ -262,6 +268,7 @@ public class Takeback : SpeakerBaseSkill
 
     void OnHeldBallWarped(Vector3 movement)
     {
+        Debug.Log("Warpin");
         StartCoroutine(PostWarpLogic(movement));
     }
 

@@ -108,9 +108,14 @@ public class BaseEcho : BaseCharacter
     public void EnableProjectile()
     {
         transform.position = startingPos;
+        UpdateSpeed(echoData.activeMinSpeed);
+        ResumeProjectile();
+    }
+
+    public void ResumeProjectile()
+    {
         playerModel.enabled = true;
         ballActive = true;
-        UpdateSpeed(echoData.activeMinSpeed);
         characterStateMachine.TransitionTo<FlyingState>();
         velocityManager.freeze = false;
     }
@@ -211,7 +216,8 @@ public class BaseEcho : BaseCharacter
     {
         var msg = new Dictionary<string, object>()
         {
-            ["deflector"] = speaker
+            ["deflector"] = speaker,
+            ["usedSkill"] = true
         };
         characterStateMachine.TransitionTo<DeflectionBounceState>(msg);
         Debug.Log("Forcing deflect of echo " + name + " by speaker " + speaker.name);
