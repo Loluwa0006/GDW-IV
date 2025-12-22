@@ -10,6 +10,7 @@ public class DeflectionBounceState : BounceState
     public override void Enter(Dictionary<string, object> msg = null)
     {
         BaseSpeaker deflector;
+        bool usedSkill = false;
         if (msg == null)
         {
             Debug.LogWarning("Entered deflection state with no message");
@@ -26,10 +27,14 @@ public class DeflectionBounceState : BounceState
             fsm.TransitionTo<FlyingState>();
             return;
         }
+        if (msg.ContainsKey("usedSkill"))
+        {
+            usedSkill = (bool)msg["usedSkill"];
+        }
         base.Enter(msg);
         echo.FindNewTarget(deflector.transform);
         echo.echoDeflected.Invoke(echo);
-        StartCoroutine(deflector.deflectManager.OnSuccessfulDeflect(echo));
+        StartCoroutine(deflector.deflectManager.OnSuccessfulDeflect(echo, usedSkill));
     }
     public override void ApplyBounceVelocity()
     {
