@@ -30,7 +30,7 @@ public class HUDAnimator : MonoBehaviour
         }
         streakReaction.gameObject.SetActive(false);
     }
-    public void OnEchoDeflected(BaseEcho echo, bool partial)
+    public void OnEchoDeflected()
     {
         deflectStreak++;
         streakDisplay.text = deflectStreak.ToString();

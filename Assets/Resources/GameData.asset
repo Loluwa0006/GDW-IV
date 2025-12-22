@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 887e4050a3e645d40b9ae0444bd87ed2, type: 3}
-  m_Name: MatchData
+  m_Name: GameData
   m_EditorClassIdentifier: Assembly-CSharp::MatchData
   numberOfTeams: 2
   numberOfRounds: 2
@@ -36,5 +36,8 @@ MonoBehaviour:
     skillIcon: {fileID: 2800000, guid: 28c2f66f43822b6489bc30ba5b797094, type: 3}
   - skillName: 6
     skillPrefab: {fileID: 999454113503776721, guid: aba795a7a2f7af747b6322198dd3fc60, type: 3}
+    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+  - skillName: 7
+    skillPrefab: {fileID: 333516544351708634, guid: 6fbd23461eca52f45a4271de08750d8d, type: 3}
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
   gameLength: 60

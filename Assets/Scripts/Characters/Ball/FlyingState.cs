@@ -1,10 +1,5 @@
 using System.Collections.Generic;
-using System.IO.Enumeration;
-using System.Linq;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.InputSystem;
 
 public class FlyingState : EchoBaseState
 {
