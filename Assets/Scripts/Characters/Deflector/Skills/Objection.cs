@@ -32,7 +32,7 @@ public class Objection : SpeakerBaseSkill
     ParticleSystem[] slashEffectPool = new ParticleSystem[SLASH_EFFECT_POOL_SIZE];
 
     List<Vector3> slashPoints = new();
-    List<HealthComponent> entitiesStruck = new();
+    List<Transform> entitiesStruck = new();
 
     BufferHelper jumpBuffer;
     float runAccel = 0;
@@ -47,7 +47,7 @@ public class Objection : SpeakerBaseSkill
     {
         base.InitState(cha, s_machine);
         currentJumpInfo.InitJumpInfo();
-        runAccel = runSpeed / (float) runAccelerationFrames;
+        runAccel = runSpeed / (float)runAccelerationFrames;
         jumpBuffer = fsm.TryGetBuffer("JumpBuffer");
         InitSlashParticles();
     }
@@ -111,16 +111,16 @@ public class Objection : SpeakerBaseSkill
         {
             currentRunSpeed *= decelRate;
         }
-            currentRunSpeed = Vector3.ClampMagnitude(currentRunSpeed, runSpeed);
+        currentRunSpeed = Vector3.ClampMagnitude(currentRunSpeed, runSpeed);
 
-        Vector3 finalSpeed = new (currentRunSpeed.x, fallSpeed, currentRunSpeed.z);
+        Vector3 finalSpeed = new(currentRunSpeed.x, fallSpeed, currentRunSpeed.z);
 
         speaker.velocityManager.OverwriteInternalSpeed(finalSpeed);
 
         DrainStamina();
 
         wasGrounded = isGrounded;
-      }
+    }
 
     public override void Process()
     {
@@ -136,11 +136,17 @@ public class Objection : SpeakerBaseSkill
             PerformSlash();
             ExitState();
         }
+        if (oppositeSkillBuffer.Buffered)
+        {
+            fsm.TransitionToSkill(oppositeSkillIndex);
+            return;
+        }
         lineTracker -= 1;
         if (lineTracker == 0)
         {
             lineTracker = slashLineUpdateRate;
             lineRenderer.positionCount = lineRenderer.positionCount + 1;
+            if (lineRenderer.positionCount <= slashPoints.Count) lineRenderer.positionCount = slashPoints.Count + 1;
             lineRenderer.SetPosition(slashPoints.Count, speaker.transform.position);
             slashPoints.Add(speaker.transform.position);
         }
@@ -156,10 +162,11 @@ public class Objection : SpeakerBaseSkill
             if (staminaComponent.GetStamina() < staminaCost) ExitState();
             drainTracker = staminaDrainRate;
         }
-    } 
+    }
 
     void ExitState()
     {
+        lineRenderer.positionCount = 0;
         if (!IsGrounded())
         {
             fsm.TransitionTo<FallState>();
@@ -190,6 +197,8 @@ public class Objection : SpeakerBaseSkill
             slash.transform.position = point;
             slash.Play();
         }
+
+        staminaComponent.ConsumeForesight();
     }
 
     //code by Claude
@@ -230,8 +239,8 @@ public class Objection : SpeakerBaseSkill
             lineRenderer.positionCount = 0;
             return;
         }
-        Vector3 halfExtents = new (slashSize, slashSize, slashSize);
-        foreach (var point  in slashPoints)
+        Vector3 halfExtents = new(slashSize, slashSize, slashSize);
+        foreach (var point in slashPoints)
         {
             var overlap = Physics.OverlapBox(point, halfExtents, Quaternion.identity, slashMask, QueryTriggerInteraction.Collide);
 
@@ -242,19 +251,26 @@ public class Objection : SpeakerBaseSkill
                 {
 
                     if (healthComponent == speaker.healthComponent) continue;
-                    if (entitiesStruck.Contains(healthComponent)) continue;
+                    if (entitiesStruck.Contains(healthComponent.hurtboxOwner)) continue;
                     damageInfo.knockbackDir = (point - entity.transform.position).normalized;
                     healthComponent.Damage(damageInfo);
-                    entitiesStruck.Add(healthComponent);
+                    entitiesStruck.Add(healthComponent.hurtboxOwner);
                 }
-                else if (entity.transform.parent.TryGetComponent(out BaseEcho echo))
+                else if (entity.transform.parent != null)
                 {
-                    Debug.Log("Found echo " + echo.name);
-                    if (echo.GetTarget() != speaker.transform) continue;
-                    echo.ForceDeflect(speaker);
+
+                    if (entity.transform.parent.TryGetComponent(out BaseEcho echo))
+                    {
+                        Debug.Log("Found echo " + echo.name);
+                        if (echo.GetTarget() != speaker.transform) continue;
+                        if (entitiesStruck.Contains(echo.transform)) continue;
+                        entitiesStruck.Add(echo.transform);
+                        echo.ForceDeflect(speaker);
+                    }
                 }
-               
+
             }
         }
     }
- }
+}
+ 
