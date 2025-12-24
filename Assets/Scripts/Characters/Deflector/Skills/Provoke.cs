@@ -7,6 +7,7 @@ public class Provoke : SpeakerBaseSkill
     BaseEcho[] activeEchoes;
     [SerializeField] int tauntDuration = 12;
     [SerializeField] int maxStaminaRecoveryRate = 9;
+    [SerializeField] GameObject warningCanvas;
     int  durationTracker = 0;
 
     int staminaToRegen = 0;
@@ -23,6 +24,7 @@ public class Provoke : SpeakerBaseSkill
         {
             jumpInfo = jumpState.currentJumpInfo;
         }
+        warningCanvas.SetActive(false);
     }
     public override void Enter(Dictionary<string, object> msg = null)
     {
@@ -36,6 +38,7 @@ public class Provoke : SpeakerBaseSkill
             e.velocityManager.OverwriteInternalSpeed(dir.normalized * speed);
         }
         OnSkillUsed();
+        warningCanvas.SetActive(true);
     }
 
     public override void PhysicsProcess()
@@ -81,33 +84,28 @@ public class Provoke : SpeakerBaseSkill
 
     public override void InactivePhysicsProcess()
     {
-        if (staminaToRegen == 0) return;
+        if (staminaToRegen <= 0) return;
         regenTracker--;
         if (regenTracker == 0)
         {
             regenTracker = maxStaminaRecoveryRate;
-            staminaComponent.RegenMaxStamina(1);
-            staminaToRegen--;
+            int staToRegen = staminaComponent.HasForesight() ? 2 : 1;
+            staminaComponent.RegenMaxStamina(staToRegen);
+            staminaToRegen -= staToRegen;
         }
+        Debug.Log(staminaToRegen + " = stamina to regen");
     }
 
     public override void OnSkillUsed()
     {
-        if (!staminaComponent.HasForesight())
-        {
-            staminaComponent.DamageStamina(staminaCost, 0, false);
-            staminaToRegen += staminaCost;
-        }
-        else
-        {
-            staminaComponent.ConsumeForesight();
-        }
         staminaComponent.DamageStamina(0, staminaCost, false);
+        staminaToRegen += staminaCost;
     }
 
     public override void Exit()
     {
         regenTracker = maxStaminaRecoveryRate;
+        warningCanvas.SetActive(false);
     }
 
 }
