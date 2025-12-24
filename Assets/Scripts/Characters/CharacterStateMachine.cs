@@ -151,7 +151,7 @@ public class CharacterStateMachine : MonoBehaviour
 
     public void UpdateState()
     {
-        if (!initMachine) { return; }
+        if (!initMachine || GameManager.gamePaused) { return; }
         currentState.Process();
 
         foreach (var state in statesWithInactiveProcess)
@@ -164,7 +164,7 @@ public class CharacterStateMachine : MonoBehaviour
 
     public void FixedUpdateState()
     {
-        if (!initMachine) { return; }
+        if (!initMachine || GameManager.gamePaused) { return; }
 
         currentState.PhysicsProcess();
 

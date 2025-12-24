@@ -74,6 +74,7 @@ public class StaminaComponent : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.gamePaused) return;
         RegenStamina();
         SetDangerZone();
         HandleStaminaDelay();

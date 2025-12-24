@@ -141,8 +141,8 @@ public class HealthComponent : MonoBehaviour
     {
         List<string> expiredEffects = new();
 
-       if (!GameManager.inSpecialStop)
-        {
+        if (GameManager.inSpecialStop || GameManager.gamePaused) return;
+        
             foreach (var effect in statusEffects)
             {
 
@@ -155,7 +155,7 @@ public class HealthComponent : MonoBehaviour
                     expiredEffects.Add(effect.Key);
                 }
             }
-        }
+        
 
         foreach (var id in expiredEffects)
         {

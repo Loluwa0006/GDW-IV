@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
 
 public class BaseCharacter : MonoBehaviour
 {
+
+    public UnityEvent<BaseCharacter> requestedPause =  new();
 
     public CharacterStateMachine characterStateMachine;
 
@@ -82,6 +85,11 @@ public class BaseCharacter : MonoBehaviour
 
     private void Update()
     {
+        if (playerInput.actions["Pause"].WasPressedThisFrame())
+        {
+            Debug.Log("pressed pause button");
+            requestedPause.Invoke(this);
+        }
         if (GameManager.inSpecialStop || !init) { return; }
         characterStateMachine.UpdateState();
     }

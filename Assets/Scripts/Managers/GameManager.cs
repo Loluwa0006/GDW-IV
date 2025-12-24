@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public CameraManager camManager;
     public AnnouncementManager announcementManager;
     public ReportManager reportManager;
+    public PauseMenu pauseMenu;
 
     [Header("Player Prefabs")]
     [SerializeField] protected BaseSpeaker speakerPrefab;
@@ -257,6 +258,11 @@ public class GameManager : MonoBehaviour
             character.staminaComponent.foresightPerformed.AddListener(reportManager.OnForesightUsed);
         }
 
+        if (pauseMenu != null)
+        {
+            pauseMenu.ConnectPauseSignals(character);
+        }
+
     }
 
     protected virtual IEnumerator SetCharacterPosition(BaseSpeaker character)
@@ -342,7 +348,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (matchActive) TimerLogic();
+        if (matchActive && !gamePaused) TimerLogic();
     }
 
     protected virtual void TimerLogic()
@@ -368,6 +374,7 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (gamePaused) return;
         if (frameAfterSpecialStop) frameAfterSpecialStop = false;
         if (inSpecialStop)
         {
@@ -407,7 +414,6 @@ public class GameManager : MonoBehaviour
 
         inSuddenDeath = true;
     }
-
     public static void ApplyHitstop(int frames)
     {
         if (gamePaused || frames <= 0) { return; }

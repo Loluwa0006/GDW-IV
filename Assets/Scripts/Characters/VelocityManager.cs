@@ -104,7 +104,7 @@ public class VelocityManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.inSpecialStop || freeze)
+        if (GameManager.inSpecialStop || freeze || GameManager.gamePaused)
         {
             _rb.linearVelocity = Vector3.zero;
         }
