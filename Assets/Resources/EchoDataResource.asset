@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: EchoDataResource
   m_EditorClassIdentifier: Assembly-CSharp::EchoDataResource
   deflectsUntilMaxSpeed: 15
-  maxSpeed: 115
-  minSpeed: 35
-  igniteSpeed: 85
-  deflectStreak: 1
-  currentSpeed: 35
-  activeMinSpeed: 75
-  activeMaxSpeed: 165
+  maxSpeed: 140
+  minSpeed: 65
+  igniteSpeed: 105
+  deflectStreak: 3
+  currentSpeed: 45.666668
+  activeMinSpeed: 35
+  activeMaxSpeed: 115
   oldSpeed: {x: 0, y: 0, z: 0}

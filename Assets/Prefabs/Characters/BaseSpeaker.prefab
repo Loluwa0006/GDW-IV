@@ -5612,6 +5612,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ec03d7bddc0ce4699d6a246b779caa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseCharacter
+  requestedPause:
+    m_PersistentCalls:
+      m_Calls: []
   characterStateMachine: {fileID: 2120398294676015572}
   staminaComponent: {fileID: 9141940878194550526}
   playerInput: {fileID: 2927447848560466722}
