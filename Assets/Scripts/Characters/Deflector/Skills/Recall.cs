@@ -135,13 +135,13 @@ public class Recall : SpeakerBaseSkill
 
     void TeleportToBlade()
     {
-        speaker.transform.position = blade.transform.position;
+        Vector3 tpSpot = blade.transform.position;
+        speaker.transform.position = tpSpot;
         struckEntities.Clear();
         hitbox.enabled = true;
         hitboxActiveFramesRemaining = warpPulseActiveFrames;
         blade.Holster();
     }
-
 
     bool CanSteer(Vector3 moveDir)
     {
@@ -156,11 +156,16 @@ public class Recall : SpeakerBaseSkill
         var overlap = Physics.OverlapBox(bladeCollider.bounds.center, bladeCollider.bounds.size, transform.rotation, holsterMask);
         foreach (Collider c in overlap)
         {
+            Debug.Log("Found collider " + c.name);
             if (c.TryGetComponent(out BaseSpeaker detectedSpeaker))
             {
                 if (detectedSpeaker != speaker) continue;
+                blade.Holster();
             }
-            blade.Holster(); //holster if owned speaker touches blade, or killbox.
+            else if (c.TryGetComponent(out DeathBox deathbox))
+            {
+                blade.Holster();
+            }
         }
     }
 

@@ -45,10 +45,10 @@ public class RecallBlade : MonoBehaviour
     {
         transform.position = recalState.speaker.transform.position;
         transform.parent = null;
-        velocityManager.OverwriteInternalSpeed(dir * flySpeed);
         status = BladeState.Flying;
         model.enabled = true;
         velocityManager.freeze = false;
+        velocityManager.OverwriteInternalSpeed(dir * flySpeed);
     }
 
 
@@ -87,5 +87,7 @@ public class RecallBlade : MonoBehaviour
         status = BladeState.Holstered;
         model.enabled = false;
         transform.parent = recalState.transform;
+        velocityManager.ClearExternalSpeed();
+        velocityManager.ClearInternalSpeed();
     }
 }
