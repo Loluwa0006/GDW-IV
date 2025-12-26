@@ -55,7 +55,7 @@ public class Recall : SpeakerBaseSkill
             else staminaComponent.ConsumeForesight();
             TeleportToBlade();
         }
-            ExitState(); 
+        ExitState();
     }
 
     IEnumerator FindOppositeSpeaker()
@@ -89,13 +89,13 @@ public class Recall : SpeakerBaseSkill
     public override void InactivePhysicsProcess()
     {
         blade.PhysicsUpdate();
-        if      (blade.status != RecallBlade.BladeState.Holstered) DrainLogic();
-        if      (staminaComponent.GetStamina() < staminaCost) blade.Holster();
+        if (blade.status != RecallBlade.BladeState.Holstered) DrainLogic();
+        if (staminaComponent.GetStamina() < staminaCost) blade.Holster();
 
         Vector3 moveDir = GetMovementDir();
         if (skillAction.IsPressed() && CanSteer(moveDir)) blade.SteerFlight(moveDir);
         if (hitboxActiveFramesRemaining > 0) HitboxLogic();
-        if (blade.status != RecallBlade.BladeState.Holstered)  HolsterLogic();
+        if (blade.status != RecallBlade.BladeState.Holstered) HolsterLogic();
         if (framesRemainingUntilHolsterAllowed > 0) framesRemainingUntilHolsterAllowed--;
     }
     public override void InactiveProcess()
@@ -114,7 +114,7 @@ public class Recall : SpeakerBaseSkill
         if (drainTracker <= 0)
         {
             drainTracker = activeBladeDrainRate;
-           if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(1, 0, false);
+            if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(1, 0, false);
         }
     }
 
@@ -125,7 +125,7 @@ public class Recall : SpeakerBaseSkill
         {
             if (!hurtbox.TryGetComponent(out HealthComponent hp)) continue;
             else if (struckEntities.Contains(hp)) continue;
-            else if (hp == speaker.healthComponent) continue; 
+            else if (hp == speaker.healthComponent) continue;
             hp.Damage(hitboxInfo);
             struckEntities.Add(hp);
         }
@@ -152,7 +152,7 @@ public class Recall : SpeakerBaseSkill
 
     public void HolsterLogic()
     {
-        if ( framesRemainingUntilHolsterAllowed > 0) return;
+        if (framesRemainingUntilHolsterAllowed > 0) return;
         var overlap = Physics.OverlapBox(bladeCollider.bounds.center, bladeCollider.bounds.size, transform.rotation, holsterMask);
         foreach (Collider c in overlap)
         {
@@ -177,4 +177,3 @@ public class Recall : SpeakerBaseSkill
         return (staminaComponent.HasForesight() || staminaComponent.GetStamina() > staCost);
     }
 }
-

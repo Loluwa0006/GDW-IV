@@ -5104,7 +5104,6 @@ MonoBehaviour:
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
   speaker: {fileID: 0}
-  deflectAllowed: 1
   moveAcceleration: 5
   moveSpeed: 20
   jumpBuffer: {fileID: 7773383736270308761}
@@ -5158,7 +5157,6 @@ MonoBehaviour:
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
   speaker: {fileID: 0}
-  deflectAllowed: 1
   moveAcceleration: 0
   moveSpeed: 0
   jumpBuffer: {fileID: 7773383736270308761}
@@ -5251,6 +5249,10 @@ MonoBehaviour:
   superDeflectPerformed:
     m_PersistentCalls:
       m_Calls: []
+  deflectedBall:
+    m_PersistentCalls:
+      m_Calls: []
+  deflectEnabled: 1
   deflectHitbox: {fileID: 8973534880129242715}
   playerInput: {fileID: 2927447848560466722}
   character: {fileID: 4524706908845404307}
@@ -5260,13 +5262,24 @@ MonoBehaviour:
   baseDeflect: {fileID: 2100000, guid: f9936cf6a22af4646bee388e3d57063a, type: 2}
   partialDeflect: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
   failedDeflect: {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
-  deflectedBall:
-    m_PersistentCalls:
-      m_Calls: []
   stateAllowsDeflect: 1
   deflectCooldown: 0.6
   deflectDuration: 1.1
   partialDeflectDuration: 0.45
+  partialDeflectInfo:
+    damage: 0
+    maxStaminaDamage: 0
+    damageSource: 0
+    dealsGrayStaminaDamage: 0
+    hitstun: 20
+    knockbackDir: {x: 0.57735026, y: 0.57735026, z: 0.57735026}
+    knockbackDistance: 5
+    hitstunGravity: -1
+    knockbackLaunch: 2
+    leaveTargetInvincible: 0
+    hitstop: 25
+    attacker: {fileID: 0}
+    hitSFX: {fileID: 0}
   deflectSparks: {fileID: 7701800066337011399}
   partialDeflectSparks: {fileID: 2447958220459630713}
   ignitionShockwaves: {fileID: 2594304574781458001}
@@ -5444,7 +5457,6 @@ MonoBehaviour:
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
   speaker: {fileID: 0}
-  deflectAllowed: 0
   jumpBuffer: {fileID: 7773383736270308761}
   characterModel: {fileID: 1214142496764976023}
   additionalIFramesPostEchoHit: 5
@@ -5497,7 +5509,6 @@ MonoBehaviour:
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
   speaker: {fileID: 0}
-  deflectAllowed: 1
   airStateHelper: {fileID: 11400000, guid: 2e66acad52c87ec4596fca04537a440b, type: 2}
   skillOneBuffer: {fileID: 4518664423736530647}
   skillTwoBuffer: {fileID: 3501594426272637387}
@@ -6199,7 +6210,6 @@ MonoBehaviour:
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
   speaker: {fileID: 0}
-  deflectAllowed: 1
   airStateHelper: {fileID: 11400000, guid: 2e66acad52c87ec4596fca04537a440b, type: 2}
   skillOneBuffer: {fileID: 4518664423736530647}
   skillTwoBuffer: {fileID: 3501594426272637387}

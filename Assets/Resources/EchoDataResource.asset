@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2df6de1268961654687407c9a06bdaec, type: 3}
   m_Name: EchoDataResource
   m_EditorClassIdentifier: Assembly-CSharp::EchoDataResource
-  deflectsUntilMaxSpeed: 15
+  deflectsUntilMaxSpeed: 20
   maxSpeed: 140
   minSpeed: 65
-  igniteSpeed: 105
+  igniteSpeed: 121.25
   deflectStreak: 3
   currentSpeed: 45.666668
   activeMinSpeed: 35
