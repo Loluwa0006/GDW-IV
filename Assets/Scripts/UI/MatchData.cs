@@ -17,6 +17,7 @@ public class MatchData : ScriptableObject
         Takeback,
         Objection,
         Provoke,
+        Recall,
         None,
     }
 

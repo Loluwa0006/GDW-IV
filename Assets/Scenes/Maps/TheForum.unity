@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 48477305}
   - component: {fileID: 48477304}
   - component: {fileID: 48477303}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Deathbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
