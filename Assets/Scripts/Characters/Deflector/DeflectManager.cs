@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class DeflectManager : MonoBehaviour
 {
 
+    
     public UnityEvent<BaseSpeaker, bool, float> deflectPerformed = new();
     public UnityEvent<BaseSpeaker> superDeflectPerformed;
    public UnityEvent<BaseEcho, bool, bool> deflectedBall;
@@ -39,6 +40,7 @@ public class DeflectManager : MonoBehaviour
      [SerializeField]  float deflectCooldown = 0.6f;
      [SerializeField]  float deflectDuration = 1.4f;
      [SerializeField]  float partialDeflectDuration = 0.45f;
+    [SerializeField] DamageInfo partialDeflectInfo;
     [Header("Deflect Gamefeel")]
     [SerializeField] ParticleSystem deflectSparks;
     [SerializeField] ParticleSystem partialDeflectSparks;
@@ -59,8 +61,10 @@ public class DeflectManager : MonoBehaviour
     bool wasDeflectingBeforeFreeze = false;
 
 
+    Dictionary<string, object> getHitData = new();
     private void Awake()
     {
+        getHitData["Data"] = partialDeflectInfo;
         deflectHitbox.enabled = false;
         if (mesh == null)
         {
@@ -190,7 +194,13 @@ public class DeflectManager : MonoBehaviour
         yield return null;
         cooldownTracker = 0.0f;
 
-        if (wasPartial) partialDeflectSparks.Play();
+        if (wasPartial || character.characterStateMachine.currentState is GetHitState)
+        {
+            partialDeflectSparks.Play();
+            partialDeflectInfo.knockbackDir = (ball.transform.position - character.transform.position).normalized;
+            character.characterStateMachine.TransitionTo<GetHitState>(getHitData);
+        }
+
         else deflectSparks.Play();
         character.unscaledAudioSource.PlayOneShot(GetRandomDeflectSFX());
         if (ball.isIgnited)
