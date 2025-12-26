@@ -10600,10 +10600,10 @@ MonoBehaviour:
   _rb: {fileID: 9064068066324509259}
   minSteerForce: 0.7
   maxSteerForce: 1.65
-  promixityMultiplier: 25
-  minProximityDistance: 2
-  maxProximityDistance: 6.5
-  minSpeedFactor: 0.4
+  promixityMultiplier: 7
+  minProximityDistance: 3
+  maxProximityDistance: 8
+  minSpeedFactor: 0.45
   normalColor: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
   igniteColor: {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
   echoTrail: {fileID: 617450825031257723}

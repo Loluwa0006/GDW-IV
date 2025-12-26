@@ -94,8 +94,6 @@ public class BaseState : MonoBehaviour
     {
 
     }
-
-
     public virtual bool OnCharacterHit(DamageInfo info) // returns whether or not to invoke damaged signal
     {
         Dictionary<string, object> msg = new()

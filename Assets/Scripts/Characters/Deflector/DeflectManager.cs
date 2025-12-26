@@ -9,6 +9,8 @@ public class DeflectManager : MonoBehaviour
 
     public UnityEvent<BaseSpeaker, bool, float> deflectPerformed = new();
     public UnityEvent<BaseSpeaker> superDeflectPerformed;
+   public UnityEvent<BaseEcho, bool, bool> deflectedBall;
+    public bool deflectEnabled = true;
 
 
     [SerializeField] BoxCollider deflectHitbox;
@@ -30,7 +32,6 @@ public class DeflectManager : MonoBehaviour
     [SerializeField] Material failedDeflect;
 
 
-    public UnityEvent<BaseEcho, bool, bool> deflectedBall;
 
     [HideInInspector] public bool stateAllowsDeflect = true;
 
