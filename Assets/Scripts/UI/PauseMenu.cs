@@ -7,8 +7,15 @@ public class PauseMenu : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+    [SerializeField] GameManager gameManager;
     [SerializeField] GameObject pauseScreen;
-    
+
+
+    private void Awake()
+    {
+        OnResumePressed();
+        if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
+    }
     public void ConnectPauseSignals(BaseCharacter cha)
     {
         cha.requestedPause.AddListener(OnPauseRequested);
@@ -30,5 +37,12 @@ public class PauseMenu : MonoBehaviour
     public void OnQuitPressed()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void OnRestartPressed()
+    {
+        GameManager.gamePaused = false;
+        pauseScreen.SetActive(false);
+        gameManager.ResetGame();
     }
 }
