@@ -78,15 +78,15 @@ public class PlayerUI : MonoBehaviour
         if (staminaComponent.HasForesight()) usableStaminaImage.color = foresightStamina;
         else usableStaminaImage.color = staminaComponent.InDangerZone() ? dangerStamina : healthyStamina;
      }
-    public void SetSkillIcons(MatchData.SkillName skillOne, MatchData.SkillName skillTwo)
+    public void SetSkillIcons(SkillName skillOne,SkillName skillTwo)
     {
-        if (skillOne != MatchData.SkillName.None)
+        if (skillOne != SkillName.None)
         {
             skillOneIcon.gameObject.SetActive(true);
             skillOneIcon.texture = MatchData.instance.skillIconDictionary[skillOne];
         }
         else skillOneIcon.gameObject.SetActive(false);
-        if (skillTwo != MatchData.SkillName.None)
+        if (skillTwo != SkillName.None)
         {
             skillTwoIcon.gameObject.SetActive(true);
             skillTwoIcon.texture = MatchData.instance.skillIconDictionary[skillTwo];

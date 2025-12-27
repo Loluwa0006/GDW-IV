@@ -8,7 +8,7 @@ public class CharacterStateMachine : MonoBehaviour
 
     public BaseState currentState;
     public UnityEvent<StateTransitionInfo> transitionedStates = new(); //order is previous state, current state;
-    public UnityEvent<MatchData.SkillName, MatchData.SkillName> updatedSkills = new();
+    public UnityEvent<SkillName, SkillName> updatedSkills = new();
 
     [SerializeField] BaseCharacter character;
     [SerializeField] GameObject bufferHolder;

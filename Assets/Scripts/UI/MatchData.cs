@@ -6,21 +6,8 @@ using UnityEngine.InputSystem;
 [System.Serializable]
 public class MatchData : ScriptableObject
 {
-    [System.Serializable]
-    public enum SkillName
-    {
-        Advance,
-        Rebuttal,
-        Precedent,
-        Anchor,
-        Pivot,
-        Takeback,
-        Objection,
-        Provoke,
-        Recall,
-        None,
-    }
 
+    [SerializeField] SkillDatabase skillDatabase;
     public enum PlayerType
     {
         Speaker,
@@ -54,14 +41,7 @@ public class MatchData : ScriptableObject
         public string teamName;
         public int handicapLevel = 0;
     }
-    [System.Serializable]
-    public class SkillPrefabs
-    {
-        public SkillName skillName;
-        public SpeakerBaseSkill skillPrefab;
-        public Texture skillIcon;
-    }
-
+   
     [HideInInspector] public int numberOfTeams = 2;
 
     [HideInInspector] public List<TeamInfo> gameTeams = new();
@@ -70,8 +50,6 @@ public class MatchData : ScriptableObject
 
 
     [HideInInspector] public bool initPrefabs = false;
-
-    public List<SkillPrefabs> skillPrefabs = new();
 
     public int gameLength = 60;
 
@@ -84,10 +62,11 @@ public class MatchData : ScriptableObject
 
     public void InitSkillPrefabs()
     {
-        foreach (var kvp in skillPrefabs)
+        foreach (var kvp in skillDatabase.skillPrefabs)
         {
             skillPrefabDictionary[kvp.skillName] = kvp.skillPrefab;
             skillIconDictionary[kvp.skillName] = kvp.skillIcon;
+            skillDatabase.prefabDictionary[kvp.skillName] = kvp;
         }
         initPrefabs = true;
     }

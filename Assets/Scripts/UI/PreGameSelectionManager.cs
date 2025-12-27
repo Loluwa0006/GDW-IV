@@ -202,17 +202,17 @@ public class PreGameSelectionManager : MonoBehaviour
     public void OnSkillPressed(UISelector selector, int index)
     {
         if (selector.locked) { return; }
-        MatchData.SkillName previousSkill;
-        MatchData.SkillName nextSkill;
-        int totalSkills = Enum.GetValues(typeof(MatchData.SkillName)).Length;
+        SkillName previousSkill;
+        SkillName nextSkill;
+        int totalSkills = Enum.GetValues(typeof(SkillName)).Length;
         if (index == 1)
         {
             previousSkill = playerInfo[selector].skillOne;
-            nextSkill = (MatchData.SkillName)(((int)previousSkill + 1) % totalSkills);
+            nextSkill = (SkillName)(((int)previousSkill + 1) % totalSkills);
 
-            while (nextSkill == playerInfo[selector].skillTwo || nextSkill == MatchData.SkillName.None)
+            while (nextSkill == playerInfo[selector].skillTwo || nextSkill == SkillName.None)
             {
-                nextSkill = (MatchData.SkillName)(((int)nextSkill + 1) % totalSkills);
+                nextSkill = (SkillName)(((int)nextSkill + 1) % totalSkills);
             }
 
             playerInfo[selector].skillOne = nextSkill;
@@ -220,11 +220,11 @@ public class PreGameSelectionManager : MonoBehaviour
         else if (index == 2)
         {
             previousSkill = playerInfo[selector].skillTwo;
-            nextSkill = (MatchData.SkillName)(((int)previousSkill + 1) % totalSkills);
+            nextSkill = (SkillName)(((int)previousSkill + 1) % totalSkills);
 
-            while (nextSkill == playerInfo[selector].skillOne || nextSkill == MatchData.SkillName.None)
+            while (nextSkill == playerInfo[selector].skillOne || nextSkill == SkillName.None)
             {
-                nextSkill = (MatchData.SkillName)(((int)nextSkill + 1) % totalSkills);
+                nextSkill = (SkillName)(((int)nextSkill + 1) % totalSkills);
             }
 
             playerInfo[selector].skillTwo = nextSkill;

@@ -16,7 +16,7 @@ public class TutorialTrigger : MonoBehaviour
     [SerializeField] bool alwaysHideTrigger;
 
     [SerializeField, ShowIf(nameof(RequiresDialogue))] protected BaseDialogue dialogueData;
-    [SerializeField, ShowIf(nameof(RequiresSkill))] MatchData.SkillName skill;
+    [SerializeField, ShowIf(nameof(RequiresSkill))] SkillName skill;
     [SerializeField, ShowIf(nameof(RequiresSkill))] int skillIndex;
 
     [SerializeField, ShowIf(nameof(RequiresInstantSwap))] TutorialManager.SectionName instantSectionSwap = TutorialManager.SectionName.Introduction;

@@ -6,7 +6,8 @@ public enum SceneRegistry
     MainMenu,
     GameSelection,
     Tutorial,
-    Training
+    Training,
+    Codex
 }
 
 public enum MapRegistry

@@ -1,0 +1,154 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76fefa83212e13442a4fd5f0bac9987a, type: 3}
+  m_Name: SkillDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::SkillDatabase
+  skillPrefabs:
+  - skillName: 0
+    skillPrefab: {fileID: 3008232512440988819, guid: de79f999f9db78f4781e580f1fdb78a7, type: 3}
+    skillSubtitle: Generalist Speedster
+    skillIcon: {fileID: 2800000, guid: 94ab6e87ea055424285cf82d01f6f11d, type: 3}
+    skillDescription: Dash forward, tackling opponents in your way.
+    skillFloor: 1
+    skillCeiling: 3
+    archetypeStats:
+      mobilityScore: 7
+      controlScore: 4
+      tempoScore: 7
+      offenseScore: 5
+      defenseScore: 5
+    type: 0
+    skillTags: 000000000900000008000000020000000b000000
+  - skillName: 1
+    skillPrefab: {fileID: 2565636254526486398, guid: 4d468c73c20bfab41bfca942d4724e13, type: 3}
+    skillSubtitle: Deflect Master
+    skillIcon: {fileID: 2800000, guid: c38df02ce88041a40bee4ec2aec5439d, type: 3}
+    skillDescription: Charge up to unleash an infinite range deflect.
+    skillFloor: 1
+    skillCeiling: 4
+    archetypeStats:
+      mobilityScore: 3
+      controlScore: 6
+      tempoScore: 5
+      offenseScore: 7
+      defenseScore: 5
+    type: 0
+    skillTags: 0100000003000000080000000a0000000a000000
+  - skillName: 2
+    skillPrefab: {fileID: 6893237331444342802, guid: 6e9026a396c01864ab1f64d27ac93192, type: 3}
+    skillSubtitle: 'Versitile '
+    skillIcon: {fileID: 2800000, guid: 8859ab92fa260e34cb2a25b009cf254f, type: 3}
+    skillDescription: 'Create a shield that gathers power to unleash a super deflect.
+      Activate the skill again to warp echoes to its position. '
+    skillFloor: 2
+    skillCeiling: 4
+    archetypeStats:
+      mobilityScore: 2
+      controlScore: 8
+      tempoScore: 4
+      offenseScore: 3
+      defenseScore: 9
+    type: 1
+    skillTags: 01000000040000000a000000
+  - skillName: 3
+    skillPrefab: {fileID: 4764352279621080222, guid: 1a141efffe4b171438106fa85deb3d30, type: 3}
+    skillSubtitle: Setup Master
+    skillIcon: {fileID: 2800000, guid: 460dc63e6d7254640a963f0dcf6ca031, type: 3}
+    skillDescription: Jump while firing a grappling hook that will pull the user
+      towards its location.
+    skillFloor: 3
+    skillCeiling: 4
+    archetypeStats:
+      mobilityScore: 5
+      controlScore: 2
+      tempoScore: 6
+      offenseScore: 3
+      defenseScore: 2
+    type: 1
+    skillTags: 00000000020000000c000000070000000a000000
+  - skillName: 4
+    skillPrefab: {fileID: 1473100305885552630, guid: 5fc49347fe38e4144b217fb21210b6ea, type: 3}
+    skillSubtitle: Moblity Master
+    skillIcon: {fileID: 2800000, guid: 76bb4d0157306e74680f518bdba2ed58, type: 3}
+    skillDescription: Bounce off terrain with perfect air control.
+    skillFloor: 4
+    skillCeiling: 5
+    archetypeStats:
+      mobilityScore: 9
+      controlScore: 2
+      tempoScore: 5
+      offenseScore: 3
+      defenseScore: 4
+    type: 0
+    skillTags: 000000000a000000070000000d00000006000000
+  - skillName: 5
+    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillSubtitle: Offensive Juggernaut
+    skillIcon: {fileID: 2800000, guid: 28c2f66f43822b6489bc30ba5b797094, type: 3}
+    skillDescription: Catch the ball and throw it in your chosen direction.
+    skillFloor: 3
+    skillCeiling: 3
+    archetypeStats:
+      mobilityScore: 3
+      controlScore: 7
+      tempoScore: 7
+      offenseScore: 10
+      defenseScore: 2
+    type: 1
+    skillTags: 
+  - skillName: 6
+    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillSubtitle: Umbra Manuplator
+    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillDescription: Enhances your movement speed while creating a special path
+      that ,once activated, deflects echoes and stuns speakers.
+    skillFloor: 2
+    skillCeiling: 4
+    archetypeStats:
+      mobilityScore: 6
+      controlScore: 7
+      tempoScore: 5
+      offenseScore: 6
+      defenseScore: 6
+    type: 0
+    skillTags: 
+  - skillName: 7
+    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillSubtitle: Daredevil
+    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillDescription: Causes echoes to fly back towards you.
+    skillFloor: 4
+    skillCeiling: 4
+    archetypeStats:
+      mobilityScore: 2
+      controlScore: 8
+      tempoScore: 9
+      offenseScore: 5
+      defenseScore: 5
+    type: 0
+    skillTags: 
+  - skillName: 8
+    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillSubtitle: Vanishing Assassin
+    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillDescription: Throw out a sticky projectile that you can steer mid flight.
+      Acrivate the skill again to teleport to it, stunning nearby speakers
+    skillFloor: 4
+    skillCeiling: 5
+    archetypeStats:
+      mobilityScore: 8
+      controlScore: 5
+      tempoScore: 6
+      offenseScore: 8
+      defenseScore: 4
+    type: 1
+    skillTags: 

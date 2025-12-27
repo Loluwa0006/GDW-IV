@@ -181,8 +181,8 @@ public class TutorialManager : GameManager
             device = inputDevice,
             controlScheme = "Combat",
             playerType = MatchData.PlayerType.Speaker,
-            skillOne = MatchData.SkillName.None,
-            skillTwo = MatchData.SkillName.None,
+            skillOne = SkillName.None,
+            skillTwo = SkillName.None,
         };
        queuedPlayerInfo.Enqueue(tutorialPlayer);
        inputManager.JoinPlayer(pairWithDevice: inputDevice);

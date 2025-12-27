@@ -54,8 +54,8 @@ public class TrainingManager : GameManager
             device = inputDevice,
             controlScheme = "Combat",
             playerType = MatchData.PlayerType.Speaker,
-            skillOne = MatchData.SkillName.None,
-            skillTwo = MatchData.SkillName.None,
+            skillOne = SkillName.None,
+            skillTwo = SkillName.None,
         };
         queuedPlayerInfo.Enqueue(tutorialPlayer);
         inputManager.JoinPlayer(pairWithDevice: inputDevice);
@@ -65,8 +65,8 @@ public class TrainingManager : GameManager
             device = Keyboard.current,
             controlScheme = "CombatKeyboardTwo",
             playerType = MatchData.PlayerType.Speaker,
-            skillOne = MatchData.SkillName.None,
-            skillTwo = MatchData.SkillName.None,
+            skillOne = SkillName.None,
+            skillTwo = SkillName.None,
         };
         queuedPlayerInfo.Enqueue(dummy);
         inputManager.JoinPlayer(pairWithDevice: inputDevice);
@@ -139,34 +139,34 @@ public class TrainingManager : GameManager
 
     public void AssignDash()
     {
-        AssignNewSkill(MatchData.SkillName.Advance);
+        AssignNewSkill(SkillName.Advance);
     }
 
     public void AssignCounterslash()
     {
-        AssignNewSkill(MatchData.SkillName.Rebuttal);
+        AssignNewSkill(SkillName.Rebuttal);
     }
 
     public void AssignAfterimage()
     {
-        AssignNewSkill(MatchData.SkillName.Precedent);
+        AssignNewSkill(SkillName.Precedent);
     }
 
     public void AssignGrapple()
     {
-        AssignNewSkill(MatchData.SkillName.Anchor);
+        AssignNewSkill(SkillName.Anchor);
     }
 
     public void AssignRedirect()
     {
-        AssignNewSkill(MatchData.SkillName.Pivot);
+        AssignNewSkill(SkillName.Pivot);
     }
 
     public void AssignTakeback()
     {
-        AssignNewSkill(MatchData.SkillName.Takeback);
+        AssignNewSkill(SkillName.Takeback);
     }
-    public void AssignNewSkill(MatchData.SkillName name)
+    public void AssignNewSkill(SkillName name)
     {
         if (playerSpeaker == null) { return; }
         if (!playerSpeaker.playerInput.actions["SkillTwo"].IsPressed()) playerSpeaker.characterStateMachine.AddNewSkill(1, name);

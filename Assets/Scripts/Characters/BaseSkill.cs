@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class BaseSkill : BaseState
 {
     public UnityEvent<BaseCharacter, int> skillUsed = new(); //int is skill index
-    [SerializeField] public MatchData.SkillName skillName = MatchData.SkillName.Advance;
+    [SerializeField] public SkillName skillName = SkillName.Advance;
     public int staminaCost = 15;
 
     protected StaminaComponent staminaComponent;
