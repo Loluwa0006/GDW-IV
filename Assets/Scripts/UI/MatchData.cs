@@ -32,6 +32,7 @@ public class MatchData : ScriptableObject
         public InputDevice device;
         public string controlScheme = "Combat";
         public int teamIndex = 0;
+        public bool isAI = false;
 
     }
 

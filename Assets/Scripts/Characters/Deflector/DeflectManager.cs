@@ -16,9 +16,6 @@ public class DeflectManager : MonoBehaviour
 
     [SerializeField] BoxCollider deflectHitbox;
 
-
-    [SerializeField] PlayerInput playerInput;
-
     [SerializeField] BaseSpeaker character;
 
     [SerializeField] MeshRenderer mesh;

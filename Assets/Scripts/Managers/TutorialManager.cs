@@ -153,7 +153,7 @@ public class TutorialManager : GameManager
         }
 
 
-        InitPlayers();
+        InitSpeakers();
         StartTutorial();
     }
 
@@ -171,7 +171,7 @@ public class TutorialManager : GameManager
         announcementManager.ResetManager();
         yield break; //no countdown for tutorial
     }
-    protected override void InitPlayers()
+    protected override void InitSpeakers()
     {
         InputDevice inputDevice = Gamepad.all.Count > 0 ? Gamepad.all[0] : Keyboard.current;
 

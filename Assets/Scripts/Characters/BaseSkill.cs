@@ -44,22 +44,22 @@ public class BaseSkill : BaseState
         switch (skillIndex)
         {
             case 1:
-                skillAction = character.playerInput.actions["SkillOne"];
+                skillAction = character.inputManager.GetAction("SkillOne");
                 oppositeSkillIndex = 2;
                 oppositeSkillBuffer = fsm.TryGetBuffer("SkillTwoBuffer");
                 skillBuffer = fsm.TryGetBuffer("SkillOneBuffer");
                 break;
             case 2:
-                skillAction = character.playerInput.actions["SkillTwo"];
+                skillAction = character.inputManager.GetAction("SkillTwo");
                 oppositeSkillIndex = 1;
                 oppositeSkillBuffer = fsm.TryGetBuffer("SkillOneBuffer");
                 skillBuffer = fsm.TryGetBuffer("SkillTwoBuffer");
                 break;
             case 3:
-                skillAction = character.playerInput.actions["SkillThree"];
+                skillAction = character.inputManager.GetAction("SkillThree");
                 break;
             default:
-                skillAction = character.playerInput.actions["SkillOne"];
+                skillAction = character.inputManager.GetAction("SkillFour");
                 break;
         }
     }

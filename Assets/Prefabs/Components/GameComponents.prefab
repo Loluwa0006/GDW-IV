@@ -14038,6 +14038,7 @@ MonoBehaviour:
   reportManager: {fileID: 5174751720899987877}
   pauseMenu: {fileID: 7757687490749578828}
   speakerPrefab: {fileID: 4524706908845404307, guid: 2e5faa123585e3441b221f9a4c4cb8a9, type: 3}
+  aiSpeakerPrefab: {fileID: 3089438711533713663, guid: f10873d66028584489e659c059262864, type: 3}
   healthUIPrefab: {fileID: 2909893997914088154, guid: f39f83fb50d04af4ab531f817557b8bb, type: 3}
   UIHolder: {fileID: 1349401949003741335}
   spawnPositions:

@@ -1,10 +1,8 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using System.Collections;
-using NaughtyAttributes.Test;
 
 public class UISelector : MonoBehaviour
 {
@@ -18,7 +16,9 @@ public class UISelector : MonoBehaviour
     public TMP_Text skillOneDisplay;
     public TMP_Text skillTwoDisplay;
     public RectTransform rectTransform;
-    public GameObject alternateControlSchemeDisplay;
+    public GameObject alternateControlSchemeDisplay; 
+    public GameObject aiDisplay;
+
 
     [HideInInspector] public int teamIndex = 0;
     [HideInInspector] public UnityEvent<UISelector> selectorLocked = new();
@@ -45,6 +45,7 @@ public class UISelector : MonoBehaviour
         skillOneDisplay.gameObject.SetActive(false);
         skillTwoDisplay.gameObject.SetActive(false);
         alternateControlSchemeDisplay.SetActive(false);
+        aiDisplay.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -52,11 +53,10 @@ public class UISelector : MonoBehaviour
         if (manager == null) { return; }
         SelectScreenLogic();
         ConfirmationLogic();
-           if (pInput.actions["Decline"].WasPerformedThisFrame())
+        if (pInput.actions["Decline"].WasPerformedThisFrame())
         {
             manager.ReturnToPreviousScreen();
         }
-
         if (pInput.actions["SwapSchemes"].WasPerformedThisFrame())
         {
             Debug.Log("Swapping schemes");
@@ -128,7 +128,7 @@ public class UISelector : MonoBehaviour
         var newColor = image.color;
         newColor.a = 0;
         image.color = newColor;
-        ToggleSkillDisplay(false);
+        ToggleExternalDisplays(false, false);
         indexDisplay.gameObject.SetActive(false);
         hidden = true;
     }
@@ -143,10 +143,12 @@ public class UISelector : MonoBehaviour
     }
 
 
-    public void ToggleSkillDisplay(bool toggle)
+    public void ToggleExternalDisplays(bool showSKills, bool showAI)
     {
-        skillOneDisplay.gameObject.SetActive(toggle);
-        skillTwoDisplay.gameObject.SetActive(toggle);
+        skillOneDisplay.gameObject.SetActive(showSKills);
+        skillTwoDisplay.gameObject.SetActive(showSKills);
+
+        aiDisplay.gameObject.SetActive(showAI);
     }
 }
 

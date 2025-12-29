@@ -5,7 +5,9 @@ using UnityEngine.InputSystem;
 public class BaseState : MonoBehaviour
 {
 
-    protected const float MOVE_DEADZONE = 0.1f;
+    public const float MOVE_DEADZONE = 0.1f;
+    public const float BOXCAST_RATIO = 0.85f;
+    public const float SAFE_MARGIN = 0.05f;
 
     [HideInInspector] public BaseCharacter character;
     public bool hasInactiveProcess = false;
@@ -18,7 +20,6 @@ public class BaseState : MonoBehaviour
 
     protected PlayerInput playerInput;
 
-    float BOXCAST_RATIO = 0.85f;
 
     public virtual void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
     {
@@ -61,7 +62,7 @@ public class BaseState : MonoBehaviour
 
     public bool IsGrounded()
     {
-        float castDistance = (_rbCollider.bounds.size.y / 2.0f) + 0.05f;
+        float castDistance = (_rbCollider.bounds.size.y / 2.0f) + SAFE_MARGIN;
         bool hit = Physics.BoxCast
             (
             _rbCollider.bounds.center,
@@ -76,14 +77,7 @@ public class BaseState : MonoBehaviour
 
     protected Vector3 GetMovementDir()
     {
-        float x = playerInput.actions["Right"].ReadValue<float>() - playerInput.actions["Left"].ReadValue<float>();
-        float z = playerInput.actions["Up"].ReadValue<float>() - playerInput.actions["Down"].ReadValue<float>();
-        Vector3 moveDir = new (x, 0, z);
-        if (moveDir.magnitude > 1.0f)
-        {
-            moveDir = moveDir.normalized;
-        }
-        return moveDir;
+        return character.inputManager.GetMovementDirection();
     }
 
     public virtual Dictionary<string, object> GetStateData()

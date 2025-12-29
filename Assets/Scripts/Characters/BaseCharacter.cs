@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Users;
 
 public class BaseCharacter : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class BaseCharacter : MonoBehaviour
     public CharacterStateMachine characterStateMachine;
 
     public StaminaComponent staminaComponent;
-    public PlayerInput playerInput;
+    public InputManager inputManager;
     public MeshRenderer playerModel;
     public VelocityManager velocityManager;
     public GroundIndicator groundIndicator;
@@ -22,9 +20,8 @@ public class BaseCharacter : MonoBehaviour
     public List<Material> playerColors = new();
 
     [HideInInspector] public int teamIndex;
-    [HideInInspector] Transform lookTarget = null;
+    protected Transform lookTarget = null;
     protected bool init = false;
-
 
     public virtual void InitPlayer(MatchData.PlayerInfo info, int index)
     {
@@ -32,12 +29,12 @@ public class BaseCharacter : MonoBehaviour
         teamIndex = index;
         playerModel.material = playerColors[index - 1];
         name = "Player " + index;
-        groundIndicator.Init(playerColors[index - 1], index);
+        groundIndicator.Init(playerModel.material, index);
 
 
-        if (playerInput == null)
+        if (inputManager == null)
         {
-            playerInput = GetComponent<PlayerInput>();
+            inputManager = GetComponent<InputManager>();
         }
         if (unscaledAudioSource == null)
         {
@@ -47,36 +44,17 @@ public class BaseCharacter : MonoBehaviour
 
         StartCoroutine(InitStateMachine(info));
         StartCoroutine(AssignLookTarget());
-        AssignPlayerDevice(info);
     }
 
     protected virtual IEnumerator InitStateMachine(MatchData.PlayerInfo info)
     {
         yield return new WaitForFixedUpdate();
-        AssignPlayerDevice(info); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
+        inputManager.InitInputComponent(info); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
         characterStateMachine.CreateSkills(info);
         characterStateMachine.InitMachine();
         init = true;
     }
-    protected void AssignPlayerDevice(MatchData.PlayerInfo info)
-    {
-        if (!playerInput.user.valid)
-        {
-            Debug.Log("Invalid user for char " + name);
-            return;
-        }
-        if (info.device is Gamepad)
-        {
-            playerInput.user.UnpairDevices(); //get rid of other gamepads / the keyboard
-            InputUser.PerformPairingWithDevice(info.device, playerInput.user); // add this gamepad to the current player
-        }
-
-        Debug.Log("device name is " + info.device.name);
-
-        playerInput.SwitchCurrentActionMap(info.controlScheme);
-
-
-    }
+  
     IEnumerator AssignLookTarget()
     {
         yield return new WaitForFixedUpdate();
@@ -85,7 +63,7 @@ public class BaseCharacter : MonoBehaviour
 
     private void Update()
     {
-        if (playerInput.actions["Pause"].WasPressedThisFrame())
+        if (inputManager.ActionPerformedThisFrame("Pause"))
         {
             Debug.Log("pressed pause button");
             requestedPause.Invoke(this);
@@ -108,14 +86,14 @@ public class BaseCharacter : MonoBehaviour
     {
         HidePlayer();
         enabled = false;
-        playerInput.DeactivateInput();
+        inputManager.DeactivateInput();
     }
 
     public virtual void ActivatePlayer()
     {
         ShowPlayer();
         enabled = true;
-        playerInput.ActivateInput();
+        inputManager.ActivateInput();
     }
 
 

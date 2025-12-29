@@ -20,7 +20,7 @@ public class BufferHelper : MonoBehaviour
 
     string actionBuffered = "";
 
-    public void InitBuffer(PlayerInput pInput)
+    public void InitBuffer(InputManager pInput)
     {
         if (initialized)
         {
@@ -29,7 +29,7 @@ public class BufferHelper : MonoBehaviour
 
         foreach (string input in inputNames)
         {
-            InputAction action = pInput.actions.FindAction(input);
+            InputAction action = pInput.GetAction(input);
             if (action == null)
             {
                 Debug.LogWarning("Could not find action of name " + input + " in player input.");
@@ -50,8 +50,7 @@ public class BufferHelper : MonoBehaviour
         {
             if (action.WasPerformedThisFrame() || isHoldable && action.IsPressed())
             {
-                actionBuffered = action.name;
-                window = currentDuration;
+                BufferInput(action);
                 break;
             }
         }
@@ -69,6 +68,18 @@ public class BufferHelper : MonoBehaviour
             }
         }
     } 
+
+    public void BufferInput(InputAction action)
+    {
+        actionBuffered = action.name;
+        window = currentDuration;
+    }
+
+    public void BufferInput(string action)
+    {
+        actionBuffered = action;
+        window = currentDuration;
+    }
 
     public void Consume()
     {

@@ -44,7 +44,7 @@ public class TrainingManager : GameManager
     }
 
 
-    protected override void InitPlayers()
+    protected override void InitSpeakers()
     {
         InputDevice inputDevice = Gamepad.all.Count > 0 ? Gamepad.all[0] : Keyboard.current;
 
@@ -169,7 +169,7 @@ public class TrainingManager : GameManager
     public void AssignNewSkill(SkillName name)
     {
         if (playerSpeaker == null) { return; }
-        if (!playerSpeaker.playerInput.actions["SkillTwo"].IsPressed()) playerSpeaker.characterStateMachine.AddNewSkill(1, name);
+        if (!playerSpeaker.inputManager.GetAction("SkillTwo").IsPressed()) playerSpeaker.characterStateMachine.AddNewSkill(1, name);
         else playerSpeaker.characterStateMachine.AddNewSkill(2, name);
     }
 

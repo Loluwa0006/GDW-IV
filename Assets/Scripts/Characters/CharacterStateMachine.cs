@@ -140,7 +140,7 @@ public class CharacterStateMachine : MonoBehaviour
         foreach (Transform t in bufferHolder.transform)
         {
             if (!t.TryGetComponent<BufferHelper>(out var bufferHelper)) { continue; }
-            bufferHelper.InitBuffer(character.playerInput);
+            bufferHelper.InitBuffer(character.inputManager);
             bufferList.Add(bufferHelper);
         }
         initMachine = true;

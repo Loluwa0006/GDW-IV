@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Player Prefabs")]
     [SerializeField] protected BaseSpeaker speakerPrefab;
+    [SerializeField] protected AISpeaker aiSpeakerPrefab;
 
     [Header("UI Objects")]
 
@@ -90,7 +91,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Initializing Timer");
         InitTimer();
         Debug.Log("Initializing Players");
-        InitPlayers();
+        InitSpeakers();
         Debug.Log("Initializing Echoes");
         InitEchoes();
         Debug.Log("Starting Game");
@@ -166,13 +167,13 @@ public class GameManager : MonoBehaviour
         timerDisplay.text = timerTracker.ToString();
     }
 
-    protected virtual void InitPlayers()
+    protected virtual void InitSpeakers()
     {
         if (MatchData.instance == null) { return; }
         activeSpeakers.Clear();
         int memberIndex = 0;
         int teamIndex = 0;
-        List<ReportManager.TrackerData> speakerData = new();
+        List<TrackerData> speakerData = new();
         foreach (MatchData.TeamInfo team in MatchData.instance.gameTeams)
         {
             teamIndex++;
@@ -182,7 +183,15 @@ public class GameManager : MonoBehaviour
                 memberIndex++;
                 if (member.playerType == MatchData.PlayerType.Speaker)
                 {
-                    queuedPlayerInfo.Enqueue(member);
+                    if (member.isAI)
+                    {
+                        inputManager.playerPrefab = aiSpeakerPrefab.gameObject;
+                    }
+                    else
+                    {
+                        inputManager.playerPrefab = speakerPrefab.gameObject;
+                    }
+                        queuedPlayerInfo.Enqueue(member);
                     inputManager.JoinPlayer(pairWithDevice: member.device);
                 }
                 
@@ -353,23 +362,20 @@ public class GameManager : MonoBehaviour
 
     protected virtual void TimerLogic()
     {
-       
-            timerTracker -= Time.deltaTime;
-            if (timerTracker <= 0.0f)
+        timerTracker -= Time.deltaTime;
+        if (timerTracker <= 0.0f)
+        {
+            if (!inSuddenDeath)
             {
-                if (!inSuddenDeath)
-                {
-                    inSuddenDeath = true;
-                    EnterSuddenDeath();
-                }
+                inSuddenDeath = true;
+                EnterSuddenDeath();
             }
-            else
-            {
-                timerTracker = Mathf.Clamp(timerTracker, 0.0f, MatchData.instance.gameLength);
-                timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
-            }
-        
-      
+        }
+        else
+        {
+            timerTracker = Mathf.Clamp(timerTracker, 0.0f, MatchData.instance.gameLength);
+            timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
+        }
     }
 
     private void FixedUpdate()
@@ -413,6 +419,11 @@ public class GameManager : MonoBehaviour
         announcementManager.QueueNewAnnouncement(suddenDeathAnnouncement);
 
         inSuddenDeath = true;
+    }
+
+    public bool InSuddenDeath()
+    {
+        return inSuddenDeath;
     }
     public static void ApplyHitstop(int frames)
     {

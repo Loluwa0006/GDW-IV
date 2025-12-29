@@ -106,7 +106,7 @@ MonoBehaviour:
     type: 1
     skillTags: 
   - skillName: 6
-    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillPrefab: {fileID: 999454113503776721, guid: aba795a7a2f7af747b6322198dd3fc60, type: 3}
     skillSubtitle: Umbra Manuplator
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
     skillDescription: Enhances your movement speed while creating a special path
@@ -122,7 +122,7 @@ MonoBehaviour:
     type: 0
     skillTags: 
   - skillName: 7
-    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillPrefab: {fileID: 333516544351708634, guid: 6fbd23461eca52f45a4271de08750d8d, type: 3}
     skillSubtitle: Daredevil
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
     skillDescription: Causes echoes to fly back towards you.
@@ -137,7 +137,7 @@ MonoBehaviour:
     type: 0
     skillTags: 
   - skillName: 8
-    skillPrefab: {fileID: 6745776406373889845, guid: 1d13351e338c582489badaaa773c8df3, type: 3}
+    skillPrefab: {fileID: 790086623164798323, guid: ed334cc1f35202449bed27c85c2af8cf, type: 3}
     skillSubtitle: Vanishing Assassin
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
     skillDescription: Throw out a sticky projectile that you can steer mid flight.

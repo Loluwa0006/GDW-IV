@@ -14,6 +14,7 @@ public class BaseEcho : BaseCharacter
     public UnityEvent<BaseEcho> echoCollision = new();
     public UnityEvent<BaseEcho> echoDeflected = new();
     public UnityEvent<Vector3> echoWarped = new();
+    public UnityEvent<Transform> echoTargetChanged = new();
 
   
 
@@ -50,7 +51,6 @@ public class BaseEcho : BaseCharacter
 
      
         StartCoroutine(InitStateMachine(info));
-        AssignPlayerDevice(info);
     }
 
     private void Start()
@@ -74,7 +74,7 @@ public class BaseEcho : BaseCharacter
     protected override IEnumerator InitStateMachine(MatchData.PlayerInfo info)
     {
         yield return new WaitForFixedUpdate();
-        if (playerControlled) AssignPlayerDevice(info); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
+        if (playerControlled) inputManager.InitInputComponent(info);        //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
         characterStateMachine.CreateSkills(info);
         characterStateMachine.InitMachine();
         init = true;
@@ -84,9 +84,9 @@ public class BaseEcho : BaseCharacter
     {
         if (charList.Count < 2) { return; }
 
-        if (playerInput == null)
+        if (inputManager == null)
         {
-            playerInput = GetComponent<PlayerInput>();
+            inputManager = GetComponentInChildren<InputManager>();
         }
         if (unscaledAudioSource == null)
         {
@@ -170,11 +170,14 @@ public class BaseEcho : BaseCharacter
         targetList.Remove(lastHitCharacter);
         int randomIndex = Random.Range(0, targetList.Count);
         currentTarget = targetList.ElementAt(randomIndex);
+        echoTargetChanged.Invoke(currentTarget);
     }
 
     public void SetNewTarget(Transform target)
     {
+        if (target == currentTarget) return;
         currentTarget = target;
+        echoTargetChanged.Invoke(target);
     }
 
     public Transform GetTarget()

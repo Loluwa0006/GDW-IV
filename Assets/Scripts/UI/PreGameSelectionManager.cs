@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -46,11 +47,13 @@ public class PreGameSelectionManager : MonoBehaviour
     [SerializeField] Image thumbnailDisplay;
 
     bool hasExtraKeyboardPlayer = false;
+    bool hasAIPlayer = false;
 
 
     Dictionary<MapRegistry, Sprite> mapThumbnailDict = new();
     MatchData matchData;
 
+    int numberOfAI = 0;
     private void Start()
     {
         matchData = FindFirstObjectByType<MatchDataHolder>().GetMatchData();
@@ -131,10 +134,20 @@ public class PreGameSelectionManager : MonoBehaviour
         hasExtraKeyboardPlayer = true;
 
         var manager = GetComponent<PlayerInputManager>();
-
-         PlayerInput input = manager.JoinPlayer(pairWithDevice: Keyboard.current);
+        manager.JoinPlayer(pairWithDevice: Keyboard.current);
     }
 
+
+    public void TogglePlayerAI(bool toggle)
+    {
+        foreach (var player in playerInfo.Reverse())
+        {
+            if (player.Value.isAI == toggle) continue;
+            player.Value.isAI = !player.Value.isAI ;
+            player.Key.aiDisplay.SetActive(player.Value.isAI);
+            break;
+        }
+    }
     IEnumerator InitSelector(UISelector selector,PlayerInput pInput)
     {
         selector.transform.SetParent(transform, false);
@@ -161,7 +174,7 @@ public class PreGameSelectionManager : MonoBehaviour
 
         if (keyboardTwo)
         {
-            Debug.Log("Setting player " + pInput.playerIndex + " to keyboard two control scheme");
+            //Debug.Log("Setting player " + pInput.playerIndex + " to keyboard two control scheme");
             playerInfo[selector].controlScheme = "CombatKeyboardTwo";
             pInput.SwitchCurrentActionMap("UIKeyboardTwo");
             playerInfo[selector].device = Keyboard.current;
@@ -171,6 +184,8 @@ public class PreGameSelectionManager : MonoBehaviour
             playerInfo[selector].device = pInput.devices[0];
             pInput.SwitchCurrentActionMap("UI");
         }
+
+
     }
     public void OnSelectionMoved(UISelector selector, int dir)
     {
@@ -195,7 +210,7 @@ public class PreGameSelectionManager : MonoBehaviour
                 selector.teamIndex = 0;
             }
         }
-        Debug.Log("New index is " + selector.teamIndex + ", new dir is " + dir);
+      //  Debug.Log("New index is " + selector.teamIndex + ", new dir is " + dir);
 
     }
 
@@ -263,7 +278,7 @@ public class PreGameSelectionManager : MonoBehaviour
 
     public void ContinueToNextScreen(UISelector locked)
     {
-        if (locked != null) SetPlayerData(locked);
+        if (locked != null) SetPlayerTeam(locked);
         if (playerInfo.Keys.Count < 2)
         {
             return;
@@ -286,7 +301,11 @@ public class PreGameSelectionManager : MonoBehaviour
                 }
                 skillSelectScreen.SetActive(true);
                 teamSelectScreen.SetActive(false);
-                foreach (var selector in playerInfo.Keys) { selector.ToggleSkillDisplay(true); }
+                foreach (var selector in playerInfo.Keys)
+                { 
+                    selector.ToggleExternalDisplays(true, playerInfo[selector].isAI); 
+                }
+                
                
                 StartCoroutine(ResetSelectors(SelectionScreen.SkillSelect));
                 break;
@@ -317,7 +336,11 @@ public class PreGameSelectionManager : MonoBehaviour
                 inputManager.EnableJoining();
                 skillSelectScreen.SetActive(false);
                 teamSelectScreen.SetActive(true);
-                foreach (var selector in playerInfo.Keys) { selector.ToggleSkillDisplay(false); }
+                foreach (var selector in playerInfo.Keys)
+                {
+                    selector.ToggleExternalDisplays(false, playerInfo[selector].isAI);
+
+                }
                 StartCoroutine(ResetSelectors(SelectionScreen.TeamSelect));
                 break;
             case SelectionScreen.MapSelect:
@@ -326,8 +349,7 @@ public class PreGameSelectionManager : MonoBehaviour
                 foreach (var selector in playerInfo.Keys)
                 {
                     selector.Show();
-                    selector.ToggleSkillDisplay(true);
-
+                    selector.ToggleExternalDisplays(true, playerInfo[selector].isAI);
                 }
                 StartCoroutine(ResetSelectors(SelectionScreen.SkillSelect));
                 break;
@@ -351,7 +373,7 @@ public class PreGameSelectionManager : MonoBehaviour
         selectionScreen = newScreen;
     }
 
-    void SetPlayerData(UISelector selector)
+    void SetPlayerTeam(UISelector selector)
     {
         if (selector.teamIndex == 0) { return; }
         switch (selectionScreen)
@@ -364,7 +386,7 @@ public class PreGameSelectionManager : MonoBehaviour
                         teams.teamMembers.Remove(playerInfo[selector]);
                     }
                 }
-                Debug.Log("Number of teams: " + matchData.gameTeams.Count + " Team index: " + selector.teamIndex);
+                //Debug.Log("Number of teams: " + matchData.gameTeams.Count + " Team index: " + selector.teamIndex);
 
                 matchData.gameTeams[selector.teamIndex - 1].teamMembers.Add(playerInfo[selector]);
                 break;
