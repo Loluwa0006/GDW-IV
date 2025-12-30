@@ -55,13 +55,15 @@ public class PlayerUI : MonoBehaviour
     void SetSkillIconColors()
     {
         if (speakerOwner == null) return;
-        if (skillOneIcon.gameObject.activeSelf)
+        var skillOne = speakerOwner.characterStateMachine.TryGetSkill(1);
+        var skillTwo = speakerOwner.characterStateMachine.TryGetSkill(2);
+        if (skillOneIcon.gameObject.activeSelf && skillOne != null)
         {
-            skillOneIcon.color = speakerOwner.characterStateMachine.TryGetSkill(1).SkillAvailable()? skillAvailable : skillUnavailable;
+            skillOneIcon.color = skillOne.SkillAvailable()? skillAvailable : skillUnavailable;
         }
-        if (skillTwoIcon.gameObject.activeSelf)
+        if (skillTwoIcon.gameObject.activeSelf && skillTwo != null)
         {
-            skillTwoIcon.color = speakerOwner.characterStateMachine.TryGetSkill(2).SkillAvailable() ? skillAvailable : skillUnavailable;
+            skillTwoIcon.color = skillTwo.SkillAvailable() ? skillAvailable : skillUnavailable;
         }
 
     }

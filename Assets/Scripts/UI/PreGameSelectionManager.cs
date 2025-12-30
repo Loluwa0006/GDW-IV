@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class PreGameSelectionManager : MonoBehaviour
 {
@@ -140,7 +139,7 @@ public class PreGameSelectionManager : MonoBehaviour
 
     public void TogglePlayerAI(bool toggle)
     {
-        foreach (var player in playerInfo.Reverse())
+        foreach (var player in playerInfo.Reverse().ToList())
         {
             if (player.Value.isAI == toggle) continue;
             player.Value.isAI = !player.Value.isAI ;
