@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class MatchData : ScriptableObject
 {
 
-    [SerializeField] SkillDatabase skillDatabase;
+    public SkillDatabase skillDatabase;
     public enum PlayerType
     {
         Speaker,

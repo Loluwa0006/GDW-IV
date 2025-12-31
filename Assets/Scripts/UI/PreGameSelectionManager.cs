@@ -45,14 +45,27 @@ public class PreGameSelectionManager : MonoBehaviour
     [SerializeField] List<MapThumbnails> mapThumbnails = new();
     [SerializeField] Image thumbnailDisplay;
 
-    bool hasExtraKeyboardPlayer = false;
-    bool hasAIPlayer = false;
+    [Header("Skill Displays")]
+    [SerializeField] RawImage p1SkillOneDisplay;
+    [SerializeField] RawImage p1SkillTwoDisplay;
+    [SerializeField] RawImage p2SkillOneDisplay;
+    [SerializeField] RawImage p2SkillTwoDisplay;
+    [SerializeField] TMP_Text p1SkillOneDescription;
+    [SerializeField] TMP_Text p1SkillTwoDescription;
+    [SerializeField] TMP_Text p2SkillOneDescription;
+    [SerializeField] TMP_Text p2SkillTwoDescription;
+    [SerializeField] TMP_Text p1SkillOneTitle;
+    [SerializeField] TMP_Text p1SkillTwoTitle;
+    [SerializeField] TMP_Text p2SkillOneTitle;
+    [SerializeField] TMP_Text p2SkillTwoTitle;
 
+
+
+    bool hasExtraKeyboardPlayer = false;
 
     Dictionary<MapRegistry, Sprite> mapThumbnailDict = new();
     MatchData matchData;
 
-    int numberOfAI = 0;
     private void Start()
     {
         matchData = FindFirstObjectByType<MatchDataHolder>().GetMatchData();
@@ -247,8 +260,33 @@ public class PreGameSelectionManager : MonoBehaviour
         selector.skillOneDisplay.text = playerInfo[selector].skillOne.ToString();
         selector.skillTwoDisplay.text = playerInfo[selector].skillTwo.ToString();
 
+        UpdateSkillDisplays();
     }
 
+    void UpdateSkillDisplays ()
+    {
+        var infoKeys = playerInfo.Values.ToArray();
+
+        var p1SkillOneName = infoKeys[0].skillOne;
+        var p1SkillTwoName = infoKeys[0].skillTwo;
+        var p2SkillOneName = infoKeys[1].skillOne;
+        var p2SkillTwoName = infoKeys[1].skillTwo;
+
+        p1SkillOneDisplay.texture  = matchData.skillIconDictionary[p1SkillOneName];
+        p1SkillTwoDisplay.texture = matchData.skillIconDictionary[p1SkillTwoName];
+        p2SkillOneDisplay.texture = matchData.skillIconDictionary[p2SkillOneName];
+        p2SkillTwoDisplay.texture = matchData.skillIconDictionary[p2SkillTwoName];
+
+        p1SkillOneDescription.text = matchData.skillDatabase.prefabDictionary[p1SkillOneName].skillDescription;
+        p1SkillTwoDescription.text = matchData.skillDatabase.prefabDictionary[p1SkillTwoName].skillDescription;
+        p2SkillOneDescription.text = matchData.skillDatabase.prefabDictionary[p2SkillOneName].skillDescription;
+        p2SkillTwoDescription.text = matchData.skillDatabase.prefabDictionary[p2SkillTwoName].skillDescription;
+
+        p1SkillOneTitle.text = p1SkillOneName.ToString();
+        p1SkillTwoTitle.text = p1SkillTwoName.ToString();
+        p2SkillOneTitle.text = p2SkillOneName.ToString();
+        p2SkillTwoTitle.text = p2SkillTwoName.ToString();
+    }
     public void SwapScheme(UISelector selector)
     {
         var info = playerInfo[selector];
@@ -305,7 +343,7 @@ public class PreGameSelectionManager : MonoBehaviour
                     selector.ToggleExternalDisplays(true, playerInfo[selector].isAI); 
                 }
                 
-               
+               UpdateSkillDisplays();
                 StartCoroutine(ResetSelectors(SelectionScreen.SkillSelect));
                 break;
             case SelectionScreen.SkillSelect:
