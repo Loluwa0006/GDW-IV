@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
   [SerializeField]  List<TransitionButton> transitionButtons = new();
+    [SerializeField] SettingsManager settingsManager;
 
     private void Awake()
     {
@@ -16,6 +17,13 @@ public class MainMenu : MonoBehaviour
                 transition.button.onClick.AddListener(() => TransitionToScene(sceneName));
             }
         }
+    }
+
+    private void Start()
+    {
+        settingsManager.gameObject.SetActive(true);
+        settingsManager.InitSettings();
+        settingsManager.gameObject.SetActive(false);
     }
 
 

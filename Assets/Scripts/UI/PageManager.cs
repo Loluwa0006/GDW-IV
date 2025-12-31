@@ -1,9 +1,12 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PageManager : MonoBehaviour
 {
     [SerializeField] List<GameObject> pages = new();
+    [SerializeField] TMP_Text pageDisplay;
 
     Dictionary<string, GameObject> pageDict = new();
 
@@ -16,10 +19,8 @@ public class PageManager : MonoBehaviour
             pageDict[page.name] = page;
             page.SetActive(false);
         }
-        currentPage = pages[0];
-        currentPage.SetActive(true);
+        if (pages.Count > 0) TransitionToPage(pages[0]);
     }
-
     public void TransitionToNextPage()
     {
         int currentIndex = pages.IndexOf(currentPage);
@@ -28,10 +29,7 @@ public class PageManager : MonoBehaviour
         {
             nextPage = 0;
         }
-
-        currentPage.SetActive(false);
-        currentPage = pages[nextPage];
-        currentPage.SetActive(true);
+        TransitionToPage(pages[nextPage]);
     }
 
     public void TransitionToPage(string pageName)
@@ -39,9 +37,10 @@ public class PageManager : MonoBehaviour
         if (currentPage.name == pageName) { return; }
         if (!pageDict.ContainsKey(pageName)) { return; }
         
-        currentPage.SetActive(false);
+       if (currentPage != null) currentPage.SetActive(false);
         currentPage = pageDict[pageName];
         currentPage.SetActive(true);
+        if (pageDisplay != null) pageDisplay.text = currentPage.name;
     }
 
     public void TransitionToPage(GameObject page)
@@ -54,9 +53,10 @@ public class PageManager : MonoBehaviour
             pages.Add(page);
         }
 
-        currentPage.SetActive(false);
+        if (currentPage != null) currentPage.SetActive(false);
         currentPage = page; 
         currentPage.SetActive(true);
+        if (pageDisplay != null) pageDisplay.text = currentPage.name;
     }
 
 

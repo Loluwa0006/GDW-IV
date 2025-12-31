@@ -16,7 +16,6 @@ public class BaseCharacter : MonoBehaviour
     public VelocityManager velocityManager;
     public GroundIndicator groundIndicator;
     public AudioSource unscaledAudioSource; //unscaled so it plays during hit-stop
-
     public List<Material> playerColors = new();
 
     [HideInInspector] public int teamIndex;

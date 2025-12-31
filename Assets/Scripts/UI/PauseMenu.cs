@@ -10,11 +10,19 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] GameManager gameManager;
     [SerializeField] GameObject pauseScreen;
 
+    [SerializeField] SettingsManager settingsManager;
 
     private void Awake()
     {
         OnResumePressed();
         if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
+    }
+
+    private void Start()
+    {
+        settingsManager.gameObject.SetActive(true);
+        settingsManager.InitSettings();
+        settingsManager.gameObject.SetActive(false);
     }
     public void ConnectPauseSignals(BaseCharacter cha)
     {
