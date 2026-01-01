@@ -44,6 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72e04e0206d52a54f862d8e15e189998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AIBrain
+  currentPersonality:
+    aggressionLevel: 0.5
+    deflectionChance: 85
+    reactionVariance: 8
+    riskTolerance: 1
+    functionalAggression: 0.5
+    functionalDeflectionChance: 85
+    aggressionLimiter: 0.75
   velocityManager: {fileID: 7059601144015743186}
   character: {fileID: 3089438711533713663}
   deflectBuffer: {fileID: 2405198557784916279}
