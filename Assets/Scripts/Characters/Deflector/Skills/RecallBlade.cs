@@ -41,6 +41,10 @@ public class RecallBlade : MonoBehaviour
         }
     }
 
+    public void Process()
+    {
+        if (model.enabled) model.transform.rotation = Quaternion.LookRotation(velocityManager.GetTotalSpeed().normalized);
+    }
     public void ThrowBlade(Vector3 dir)
     {
         transform.position = recalState.speaker.transform.position;

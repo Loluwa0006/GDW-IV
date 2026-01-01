@@ -101,6 +101,7 @@ public class Recall : SpeakerBaseSkill
     public override void InactiveProcess()
     {
         if (!skillAction.IsPressed()) releasedButton = true;
+        blade.Process();
     }
 
     public override void ResetSkill()

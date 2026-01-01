@@ -5,7 +5,8 @@ public class FallState : SpeakerAirState
 {
     [Header("SFX")]
     [SerializeField] AudioClip landSFX;
-
+    [Header("Particles")]
+    [SerializeField] ParticleSystem landParticles;
     AirStateResource.JumpInfo currentJumpInfo;
     public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
     {
@@ -25,6 +26,7 @@ public class FallState : SpeakerAirState
         if (IsGrounded())
         {
             character.unscaledAudioSource.PlayOneShot(landSFX);
+            landParticles.Play();
             if (GetMovementDir().magnitude < MOVE_DEADZONE)
             {
                 fsm.TransitionTo<IdleState>();
