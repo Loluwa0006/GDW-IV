@@ -17,9 +17,13 @@ public class AIBrain : MonoBehaviour
     const float MAX_AGGRESSION_CHANGE = 1.5f;
     const float MIN_RISK_LEVEL = 100;
     const float MAX_RISK_LEVEL = 3000;
-    const float MIN_RANGE_FROM_ECHO_FOR_DEFLECTION_CHANCE = 3f; 
-    const float MAX_RANGE_FROM_ECHO_FOR_DEFLECTION_CHANCE = 250;
+    const float MIN_RANGE_FROM_ECHO_FOR_DEFLECTION_CHANCE = 3f;
+    const float MAX_RANGE_FROM_ECHO_FOR_DEFLECTION_CHANCE = 250f;
+    const int MAX_DEFLECT_CHANCE_IF_ECHO_MISS_PREDICTED_MODIFIER = 15;
     const int MAX_ATTEMPTS = 50;
+
+
+    [System.Serializable]
     public class AIPersonality
     {
         public float aggressionLevel = 0.5f; //AI perferred range
@@ -142,7 +146,7 @@ public class AIBrain : MonoBehaviour
         var distanceAsPercent = distanceFromEcho / range;
 
         var reactionModifier = Mathf.Lerp(-currentPersonality.reactionVariance, currentPersonality.reactionVariance, 1 - distanceAsPercent);
-        if (!EchoHitPredicted()) reactionModifier -= currentPersonality.reactionVariance * 2;
+        if (!EchoHitPredicted()) reactionModifier /= MAX_DEFLECT_CHANCE_IF_ECHO_MISS_PREDICTED_MODIFIER;
 
         var finalReactionValue = currentPersonality.functionalDeflectionChance + reactionModifier;
         var chance = Random.Range(0, 101);
@@ -249,6 +253,9 @@ public class AIBrain : MonoBehaviour
         float echoRiskFactor = distanceRiskLevel;
         if (strikableByEcho) echoRiskFactor *= 2;
         if (echoIgnited) echoRiskFactor *= ECHO_IGNITION_RISK_INFLUENCE;
+
+        bool deflecting = character.deflectManager.IsDeflecting();
+        if (deflecting && !character.deflectManager.IsPartialDeflect()) echoRiskFactor = 0; //echo is no threat while im deflecting, more likely to be walking forward while deflecting.
         return echoRiskFactor;
     }
 
