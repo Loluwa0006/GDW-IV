@@ -39,9 +39,15 @@ public class PlayerUI : MonoBehaviour
     public void InitDisplay(BaseSpeaker cha, MatchData.PlayerInfo info)
     {
         speakerOwner = cha;
-        UIBackdrop.color = UIColors[cha.teamIndex - 1];
+        if (UIBackdrop != null) UIBackdrop.color = UIColors[cha.teamIndex - 1];
         if (info != null)  SetSkillIcons(info.skillOne, info.skillTwo);
         cha.characterStateMachine.updatedSkills.AddListener(SetSkillIcons);
+
+        if (info.teamIndex == 2)
+        {
+            var rectTransform = GetComponent<RectTransform>();
+            rectTransform.localScale  = new Vector3(rectTransform.localScale.x * -1.0f, 1.0f, 1.0f);
+        }
     }
 
     private void Update()
