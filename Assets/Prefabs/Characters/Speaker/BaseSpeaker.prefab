@@ -5535,6 +5535,7 @@ GameObject:
   - component: {fileID: 6301148340495318582}
   - component: {fileID: 4524706908845404307}
   - component: {fileID: 1621222227155274029}
+  - component: {fileID: 634869520480553850}
   m_Layer: 3
   m_Name: BaseSpeaker
   m_TagString: Untagged
@@ -5560,7 +5561,6 @@ Transform:
   - {fileID: 7313474182835933557}
   - {fileID: 5973024361340475755}
   - {fileID: 2318811112882644222}
-  - {fileID: 5137046825091746190}
   - {fileID: 6114457743505591121}
   - {fileID: 190518132690082645}
   m_Father: {fileID: 0}
@@ -5632,7 +5632,7 @@ MonoBehaviour:
   staminaComponent: {fileID: 9141940878194550526}
   inputManager: {fileID: 5157131815780730791}
   playerModel: {fileID: 8614019372539046563}
-  velocityManager: {fileID: 8246316863854082773}
+  velocityManager: {fileID: 634869520480553850}
   groundIndicator: {fileID: 6338314904657577476}
   unscaledAudioSource: {fileID: 3479633279918380723}
   playerColors:
@@ -5673,6 +5673,20 @@ MonoBehaviour:
   m_DefaultActionMap: Combat
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &634869520480553850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4560575751693155189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdaaf474c4df3aa4286a4571a3342edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
+  _rb: {fileID: 6301148340495318582}
+  freeze: 0
 --- !u!1 &4931365720535405192
 GameObject:
   m_ObjectHideFlags: 0
@@ -6682,52 +6696,6 @@ Transform:
   - {fileID: 8676726531757626987}
   m_Father: {fileID: 5596241407682465862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8564104809267549301
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5137046825091746190}
-  - component: {fileID: 8246316863854082773}
-  m_Layer: 15
-  m_Name: VelocityManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5137046825091746190
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8564104809267549301}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1465496694543984118}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8246316863854082773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8564104809267549301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdaaf474c4df3aa4286a4571a3342edd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
-  _rb: {fileID: 6301148340495318582}
-  freeze: 0
 --- !u!1 &8696551371810625130
 GameObject:
   m_ObjectHideFlags: 0

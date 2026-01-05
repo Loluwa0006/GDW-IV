@@ -48,7 +48,6 @@ public class Grapple : SpeakerBaseSkill
         lineRenderer.enabled = false;
         targetEcho = null;
     }
-
     public override void Enter(Dictionary<string, object> msg = null)
     {
         base.Enter(msg);
@@ -62,7 +61,7 @@ public class Grapple : SpeakerBaseSkill
         else
         {
             DestroyGrapple();
-            ExitState();
+            OnSkillOver();
         }
     }
 
@@ -99,7 +98,7 @@ public class Grapple : SpeakerBaseSkill
         jumpTracker += 1;
         if (jumpTracker >= jumpDuration)
         {
-            ExitState();
+            OnSkillOver();
             return;
         }
         GravityLogic();
@@ -206,23 +205,11 @@ public class Grapple : SpeakerBaseSkill
         hookState = HookState.Holstered;
     }
 
-    void ExitState()
+    protected override void OnSkillOver()
     {
         previousHookPos = Vector3.zero;
-        if (IsGrounded())
-        {
-            if (GetMovementDir().magnitude < MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-            else
-            {
-                fsm.TransitionTo<RunState>();
-            }
-        }
-        else fsm.TransitionTo<FallState>();
+        base.OnSkillOver();
     }
-
     float GetGravity()
     {
         if (character.velocityManager.GetInternalSpeed().y > 0)

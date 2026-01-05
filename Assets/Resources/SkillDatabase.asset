@@ -79,7 +79,7 @@ MonoBehaviour:
     skillPrefab: {fileID: 1473100305885552630, guid: 5fc49347fe38e4144b217fb21210b6ea, type: 3}
     skillSubtitle: Moblity Master
     skillIcon: {fileID: 2800000, guid: 76bb4d0157306e74680f518bdba2ed58, type: 3}
-    skillDescription: Bounce off terrain with perfect air control.
+    skillDescription: 'Fly with perfect air control, while bouncing off obsticles. '
     skillFloor: 4
     skillCeiling: 5
     archetypeStats:
@@ -110,7 +110,7 @@ MonoBehaviour:
     skillSubtitle: Umbra Manuplator
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
     skillDescription: Enhances your movement speed while creating a special path
-      that ,once activated, deflects echoes and stuns speakers.
+      that, once activated, deflects echoes and stuns speakers.
     skillFloor: 2
     skillCeiling: 4
     archetypeStats:
@@ -125,7 +125,7 @@ MonoBehaviour:
     skillPrefab: {fileID: 333516544351708634, guid: 6fbd23461eca52f45a4271de08750d8d, type: 3}
     skillSubtitle: Daredevil
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
-    skillDescription: Causes echoes to fly back towards you.
+    skillDescription: Insult the echo, causing it to fly back towards you.
     skillFloor: 4
     skillCeiling: 4
     archetypeStats:
@@ -141,7 +141,7 @@ MonoBehaviour:
     skillSubtitle: Vanishing Assassin
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
     skillDescription: Throw out a sticky projectile that you can steer mid flight.
-      Acrivate the skill again to teleport to it, stunning nearby speakers
+      Acrivate the skill again to teleport to it, stunning nearby speakers.
     skillFloor: 4
     skillCeiling: 5
     archetypeStats:
@@ -152,3 +152,18 @@ MonoBehaviour:
       defenseScore: 4
     type: 1
     skillTags: 
+  - skillName: 9
+    skillPrefab: {fileID: 2707250658487227898, guid: 8356f90502225104fae7f9ab712ea668, type: 3}
+    skillSubtitle: Technical Specialist
+    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillDescription: Deploy a grenade that either pulls or attracts nearby entities.
+    skillFloor: 2
+    skillCeiling: 4
+    archetypeStats:
+      mobilityScore: 2
+      controlScore: 9
+      tempoScore: 5
+      offenseScore: 7
+      defenseScore: 6
+    type: 1
+    skillTags: 010000000c00000000000000

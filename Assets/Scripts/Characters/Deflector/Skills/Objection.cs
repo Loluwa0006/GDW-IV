@@ -134,7 +134,7 @@ public class Objection : SpeakerBaseSkill
         {
             skillBuffer.Consume();
             PerformSlash();
-            ExitState();
+            OnSkillOver();
         }
         if (oppositeSkillBuffer.Buffered)
         {
@@ -159,29 +159,15 @@ public class Objection : SpeakerBaseSkill
         if (drainTracker == 0)
         {
             staminaComponent.DamageStamina(1, 0, false);
-            if (staminaComponent.GetStamina() < staminaCost) ExitState();
+            if (staminaComponent.GetStamina() < staminaCost) OnSkillOver();
             drainTracker = staminaDrainRate;
         }
     }
 
-    void ExitState()
+    protected override void OnSkillOver()
     {
         lineRenderer.positionCount = 0;
-        if (!IsGrounded())
-        {
-            fsm.TransitionTo<FallState>();
-        }
-        else
-        {
-            if (GetMovementDir().magnitude < MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-            else
-            {
-                fsm.TransitionTo<RunState>();
-            }
-        }
+        base.OnSkillOver();
     }
 
     void PerformSlash()

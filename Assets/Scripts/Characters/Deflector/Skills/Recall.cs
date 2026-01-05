@@ -55,7 +55,7 @@ public class Recall : SpeakerBaseSkill
             else staminaComponent.ConsumeForesight();
             TeleportToBlade();
         }
-        ExitState();
+        OnSkillOver();
     }
 
     IEnumerator FindOppositeSpeaker()
@@ -70,22 +70,6 @@ public class Recall : SpeakerBaseSkill
             break;
         }
     }
-    void ExitState()
-    {
-        if (IsGrounded())
-        {
-            if (GetMovementDir().magnitude < MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-            else
-            {
-                fsm.TransitionTo<RunState>();
-            }
-        }
-        else fsm.TransitionTo<FallState>();
-    }
-
     public override void InactivePhysicsProcess()
     {
         blade.PhysicsUpdate();

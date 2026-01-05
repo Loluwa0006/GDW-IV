@@ -20,6 +20,7 @@ public enum SkillName
     Objection,
     Provoke,
     Recall,
+    Polarity,
     None,
 }
 

@@ -77,31 +77,13 @@ public class Dash : SpeakerBaseSkill
         }
         if (hitEntity)  GameManager.ApplyHitstop(hitbox.damageInfo.hitstop);
     }
-
     public override void PhysicsProcess()
     {
         dashTracker += Time.fixedDeltaTime;
         if (dashTracker >= dashDuration)
         {
             character.velocityManager.OverwriteInternalSpeed(dashSpeed * speedMaintained * dashDir);
-            if (!IsGrounded())
-            {
-                fsm.TransitionTo<FallState>();
-            }
-            else
-            {
-                var moveDir = GetMovementDir();
-
-                if (moveDir.magnitude > MOVE_DEADZONE)
-                {
-                    fsm.TransitionTo<RunState>();
-                }
-                else
-                {
-                    fsm.TransitionTo<IdleState>();
-                }
-            }
-
+            OnSkillOver();
         }
 
         dashParticles.transform.rotation = Quaternion.LookRotation(-dashDir);

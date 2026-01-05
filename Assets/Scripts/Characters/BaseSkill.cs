@@ -64,7 +64,7 @@ public class BaseSkill : BaseState
         }
     }
 
-    public virtual void OnSkillUsed()
+    protected virtual void OnSkillUsed()
     {
         if (!staminaComponent.HasForesight())
         {
@@ -74,6 +74,22 @@ public class BaseSkill : BaseState
         {
             staminaComponent.ConsumeForesight();
         }
+    }
+
+    protected virtual void OnSkillOver()
+    {
+        if (IsGrounded())
+        {
+            if (GetMovementDir().magnitude < MOVE_DEADZONE)
+            {
+                fsm.TransitionTo<IdleState>();
+            }
+            else
+            {
+                fsm.TransitionTo<RunState>();
+            }
+        }
+        else fsm.TransitionTo<FallState>();
     }
 
 
@@ -86,4 +102,5 @@ public class BaseSkill : BaseState
     {
 
     }
+    
 }

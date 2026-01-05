@@ -44,7 +44,7 @@ public class Provoke : SpeakerBaseSkill
     public override void PhysicsProcess()
     {
         durationTracker--;
-        if (durationTracker == 0) ExitState();
+        if (durationTracker == 0) OnSkillOver();
         if (oppositeSkillBuffer.Buffered)
         {
             fsm.TransitionToSkill(oppositeSkillIndex);
@@ -61,27 +61,6 @@ public class Provoke : SpeakerBaseSkill
         return speaker.velocityManager.GetTotalSpeed().y > 0 ? jumpInfo.jumpGravity : jumpInfo.fallGravity;
     }
 
-
-    void ExitState()
-    {
-        if (!IsGrounded())
-        {
-            fsm.TransitionTo<FallState>();
-        }
-        else
-        {
-            if (GetMovementDir().magnitude < MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-            else
-            {
-                fsm.TransitionTo<RunState>();
-            }
-        }
-    }
-
-
     public override void InactivePhysicsProcess()
     {
         if (staminaToRegen <= 0) return;
@@ -96,7 +75,7 @@ public class Provoke : SpeakerBaseSkill
         Debug.Log(staminaToRegen + " = stamina to regen");
     }
 
-    public override void OnSkillUsed()
+    protected override void OnSkillUsed()
     {
         staminaComponent.DamageStamina(0, staminaCost, false);
         staminaToRegen += staminaCost;

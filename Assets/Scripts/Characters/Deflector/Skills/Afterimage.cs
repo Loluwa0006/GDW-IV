@@ -135,7 +135,7 @@ public class Afterimage : SpeakerBaseSkill
         placingClone = false;
         cloneObject.Enable();
         chargeTracker = 0;
-        ExitState();
+        OnSkillOver();
         cloneObject.transform.rotation = character.transform.rotation;
         idleFrames = 0;
         
@@ -179,7 +179,7 @@ public class Afterimage : SpeakerBaseSkill
         warplines.transform.position = oldPos;
         yield return null;
         staminaComponent.ConsumeForesight();
-        ExitState();
+        OnSkillOver();
         warplines.transform.LookAt(deflectTarget.transform.position);
         warplines.transform.DOMove(deflectTarget.transform.position, warplineMoveDuration);
     }
@@ -192,29 +192,14 @@ public class Afterimage : SpeakerBaseSkill
             targetGroup.RemoveMember(cloneObject.transform);
         }
     }
-
-    void ExitState()
+    protected override void OnSkillOver()
     {
         timeUntilDrain = activeCloneStaminaDrain;
         if (targetGroup != null && cloneObject.IsActive())
         {
             targetGroup.AddMember(cloneObject.transform, 1.0f, 5.0f);
         }
-        if (!IsGrounded())
-        {
-            fsm.TransitionTo<FallState>();
-        }
-        else
-        {
-            if (GetMovementDir().magnitude >= MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<RunState>();
-            }
-            else
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-        }
+        base.OnSkillOver();
     }
      
     public override void InactivePhysicsProcess()

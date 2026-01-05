@@ -110,7 +110,7 @@ public class Pivot : SpeakerBaseSkill
                 frameTracker = 0;
                 if (staminaComponent.GetStamina() <= staminaCost && !staminaComponent.HasForesight()) 
                 {
-                    ExitState();
+                    OnSkillOver();
                     return;
                 }
             }
@@ -122,7 +122,7 @@ public class Pivot : SpeakerBaseSkill
             PerformRedirect(data.normal);
             CreateParticles(data);
             character.unscaledAudioSource.PlayOneShot(GetRandomBounceSound(), bounceVolume);
-            ExitState();
+            OnSkillOver();
             return;
         }
        
@@ -298,26 +298,6 @@ public class Pivot : SpeakerBaseSkill
         newParticles.transform.position = data.point;
         newParticles.transform.rotation = Quaternion.LookRotation(data.normal);
     }
-
-    void ExitState()
-    {
-        if (!IsGrounded())
-        {
-            fsm.TransitionTo<FallState>();
-        }
-        else
-        {
-            if (moveDir.magnitude > MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<RunState>();
-            }
-            else
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-        }
-    }
-
 
     public override void Exit()
     {

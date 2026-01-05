@@ -107,7 +107,7 @@ public class Takeback : SpeakerBaseSkill
                 break;
             case TakebackState.Whiff:
                 whiffTracker -= Time.deltaTime;
-                if (whiffTracker <= 0.0f) ExitState();
+                if (whiffTracker <= 0.0f) OnSkillOver();
                 break;
         }
 
@@ -199,7 +199,7 @@ public class Takeback : SpeakerBaseSkill
         }
         character.SetLookTarget(enemySpeaker.transform);
         ConnectSignals(echo);
-        ExitState();
+        OnSkillOver();
         RemoveCatchAttemptParticles();
     }
     void EnterThrowState()
@@ -301,23 +301,6 @@ public class Takeback : SpeakerBaseSkill
         heldBall.echoWarped.RemoveListener(onEchoWarped);
     }
 
-
-    void ExitState()
-    {
-        if (!IsGrounded()) fsm.TransitionTo<FallState>();
-        
-        else
-        {
-            if (GetMovementDir().magnitude < MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-            else
-            {
-                fsm.TransitionTo<RunState>();
-            }
-        }
-    }
     public override void Exit()
     {
         speaker.healthComponent.RemoveStatusEffect("TakebackCatch"); 

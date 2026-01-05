@@ -96,7 +96,7 @@ public class Counterslash : SpeakerBaseSkill
             }
             else if (chargeTracker >= timeUntilCancel)
             {
-                StartCoroutine(ExitState());
+                OnSkillOver();
             }
         }
         else if (oppositeSkillBuffer != null) 
@@ -158,7 +158,7 @@ public class Counterslash : SpeakerBaseSkill
             }
         if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(staminaCost, 0, false);
         else staminaComponent.ConsumeForesight();
-            StartCoroutine(ExitState());
+        OnSkillOver();
         releaseParticles.Play();
         sfxHandler.PlayOneShot(electricBurst, burstVolume);
             
@@ -166,27 +166,7 @@ public class Counterslash : SpeakerBaseSkill
     }
 
 
-    IEnumerator ExitState()
-    {
-        Debug.Log("exiting counterslash");
-        yield return null;
-        if (!IsGrounded())
-        {
-            fsm.TransitionTo<FallState>();
-        }
-        else
-        {
-            var moveDir = GetMovementDir();
-            if (moveDir.magnitude >= MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<RunState>();
-            }
-            else
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-        }
-    }
+
 
     
 
@@ -204,10 +184,10 @@ public class Counterslash : SpeakerBaseSkill
             {
                 staminaComponent.DamageStamina(1, 0, false);
             
-            if (staminaComponent.GetStamina() <= staminaCost)
-            {
-                StartCoroutine(ExitState());
-            }
+                if (staminaComponent.GetStamina() <= staminaCost)
+                {
+                        OnSkillOver();
+                }
             }
         }
         Vector3 currentSpeed = character.velocityManager.GetInternalSpeed();
