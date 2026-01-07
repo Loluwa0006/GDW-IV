@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     public AnnouncementManager announcementManager;
     public ReportManager reportManager;
     public PauseMenu pauseMenu;
+    public BGMManager bgmManager;
 
     [Header("Player Prefabs")]
     [SerializeField] protected BaseSpeaker speakerPrefab;
@@ -479,6 +480,10 @@ public class GameManager : MonoBehaviour
         if (reportManager != null)
         {
             reportManager.OnMatchStart();
+        }
+        if (bgmManager != null)
+        {
+            bgmManager.PlayNewTrack();
         }
     }
 

@@ -31,10 +31,6 @@ public static class ProjectileHelper
         {
             Debug.Log("Projectile " + hitbox.transform.parent.name + " detected entity " + entity.name);
             if (entity.TryGetComponent(out T component)) components.Add(component);
-            else if (entity.transform.parent != null && entity.transform.parent.TryGetComponent(out T parentComponent))
-            {
-                components.Add(parentComponent);
-            }
             else if (checkChildren)
             {
                 var comp = entity.GetComponentInChildren<T>();
