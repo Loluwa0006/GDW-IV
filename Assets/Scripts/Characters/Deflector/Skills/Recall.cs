@@ -8,6 +8,7 @@ public class Recall : SpeakerBaseSkill
 {
     [SerializeField] RecallBlade blade;
     [SerializeField] Collider bladeCollider;
+    [SerializeField] ParticleSystem warpEffect;
 
     [Header("Stamina Attributes")]
     [SerializeField] int activeBladeDrainRate = 9;
@@ -24,18 +25,20 @@ public class Recall : SpeakerBaseSkill
     List<HealthComponent> struckEntities = new();
 
     bool releasedButton = true;
-
     int drainTracker = 9;
     int hitboxActiveFramesRemaining = 0;
     int framesRemainingUntilHolsterAllowed = 8;
 
     BaseSpeaker enemySpeaker;
 
+    Rigidbody _rb;
+
     public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
     {
         base.InitState(cha, s_machine);
         StartCoroutine(FindOppositeSpeaker());
         blade.Holster();
+        _rb = speaker.GetComponent<Rigidbody>();
     }
     public override void Enter(Dictionary<string, object> msg = null)
     {
@@ -46,7 +49,7 @@ public class Recall : SpeakerBaseSkill
         {
             OnSkillUsed();
             Vector3 throwDir = GetMovementDir();
-            if (throwDir.magnitude < MOVE_DEADZONE) throwDir = enemySpeaker.transform.position - speaker.transform.position;
+            if (throwDir.magnitude < MOVE_DEADZONE) throwDir = (enemySpeaker.transform.position - speaker.transform.position).normalized;
             blade.ThrowBlade(throwDir);
         }
         else
@@ -121,11 +124,12 @@ public class Recall : SpeakerBaseSkill
     void TeleportToBlade()
     {
         Vector3 tpSpot = blade.transform.position;
-        speaker.transform.position = tpSpot;
+        _rb.Move(tpSpot, _rb.transform.rotation);
         struckEntities.Clear();
         hitbox.enabled = true;
         hitboxActiveFramesRemaining = warpPulseActiveFrames;
-        blade.Holster();
+        warpEffect.Play();
+        framesRemainingUntilHolsterAllowed = 1; // holster next frame for safety
     }
 
     bool CanSteer(Vector3 moveDir)

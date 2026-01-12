@@ -93,5 +93,6 @@ public class RecallBlade : MonoBehaviour
         transform.parent = recalState.transform;
         velocityManager.ClearExternalSpeed();
         velocityManager.ClearInternalSpeed();
+        transform.localPosition = Vector3.zero;
     }
 }
