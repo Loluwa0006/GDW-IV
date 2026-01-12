@@ -142,7 +142,7 @@ public class PreGameSelectionManager : MonoBehaviour
     }
     public void AddNewKeyboardPlayer()
     {
-        if (hasExtraKeyboardPlayer) return;
+        if (hasExtraKeyboardPlayer || playerInfo.Count == 0) return;
         hasExtraKeyboardPlayer = true;
 
         var manager = GetComponent<PlayerInputManager>();

@@ -205,7 +205,7 @@ public class DeflectManager : MonoBehaviour
             ignitionShockwaves.Play();
             character.unscaledAudioSource.PlayOneShot(ignitionDeflectSFX);
         }
-        ball.transform.position = transform.position; //hide tunnelling
+       if (!usedSkill) ball.transform.position = transform.position; //hide tunnelling
     }
 
     public void OnDeflectBroken()

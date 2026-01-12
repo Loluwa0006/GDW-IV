@@ -46,7 +46,11 @@ public class PlayerUI : MonoBehaviour
         if (info.teamIndex == 2)
         {
             var rectTransform = GetComponent<RectTransform>();
-            rectTransform.localScale  = new Vector3(rectTransform.localScale.x * -1.0f, 1.0f, 1.0f);
+            rectTransform.localScale = new Vector3(rectTransform.localScale.x * -1.0f, 1.0f, 1.0f);
+            skillOneIcon.rectTransform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+            skillTwoIcon.rectTransform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
+
+
         }
     }
 
