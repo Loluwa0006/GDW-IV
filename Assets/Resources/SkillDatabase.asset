@@ -109,8 +109,8 @@ MonoBehaviour:
     skillPrefab: {fileID: 999454113503776721, guid: aba795a7a2f7af747b6322198dd3fc60, type: 3}
     skillSubtitle: Umbra Manuplator
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
-    skillDescription: Enhances your movement speed while creating a special path
-      that, once activated, deflects echoes and stuns speakers.
+    skillDescription: Enhance your movement, preparing a slash that deflect echoes
+      and stuns speakers.
     skillFloor: 2
     skillCeiling: 4
     archetypeStats:
@@ -140,8 +140,8 @@ MonoBehaviour:
     skillPrefab: {fileID: 790086623164798323, guid: ed334cc1f35202449bed27c85c2af8cf, type: 3}
     skillSubtitle: Vanishing Assassin
     skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
-    skillDescription: Throw out a sticky projectile that you can steer mid flight.
-      Acrivate the skill again to teleport to it, stunning nearby speakers.
+    skillDescription: Throw out a steerable sticky projectile that you can warp to,
+      stunning enemy speakers.
     skillFloor: 4
     skillCeiling: 5
     archetypeStats:
