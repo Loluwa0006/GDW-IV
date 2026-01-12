@@ -258,5 +258,13 @@ public class Objection : SpeakerBaseSkill
             }
         }
     }
+
+    public override void ResetSkill()
+    {
+        slashPoints.Clear();
+        entitiesStruck.Clear();
+        lineRenderer.positionCount = 0;
+        slashTracker = 0;
+    }
 }
  
