@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class PlayerUI : MonoBehaviour
+public class BasePlayerUI : MonoBehaviour
 {
     BaseSpeaker speakerOwner;
     [SerializeField] TMP_Text staminaDisplay;

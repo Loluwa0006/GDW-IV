@@ -35,9 +35,6 @@ public class BaseEcho : BaseCharacter
     protected Vector2 startingPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-
-
-
     private void Awake()
     {
         startingPos = transform.position;
@@ -55,18 +52,6 @@ public class BaseEcho : BaseCharacter
 
     private void Start()
     {
-        var gameManager = FindFirstObjectByType<GameManager>();
-        if (gameManager != null )
-        {
-            if (!gameManager.echoList.Contains(this))
-            {
-                gameManager.echoList.Add(this);
-            }
-        }
-        else
-        {
-            Debug.Log("Couldn't find game manager");
-        }
         SuspendProjectile();
     }
 

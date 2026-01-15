@@ -1,3 +1,5 @@
+using System;
+
 public class BaseSpeaker : BaseCharacter
 {
     public HealthComponent healthComponent;
@@ -11,5 +13,12 @@ public class BaseSpeaker : BaseCharacter
     {
         base.ActivatePlayer();
         deflectManager.gameObject.SetActive(true);
+    }
+
+    public override void ResetComponents()
+    {
+        healthComponent.ResetComponent();
+        deflectManager.ResetComponent();
+        base.ResetComponents();
     }
 }

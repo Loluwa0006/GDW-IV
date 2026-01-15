@@ -29,11 +29,10 @@ public class PreGameSelectionManager : MonoBehaviour
 
     [Header("MenuScreens")]
 
+    [SerializeField] GameObject modeSelectScreen;
     [SerializeField] GameObject teamSelectScreen;
     [SerializeField] GameObject skillSelectScreen;
     [SerializeField] GameObject mapSelectScreen;
-
-
 
     [SerializeField] GameObject mapButtonHolder;
 
@@ -59,7 +58,8 @@ public class PreGameSelectionManager : MonoBehaviour
     [SerializeField] TMP_Text p2SkillOneTitle;
     [SerializeField] TMP_Text p2SkillTwoTitle;
 
-
+    [Header("Mode Selection")]
+    [SerializeField] TMP_Text modeDescription;
 
     bool hasExtraKeyboardPlayer = false;
 
@@ -68,7 +68,7 @@ public class PreGameSelectionManager : MonoBehaviour
 
     private void Start()
     {
-        matchData = FindFirstObjectByType<MatchDataHolder>().GetMatchData();
+        matchData = MatchData.instance;
         if (inputManager == null )
         {
             inputManager = GetComponent<PlayerInputManager>();
@@ -77,8 +77,6 @@ public class PreGameSelectionManager : MonoBehaviour
         InitSelectionManager();
 
         InitMatchData();
-
-      
     }
 
 
@@ -86,23 +84,22 @@ public class PreGameSelectionManager : MonoBehaviour
     {
         skillSelectScreen.SetActive(false);
         mapSelectScreen.SetActive(false);
-        teamSelectScreen.SetActive(true);
-
+        teamSelectScreen.SetActive(false);
+        modeSelectScreen.SetActive(true);
 
         selectedMap = MapRegistry.The_Forum;
-
 
         int index = 0;
         foreach (Transform t in mapButtonHolder.transform)
         {
             if (!t.TryGetComponent(out Button button)) { continue; }
-            MapRegistry currentMap = ((MapRegistry)(index));
+            MapRegistry currentMap = (MapRegistry) index;
 
             string formattedName = currentMap.ToString().Replace("_", " ");
             button.GetComponentInChildren<TMP_Text>().text = formattedName;
 
             button.onClick.AddListener(() => SetSelectedMap(currentMap));
-            index++;
+            index++;  
         }
 
         foreach (var thumbnail in mapThumbnails)
@@ -110,15 +107,30 @@ public class PreGameSelectionManager : MonoBehaviour
             mapThumbnailDict[thumbnail.map] = thumbnail.thumbnail;
         }
         SetSelectedMap(MapRegistry.The_Forum);
-    }
+        SetSelectedGameMode("SpeakerDuel");
+        modeDescription.text = matchData.selectedGameMode.modeDescription;
 
+        inputManager.DisableJoining();
+    }
+    public void SetSelectedGameMode(string modeString)
+    {
+        MatchData.GameModeName gameModeName = (MatchData.GameModeName) Enum.Parse(typeof(MatchData.GameModeName), modeString);
+        matchData.selectedGameMode = matchData.gameModeDictionary[gameModeName];
+        modeDescription.text = matchData.selectedGameMode.modeDescription;
+    }
+    public void ContinueToGameSelect()
+    {
+        inputManager.EnableJoining();
+        modeSelectScreen.SetActive(false);
+        teamSelectScreen.SetActive(true);
+        selectionScreen = SelectionScreen.TeamSelect;
+    }
     public void SetSelectedMap(MapRegistry newMap)
     {
         selectedMap = newMap;
         mapDisplay.text = selectedMap.ToString().Replace("_", " ");
         thumbnailDisplay.sprite = mapThumbnailDict[newMap];
     }
-
     public void StartGame()
     {
       string formattedString = selectedMap.ToString().Replace("_", "");
@@ -148,8 +160,6 @@ public class PreGameSelectionManager : MonoBehaviour
         var manager = GetComponent<PlayerInputManager>();
         manager.JoinPlayer(pairWithDevice: Keyboard.current);
     }
-
-
     public void TogglePlayerAI(bool toggle)
     {
         foreach (var player in playerInfo.Reverse().ToList())
@@ -196,8 +206,6 @@ public class PreGameSelectionManager : MonoBehaviour
             playerInfo[selector].device = pInput.devices[0];
             pInput.SwitchCurrentActionMap("UI");
         }
-
-
     }
     public void OnSelectionMoved(UISelector selector, int dir)
     {
@@ -223,7 +231,6 @@ public class PreGameSelectionManager : MonoBehaviour
             }
         }
       //  Debug.Log("New index is " + selector.teamIndex + ", new dir is " + dir);
-
     }
 
     public void OnSkillPressed(UISelector selector, int index)
@@ -365,10 +372,21 @@ public class PreGameSelectionManager : MonoBehaviour
     {
         switch (selectionScreen)
         {
-            case SelectionScreen.TeamSelect:
+            case SelectionScreen.ModeSelect: // returns to main menu
                 ReturnToMainMenu();
                 break;
-            case SelectionScreen.SkillSelect:
+            case SelectionScreen.TeamSelect: // goes to mode select
+                modeSelectScreen.SetActive(true);
+                teamSelectScreen.SetActive(false);
+                foreach(var selector in playerInfo.Keys.ToList())
+                {
+                    Destroy(selector.gameObject);
+                }
+                playerInfo.Clear();
+                inputManager.DisableJoining();
+                selectionScreen = SelectionScreen.ModeSelect;
+                break;
+            case SelectionScreen.SkillSelect: // goes to team select
 
                 inputManager.EnableJoining();
                 skillSelectScreen.SetActive(false);
@@ -380,7 +398,7 @@ public class PreGameSelectionManager : MonoBehaviour
                 }
                 StartCoroutine(ResetSelectors(SelectionScreen.TeamSelect));
                 break;
-            case SelectionScreen.MapSelect:
+            case SelectionScreen.MapSelect: //goes to skill select
                 mapSelectScreen.SetActive(false);
                 skillSelectScreen.SetActive(true);
                 foreach (var selector in playerInfo.Keys)
@@ -389,10 +407,8 @@ public class PreGameSelectionManager : MonoBehaviour
                     selector.ToggleExternalDisplays(true, playerInfo[selector].isAI);
                 }
                 StartCoroutine(ResetSelectors(SelectionScreen.SkillSelect));
-                break;
-            
+                break;   
         }
-
     }
 
     IEnumerator ResetSelectors(SelectionScreen newScreen, bool hideAfter = false)
@@ -440,5 +456,6 @@ public enum SelectionScreen
     TeamSelect,
     RoleSelect,
     SkillSelect,
-    MapSelect
+    MapSelect,
+    ModeSelect,
 }

@@ -44,6 +44,6 @@ public class DeflectionBounceState : BounceState
         echoData.deflectStreak += 1;
         echo.UpdateSpeed(Mathf.Lerp(echoData.minSpeed, echoData.maxSpeed, t));
         Debug.Log("Deflection bounce speed change: " + previousSpeed + " -> " + echo.GetSpeed());
-        GameManager.ApplyHitstop(deflectStopAmount);
+        GameManager.ApplySpecialStop(deflectStopAmount);
     }
 }

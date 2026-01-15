@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class BaseCharacter : MonoBehaviour
     public AudioSource unscaledAudioSource; //unscaled so it plays during hit-stop
     public List<Material> playerColors = new();
 
-    [HideInInspector] public int teamIndex;
+    [HideInInspector] public int teamIndex = 1;
     protected Transform lookTarget = null;
     protected bool init = false;
 
@@ -114,6 +115,17 @@ public class BaseCharacter : MonoBehaviour
     public Transform GetLookTarget()
     {
         return lookTarget;
+    }
+
+    public virtual void ResetComponents()
+    {
+        enabled = true;
+        ActivatePlayer();
+
+
+        staminaComponent.ResetComponent(true);
+        velocityManager.ResetComponent();
+        characterStateMachine.ResetComponent();
     }
 
 }

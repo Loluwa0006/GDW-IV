@@ -45,6 +45,7 @@ public class Counterslash : SpeakerBaseSkill
 
     List<ParticleSystem> particlesList = new();
 
+    BaseEcho[] echoList;
     private void Start()
     {
         var main = releaseParticles.main;
@@ -69,6 +70,7 @@ public class Counterslash : SpeakerBaseSkill
             particles.Stop();
         }
         windSwirler.Stop();
+        echoList = FindObjectsByType<BaseEcho>(FindObjectsSortMode.InstanceID);
     }
 
     public override void Enter(Dictionary<string, object> msg = null)
@@ -142,10 +144,10 @@ public class Counterslash : SpeakerBaseSkill
     void OnCounterslashReleased()
     {
         if (chargeTracker < chargeDuration) return; 
-        else if (manager.echoList.Count <= 0) { Debug.Log("nothing to deflect mr/mrs " + character.name); return;  }
+        else if (echoList.Length <= 0) { Debug.Log("nothing to deflect mr/mrs " + character.name); return;  }
         int index = 0;
        
-            foreach (var ball in manager.echoList)
+            foreach (var ball in echoList)
             {
                 if (ball.GetTarget() == character.transform)
                 {

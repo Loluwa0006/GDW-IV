@@ -75,7 +75,7 @@ public class Dash : SpeakerBaseSkill
             victim.Damage(hitbox.damageInfo);
             if (victim.ownedByEntity) hitEntity = true;
         }
-        if (hitEntity)  GameManager.ApplyHitstop(hitbox.damageInfo.hitstop);
+        if (hitEntity)  GameManager.ApplySpecialStop(hitbox.damageInfo.hitstop);
     }
     public override void PhysicsProcess()
     {

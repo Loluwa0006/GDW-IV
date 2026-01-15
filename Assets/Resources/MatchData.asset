@@ -17,3 +17,46 @@ MonoBehaviour:
   numberOfRounds: 2
   initPrefabs: 1
   gameLength: 60
+  selectedGameMode:
+    gameType: 0
+    gameModePrefab: {fileID: 3096040581361333721, guid: 0ed02db9269c21640bdc3f213c5168d7, type: 3}
+    modeDescription: 1v1 between 2 deflectors.
+    minimumTeams: 2
+    maximumTeams: 2
+    numberOfSpeakers: 2
+    numberOfEchoes: 1
+    echoIsAI: 1
+  availableGameModes:
+  - gameType: 0
+    gameModePrefab: {fileID: 3096040581361333721, guid: 0ed02db9269c21640bdc3f213c5168d7, type: 3}
+    modeDescription: 1v1 between 2 deflectors.
+    minimumTeams: 2
+    maximumTeams: 2
+    numberOfSpeakers: 2
+    numberOfEchoes: 1
+    echoIsAI: 1
+  - gameType: 2
+    gameModePrefab: {fileID: 3096040581361333721, guid: 0ed02db9269c21640bdc3f213c5168d7, type: 3}
+    modeDescription: Earn the most points in this objective based deflector free
+      for all.
+    minimumTeams: 2
+    maximumTeams: 8
+    numberOfSpeakers: 2
+    numberOfEchoes: 1
+    echoIsAI: 1
+  - gameType: 1
+    gameModePrefab: {fileID: 3096040581361333721, guid: 0ed02db9269c21640bdc3f213c5168d7, type: 3}
+    modeDescription: 2v2 made up of a deflector and an ball.
+    minimumTeams: 2
+    maximumTeams: 2
+    numberOfSpeakers: 2
+    numberOfEchoes: 2
+    echoIsAI: 0
+  - gameType: 3
+    gameModePrefab: {fileID: 3096040581361333721, guid: 0ed02db9269c21640bdc3f213c5168d7, type: 3}
+    modeDescription: Pick and ban skills in this best of 5 speaker duel.
+    minimumTeams: 2
+    maximumTeams: 2
+    numberOfSpeakers: 2
+    numberOfEchoes: 1
+    echoIsAI: 1

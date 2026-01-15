@@ -11,7 +11,7 @@ public class MatchDataHolder : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
-        matchData.InitSkillPrefabs();
+        matchData.InitData();
         MatchData.instance = matchData;
     }
     public MatchData GetMatchData()

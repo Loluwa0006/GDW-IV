@@ -113,12 +113,12 @@ public class TutorialManager : GameManager
 
         public override void OnSectionStarted()
         {
-            manager.timerDisplay.gameObject.SetActive(true);
+           // manager.timerDisplay.gameObject.SetActive(true);
         }
 
         public override void OnSectionEnded()
         {
-            manager.timerDisplay.gameObject.SetActive(false);
+          //  manager.timerDisplay.gameObject.SetActive(false);
         }
     }
 
@@ -152,26 +152,23 @@ public class TutorialManager : GameManager
             section.tutorialPoints = 0;
         }
 
-
         InitSpeakers();
+        InitEchoes();
         StartTutorial();
     }
 
-    protected override void InitEchoes()
+    protected void InitEchoes()
     {
-        foreach (var ball in echoList)
-        {
-            ball.InitProjectile(speakerList);
-            ball.SuspendProjectile();
-        }
+        //var echoList = FindObjectsByType<BaseEcho>(FindObjectsSortMode.InstanceID);
+        //var 
+        //foreach (var ball in echoList)
+        //{
+        //    ball.InitProjectile(speakerList);
+        //    ball.SuspendProjectile();
+        //}
     }
 
-    protected override IEnumerator StartGame()
-    {
-        announcementManager.ResetManager();
-        yield break; //no countdown for tutorial
-    }
-    protected override void InitSpeakers()
+    protected void InitSpeakers()
     {
         InputDevice inputDevice = Gamepad.all.Count > 0 ? Gamepad.all[0] : Keyboard.current;
 
@@ -184,19 +181,19 @@ public class TutorialManager : GameManager
             skillOne = SkillName.None,
             skillTwo = SkillName.None,
         };
-       queuedPlayerInfo.Enqueue(tutorialPlayer);
-       inputManager.JoinPlayer(pairWithDevice: inputDevice);
+      // queuedPlayerInfo.Enqueue(tutorialPlayer);
+      // inputManager.JoinPlayer(pairWithDevice: inputDevice);
     }
 
-    public override void OnPlayerJoined(PlayerInput playerInput)
+    public void OnPlayerJoined(PlayerInput playerInput)
     {
-        base.OnPlayerJoined(playerInput);
+        //base.OnPlayerJoined(playerInput);
         if (dialogueManager != null)
         {
             dialogueManager.SetPlayerInput(playerInput);
         }
     }
-    protected override IEnumerator SetCharacterPosition(BaseSpeaker character)
+    protected IEnumerator SetCharacterPosition(BaseSpeaker character)
     {
         yield return new WaitForFixedUpdate();
         character.transform.position = respawnPoint.position;
@@ -289,7 +286,7 @@ public void RedoSection()
         sectionRestarted.Invoke(currentSection);
     }
 
-    protected override void OnCharacterDefeated(DamageInfo info, HealthComponent victim)
+    protected void OnCharacterDefeated(DamageInfo info, HealthComponent victim)
     {
         if (!victim.hurtboxOwner.TryGetComponent(out BaseSpeaker defeated))
         {
@@ -307,8 +304,8 @@ public void RedoSection()
 
     private IEnumerator OnTutorialCompleted()
     {
-        winScreen.SetActive(true);
-        winText.text = "Tutorial Complete";
+        //winScreen.SetActive(true);
+       // winText.text = "Tutorial Complete";
         Time.timeScale = 0.0f;
         yield return new WaitForSecondsRealtime(5.0f);
         Time.timeScale = 1.0f;

@@ -66,7 +66,7 @@ public class CharacterStateMachine : MonoBehaviour
 
     public void AddNewSkill(int index, SkillName name)
     {
-        if (!matchData.skillPrefabDictionary.ContainsKey(name)) matchData.InitSkillPrefabs(); 
+        if (!matchData.skillPrefabDictionary.ContainsKey(name)) matchData.InitData(); 
         else  Debug.Log("Init skill prefabs."); 
         if (!matchData.skillPrefabDictionary.ContainsKey(name)) { Debug.Log("skill " + name.ToString() + " doesn't have a prefab."); return; }
         if (skillLookup.ContainsKey(index))

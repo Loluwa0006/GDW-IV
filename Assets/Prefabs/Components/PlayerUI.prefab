@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.96862745, g: 0.96862745, b: 0.96862745, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -86,7 +86,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7426279615286890708}
   - component: {fileID: 4934522755649417736}
-  - component: {fileID: 2909893997914088154}
+  - component: {fileID: 7603735769058187820}
   m_Layer: 5
   m_Name: PlayerUI
   m_TagString: Untagged
@@ -130,7 +130,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1022780838416172158}
   m_CullTransparentMesh: 1
---- !u!114 &2909893997914088154
+--- !u!114 &7603735769058187820
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,27 +139,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1022780838416172158}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7ca8ad6669e0d84b97ad94ed7f2a7bf, type: 3}
+  m_Script: {fileID: 11500000, guid: 355e5b28bf0e7ce478dc9106cfe5031a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthUI
+  m_EditorClassIdentifier: Assembly-CSharp::BasePlayerUI
   staminaDisplay: {fileID: 0}
   maxStaminaDisplay: {fileID: 0}
   UIBackdrop: {fileID: 0}
-  UIColors:
-  - {r: 0.9245283, g: 0.22153787, b: 0.22153787, a: 0.4509804}
-  - {r: 0.21960783, g: 0.22402962, b: 0.9254902, a: 0.4509804}
-  - {r: 0.9254902, g: 0.8549174, b: 0.21960783, a: 0.4509804}
-  - {r: 0.9254902, g: 0.21960783, b: 0.88820267, a: 0.4509804}
+  UIColors: []
   maxStaminaImage: {fileID: 949572332971679178}
   usableStaminaImage: {fileID: 90221190756512032}
   grayStaminaImage: {fileID: 3604352369665838249}
   skillOneIcon: {fileID: 1368804800238798193}
   skillTwoIcon: {fileID: 2661752106102499578}
-  healthyStamina: {r: 0, g: 0.9411765, b: 0.65882355, a: 0.7490196}
-  dangerStamina: {r: 0.80784315, g: 0.1254902, b: 0.16078432, a: 0.7490196}
-  foresightStamina: {r: 0.16707003, g: 0.8622182, b: 0.93207544, a: 0.7490196}
-  skillAvailable: {r: 0.9647059, g: 0.9647059, b: 0.9647059, a: 0.9019608}
-  skillUnavailable: {r: 0.8862746, g: 0.23137257, b: 0.23137257, a: 0.9019608}
+  healthyStamina: {r: 0.18039216, g: 0.8, b: 0.44313726, a: 0.8}
+  dangerStamina: {r: 0.8784314, g: 0.06666667, b: 0.37254903, a: 0.8}
+  foresightStamina: {r: 0, g: 1, b: 0.9411765, a: 0.8}
+  skillAvailable: {r: 0.92941177, g: 0.95686275, b: 0.9490196, a: 0.8}
+  skillUnavailable: {r: 0.8784314, g: 0.06666667, b: 0.37254903, a: 0.8}
 --- !u!1 &1837046582243673023
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,7 +214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.45981005, g: 0.4019722, b: 0.4641509, a: 1}
+  m_Color: {r: 0.42745098, g: 0.5058824, b: 0.5882353, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -293,7 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.96862745, g: 0.96862745, b: 0.96862745, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -440,7 +436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.99607843, b: 0.9254902, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -591,7 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.96862745, g: 0.96862745, b: 0.96862745, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -816,7 +812,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.96862745, g: 0.96862745, b: 0.96862745, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

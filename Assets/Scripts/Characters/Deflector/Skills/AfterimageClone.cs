@@ -108,7 +108,7 @@ public class AfterimageClone : MonoBehaviour
     IEnumerator OnCloneChargedDeflect(BaseEcho echo)
     {
         afterimageManager.speaker.deflectManager.superDeflectPerformed.Invoke(afterimageManager.speaker);
-        GameManager.ApplyHitstop(afterimageManager.chargedDeflectParrystop);
+        GameManager.ApplySpecialStop(afterimageManager.chargedDeflectParrystop);
         echo.FindNewTarget(afterimageManager.speaker.transform);
         yield return new WaitUntil(() => GameManager.inSpecialStop);
         yield return new WaitUntil(() => !GameManager.inSpecialStop);

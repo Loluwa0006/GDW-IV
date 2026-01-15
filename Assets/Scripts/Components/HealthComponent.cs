@@ -87,7 +87,7 @@ public class HealthComponent : MonoBehaviour
         {
 
             entityDamaged.Invoke(modifiedInfo);
-            GameManager.ApplyHitstop(modifiedInfo.hitstop);
+            GameManager.ApplySpecialStop(modifiedInfo.hitstop);
         }
             
         OnEntityDamaged(modifiedInfo);

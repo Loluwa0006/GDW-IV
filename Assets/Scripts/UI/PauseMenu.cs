@@ -51,6 +51,6 @@ public class PauseMenu : MonoBehaviour
     {
         GameManager.gamePaused = false;
         pauseScreen.SetActive(false);
-        gameManager.ResetGame();
+        gameManager.ResetManager();
     }
 }

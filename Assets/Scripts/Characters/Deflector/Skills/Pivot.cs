@@ -180,7 +180,7 @@ public class Pivot : SpeakerBaseSkill
             victim.Damage(hitbox.damageInfo);
             if (victim.ownedByEntity) hitEntity = true;
         }
-        if (hitEntity) GameManager.ApplyHitstop(hitbox.damageInfo.hitstop);
+        if (hitEntity) GameManager.ApplySpecialStop(hitbox.damageInfo.hitstop);
     }
 
     void AddGravity()

@@ -15,7 +15,12 @@ public class TrainingManager : GameManager
     BaseSpeaker trainingSpeaker = null;
     [HideInInspector] public BaseSpeaker playerSpeaker = null;
 
-    protected override void OnCharacterDefeated(DamageInfo info, HealthComponent victim)
+    protected Queue<MatchData.PlayerInfo> queuedPlayerInfo = new();
+
+    BaseEcho trainingEcho;
+
+
+    protected void OnCharacterDefeated(DamageInfo info, HealthComponent victim)
     {
         if (!victim.hurtboxOwner.TryGetComponent(out BaseSpeaker defeated))
         {
@@ -27,25 +32,21 @@ public class TrainingManager : GameManager
         defeated.velocityManager.ResetComponent();
     }
 
-    protected override IEnumerator StartGame()
-    {
-        yield break;
-    }
 
-
-    public override void ResetGame()
+    public override void ResetManager()
     {
         SceneManager.LoadScene(SceneRegistry.Training.ToString());
     }
 
-    protected override void InitEchoes()
+    protected void InitEchoes()
     {
 
     }
 
 
-    protected override void InitSpeakers()
+    protected void InitSpeakers()
     {
+        trainingEcho = FindObjectsByType<BaseEcho>(FindObjectsSortMode.None)[0];
         InputDevice inputDevice = Gamepad.all.Count > 0 ? Gamepad.all[0] : Keyboard.current;
 
 
@@ -58,7 +59,7 @@ public class TrainingManager : GameManager
             skillTwo = SkillName.None,
         };
         queuedPlayerInfo.Enqueue(tutorialPlayer);
-        inputManager.JoinPlayer(pairWithDevice: inputDevice);
+        //inputManager.JoinPlayer(pairWithDevice: inputDevice);
 
         MatchData.PlayerInfo dummy = new()
         {
@@ -69,24 +70,17 @@ public class TrainingManager : GameManager
             skillTwo = SkillName.None,
         };
         queuedPlayerInfo.Enqueue(dummy);
-        inputManager.JoinPlayer(pairWithDevice: inputDevice);
+        //inputManager.JoinPlayer(pairWithDevice: inputDevice);
 
 
 
     }
 
 
-    protected override void InitTimer()
-    {
+   
 
-    }
 
-    protected override void TimerLogic()
-    {
-
-    }
-
-    protected override IEnumerator SetCharacterPosition(BaseSpeaker character)
+    protected IEnumerator SetCharacterPosition(BaseSpeaker character)
     {
         yield return new WaitForFixedUpdate();
         character.transform.position = respawnPoint.position;
@@ -101,7 +95,7 @@ public class TrainingManager : GameManager
         targetGroup.AddMember(trainingSpeaker.transform, 1.0f, 5.0f);
         InvulnerabilityEffect invulnerabilityEffect = new(DamageSource.Ball, int.MaxValue, false);
         trainingSpeaker.healthComponent.AddStatusEffect(invulnerabilityEffect, "trainingDummyImmunity");
-        echoList[0].InitProjectile(speakerList);
+        //trainingEcho.InitProjectile(speakerList);
         StartCoroutine(SetDummyToSpawnPos());
 
 
@@ -118,11 +112,11 @@ public class TrainingManager : GameManager
         Debug.Log("removing training dummy");
         targetGroup.RemoveMember(trainingSpeaker.transform);
         trainingSpeaker.DeactivatePlayer();
-        echoList[0].SuspendProjectile();
+        trainingEcho.SuspendProjectile();
     }
-    public override void OnPlayerJoined(PlayerInput playerInput)
+    public void OnPlayerJoined(PlayerInput playerInput)
     {
-        base.OnPlayerJoined(playerInput);
+       // base.OnPlayerJoined(playerInput);
 
         Debug.Log("Adding training player ");
         if (!playerInput.TryGetComponent(out BaseSpeaker speakerComponent)) return;
