@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 
 public class Counterslash : SpeakerBaseSkill
@@ -7,7 +6,7 @@ public class Counterslash : SpeakerBaseSkill
     //counter slash is unique: it drains stamina as you charge it up. there's a flat cost when releasing the blade tho
 
 
-    const int NUMBER_OF_DEFLECT_PARTICLE_OBJECTS = 5;
+    const int NUMBER_OF_DEFLECT_PARTICLE_OBJECTS = 10;
 
 
     [Header("Balance Attributes")]
@@ -45,7 +44,6 @@ public class Counterslash : SpeakerBaseSkill
 
     List<ParticleSystem> particlesList = new();
 
-    BaseEcho[] echoList;
     private void Start()
     {
         var main = releaseParticles.main;
@@ -70,7 +68,6 @@ public class Counterslash : SpeakerBaseSkill
             particles.Stop();
         }
         windSwirler.Stop();
-        echoList = FindObjectsByType<BaseEcho>(FindObjectsSortMode.InstanceID);
     }
 
     public override void Enter(Dictionary<string, object> msg = null)
@@ -101,20 +98,10 @@ public class Counterslash : SpeakerBaseSkill
                 OnSkillOver();
             }
         }
-        else if (oppositeSkillBuffer != null) 
-        {
-            if (oppositeSkillBuffer.Buffered)
-            {
-                fsm.TransitionToSkill(oppositeSkillIndex);
-                return;
-            }
-        }
 
-
+        if (CancelSkillIfOppositeSkillBuffered()) return;
         ChargeMeterLogic();
-        
     }
-
     void ChargeMeterLogic()
     {
 
@@ -143,18 +130,20 @@ public class Counterslash : SpeakerBaseSkill
 
     void OnCounterslashReleased()
     {
-        if (chargeTracker < chargeDuration) return; 
-        else if (echoList.Length <= 0) { Debug.Log("nothing to deflect mr/mrs " + character.name); return;  }
+        if (chargeTracker < chargeDuration) return;
+        var echoList = FindObjectsByType<BaseEcho>(FindObjectsSortMode.InstanceID);
+        if (echoList.Length <= 0) { Debug.Log("nothing to deflect mr/mrs " + character.name); return;  }
         int index = 0;
-       
-            foreach (var ball in echoList)
+        int particleIndex = 0;
+        foreach (var ball in echoList)
             {
                 if (ball.GetTarget() == character.transform)
                 {
                 ball.ForceDeflect(speaker);
-                var particle = particlesList[index];
+                var particle = particlesList[particleIndex % NUMBER_OF_DEFLECT_PARTICLE_OBJECTS];
                     particle.transform.position = ball.transform.position;
                     particle.Play();
+                particleIndex++;
                 }
             index++;
             }
@@ -166,14 +155,6 @@ public class Counterslash : SpeakerBaseSkill
             
         
     }
-
-
-
-
-    
-
-    // Update is called once per frame
-
     public override void PhysicsProcess()
     {
     

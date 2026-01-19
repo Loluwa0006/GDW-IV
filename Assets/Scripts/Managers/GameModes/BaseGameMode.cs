@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class BaseGameMode : MonoBehaviour
 {
+
+    protected const int DEFAULT_MATCH_LENGTH = 60;
+    public const float TWEEN_TO_REGULAR_SPEED_DURATION = 0.35f;
+
     [HideInInspector] public GameManager gameManager;
     [SerializeField] protected PlayerInputManager inputManager;
  
@@ -96,10 +100,13 @@ public class BaseGameMode : MonoBehaviour
 
     protected virtual IEnumerator SetCharacterPosition(BaseCharacter character)
     {
-        yield break; 
+        int spawnIndex = (character.teamIndex - 1) % spawnPositions.Count;
+        yield return new WaitForFixedUpdate();
+        character.transform.position = spawnPositions[spawnIndex];
+        if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true);
     }
 
-    public virtual void RemoveCharacter(BaseSpeaker character)
+    public virtual void RemoveCharacter(BaseCharacter character)
     {
         
     }
@@ -140,5 +147,8 @@ public class BaseGameMode : MonoBehaviour
         SceneManager.LoadScene(SceneRegistry.MainMenu.ToString());
     }
 
-
+    public void ToggleReportDisplay(bool status)
+    {
+        gameManager.reportManager.reportDisplay.SetActive(status);
+    }
 }

@@ -153,14 +153,7 @@ public class Afterimage : SpeakerBaseSkill
         }
         character.velocityManager.OverwriteInternalSpeed(newSpeed);
 
-        if (oppositeSkillBuffer != null)
-        {
-            if (oppositeSkillBuffer.Buffered)
-            {
-                oppositeSkillBuffer.Consume();
-                fsm.TransitionToSkill(oppositeSkillIndex);
-            }
-        }
+        if (CancelSkillIfOppositeSkillBuffered()) return;
         DrainStamina();
 
         if (moveDir.magnitude < MOVE_DEADZONE) idleFrames += 1;

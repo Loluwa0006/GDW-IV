@@ -29,8 +29,14 @@ public class FlyingState : EchoBaseState
     [SerializeField] protected Gradient ignitionGradient;
     [SerializeField] protected ParticleSystem ignitionTravelParticles;
 
+    [Header("Other")]
+    [SerializeField] int bounceCooldown = 7;
+
 
     Vector3 previousPos = Vector3.zero;
+
+    int cooldownTracker = 0;
+
     public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
     {
         base.InitState(cha, s_machine);
@@ -43,7 +49,6 @@ public class FlyingState : EchoBaseState
     {
         base.Enter(msg);
 
-        UpdateVelocityVector();
         if (echo.isIgnited)
         {
             echoTrail.colorGradient = ignitionGradient;
@@ -53,6 +58,7 @@ public class FlyingState : EchoBaseState
             echoTrail.colorGradient = regularGradient;
         }
 
+        cooldownTracker = bounceCooldown;
     }
 
     protected bool HitboxCollisionLogic()
@@ -102,7 +108,9 @@ public class FlyingState : EchoBaseState
     override public void PhysicsProcess()
     {
         base.PhysicsProcess();
-        if (GameManager.inSpecialStop || !echo.ballActive || echo.GetTarget() == null) { return; }
+        cooldownTracker -= 1;
+        if (cooldownTracker< 0) cooldownTracker = 0;
+        if (GameManager.inSpecialStop || !echo.ballActive || echo.GetTarget() == null || cooldownTracker > 0) { return; }
         if (HitboxCollisionLogic()) return;
 
         TerrainCollisionLogic();
@@ -169,12 +177,9 @@ public class FlyingState : EchoBaseState
 
     public override void OnBallIgnited()
     {
-        UpdateVelocityVector();
-    }
-    void UpdateVelocityVector()
-    {
         echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
     }
+
 
 
 

@@ -2120,6 +2120,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3590128639528105267, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 3651069264975915023, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2191,7 +2195,7 @@ PrefabInstance:
     - target: {fileID: 4940443204739043314, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: 'echoList.Array.data[0]'
       value: 
-      objectReference: {fileID: 16452872587046621}
+      objectReference: {fileID: 0}
     - target: {fileID: 5038223285169931009, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: Targets.Array.size
       value: 0
@@ -2223,7 +2227,7 @@ PrefabInstance:
     - target: {fileID: 5038223285169931009, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: Targets.Array.data[2].Object
       value: 
-      objectReference: {fileID: 16452872587046622}
+      objectReference: {fileID: 0}
     - target: {fileID: 5038223285169931009, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: Targets.Array.data[2].Radius
       value: 5
@@ -6350,79 +6354,6 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
---- !u!1001 &16452872587046620
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2768490926264993879, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-      propertyPath: m_Name
-      value: GameBall
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
---- !u!114 &16452872587046621 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7769364213794897104, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-  m_PrefabInstance: {fileID: 16452872587046620}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba9ebb279a75fc94b97b51013103bcd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RicochetBall
---- !u!4 &16452872587046622 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
-  m_PrefabInstance: {fileID: 16452872587046620}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -6435,7 +6366,6 @@ SceneRoots:
   - {fileID: 698262332}
   - {fileID: 1425513208}
   - {fileID: 1964551383}
-  - {fileID: 16452872587046620}
   - {fileID: 832575519}
   - {fileID: 2045420498}
   - {fileID: 1247757100}

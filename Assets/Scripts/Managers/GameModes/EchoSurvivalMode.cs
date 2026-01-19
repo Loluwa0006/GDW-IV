@@ -1,16 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static ReportManager;
+using System.Linq;
+using System;
 
-public class SpeakerDuelMode : BaseGameMode
+public class EchoSurvivalMode : BaseGameMode
 {
     const float SUDDEN_DEATH_SLOW_DOWN_DURATION = 2.5f;
     const float SUDDEN_DEATH_SLOW_DOWN_AMOUNT = 0.1f;
-
+    const float TIME_UNTIL_NEW_ECHO_CREATED = 15.0f;
+    const int MAX_ECHO_COUNT = 6;
     [Header("UI Objects")]
 
     [SerializeField] protected BasePlayerUI healthUIPrefab;
@@ -22,29 +24,34 @@ public class SpeakerDuelMode : BaseGameMode
 
     [Header("Player Prefabs")]
     [SerializeField] protected BaseSpeaker speakerPrefab;
-    [SerializeField] protected BaseSpeaker aiSpeakerPrefab;
     [SerializeField] protected BaseEcho echoPrefab;
 
-    public HashSet<Transform> speakerList = new();
-    static HashSet<BaseSpeaker> activeSpeakers = new();
+    [Header("Other Settings")]
+    [SerializeField] protected float speakerCameraRadius = 12.0f;
+
+    //public HashSet<Transform> speakerList = new();
+    //static HashSet<BaseSpeaker> activeSpeakers = new();
+
+    BaseSpeaker speakerPlayer;
 
     Dictionary<BaseCharacter, BasePlayerUI> characterUI = new();
 
     struct ScoreTracker
     {
-        public int teamOneWins;
-        public int teamTwoWins;
+        public float timeToBeat;
     }
 
     ScoreTracker scoreTracker;
     float timerTracker;
+    float timeUntilNextEcho = TIME_UNTIL_NEW_ECHO_CREATED;
 
     List<TrackerData> trackerData = new();
 
-    BaseEcho gameEcho;
+    List<BaseEcho> gameEchoes = new();
+    TimeSpan matchDuration = new();
 
     public override void InitGameMode(GameManager manager)
-    { 
+    {
         base.InitGameMode(manager);
         spawnPositions = gameManager.spawnManager.GetSpeakerDuelSpawns();
         Debug.Log("Initializing UI");
@@ -61,13 +68,30 @@ public class SpeakerDuelMode : BaseGameMode
 
     protected virtual void InitEchoes()
     {
-        gameEcho = Instantiate(echoPrefab);
+        foreach(var echo in gameEchoes)
+        {
+            Destroy(echo.gameObject);
+        }
+        gameEchoes.Clear();
+        var startingEcho = AddNewEcho();
+        startingEcho.SuspendProjectile();
+    }
 
-        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
-        gameManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
-        gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
-        gameEcho.SuspendProjectile();
+    BaseEcho AddNewEcho()
+    {
+        if (gameEchoes.Count >= MAX_ECHO_COUNT) { return null; }
+        var newEcho = Instantiate(echoPrefab);
 
+        HashSet<Transform> speakerList = new()
+        {
+            speakerPlayer.transform
+        };
+        newEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
+        gameManager.AddCharacterToCameraTargetGroup(newEcho.transform, 1.0f, 2.5f);
+        gameEchoes.Add(newEcho);
+        newEcho.EnableProjectile();
+        newEcho.transform.name = "Echo " + gameEchoes.Count;
+        return newEcho;
     }
 
     protected override IEnumerator StartGame()
@@ -90,10 +114,8 @@ public class SpeakerDuelMode : BaseGameMode
         countdownDataFour.announcementText = "BEGIN";
         countdownDataFour.customTimescale = 1.0f;
         gameManager.announcementManager.QueueNewAnnouncement(countdownDataOne, countdownDataTwo, countdownDataThree, countdownDataFour);
-        foreach (var speaker in activeSpeakers)
-        {
-            speaker.ShowPlayer();
-        }
+        speakerPlayer.ShowPlayer();
+        
         yield return new WaitUntil(() => gameManager.announcementManager.annoucementPlaying);
         yield return new WaitUntil(() => !gameManager.announcementManager.annoucementPlaying);
         if (gameManager.reportManager != null)
@@ -102,12 +124,10 @@ public class SpeakerDuelMode : BaseGameMode
         }
         matchActive = true;
 
-        gameEcho.EnableProjectile();
+        gameEchoes[0].EnableProjectile();
+
+        speakerPlayer.ActivatePlayer();
         
-        foreach (var speaker in activeSpeakers)
-        {
-            speaker.ActivatePlayer();
-        }
     }
 
     protected override void InitUI()
@@ -121,47 +141,25 @@ public class SpeakerDuelMode : BaseGameMode
     protected virtual void InitTimer()
     {
         timerDisplay.gameObject.SetActive(true);
-        Debug.Log("match length is " + MatchData.instance.gameLength);
-        timerTracker = MatchData.instance.gameLength;
+        timerTracker = 0.0f;
         timerDisplay.text = timerTracker.ToString();
     }
 
     protected virtual void InitSpeakers()
     {
         if (MatchData.instance == null) { return; }
-        activeSpeakers.Clear();
-        int memberIndex = 0;
-        int teamIndex = 0;
-        List<TrackerData> speakerData = new();
-        foreach (MatchData.TeamInfo team in MatchData.instance.gameTeams)
-        {
-            teamIndex++;
-            foreach (MatchData.PlayerInfo member in team.teamMembers)
-            {
-                member.teamIndex = teamIndex;
-                memberIndex++;
-                if (member.playerType == MatchData.PlayerType.Speaker)
-                {
-                    if (member.isAI)
-                    {
-                        inputManager.playerPrefab = aiSpeakerPrefab.gameObject;
-                    }
-                    else
-                    {
-                        inputManager.playerPrefab = speakerPrefab.gameObject;
-                    }
-                    queuedPlayerInfo.Enqueue(member);
-                    inputManager.JoinPlayer(pairWithDevice: member.device);
-                }
 
-            }
-        }
+        var team = MatchData.instance.gameTeams[0];
+        var member = team.teamMembers.ElementAt(0);
+        queuedPlayerInfo.Enqueue(member);
+        inputManager.playerPrefab = speakerPrefab.gameObject;
+        inputManager.JoinPlayer(pairWithDevice: member.device);
     }
     public override void OnPlayerJoined(PlayerInput playerInput)
     {
 
         if (!playerInput.gameObject.TryGetComponent(out BaseSpeaker character)) { return; }
-        if (speakerList.Contains(character.transform)) { return; }
+        if (speakerPlayer != null) { return; }
         int index = playerInput.playerIndex + 1;
         MatchData.PlayerInfo info = null;
         if (queuedPlayerInfo.Count > 0)
@@ -180,15 +178,15 @@ public class SpeakerDuelMode : BaseGameMode
         }
         StartCoroutine(InitSpeakerSignals(character));
         AddStaminaUIForCharacter(character, info);
-        gameManager.AddCharacterToCameraTargetGroup(character.transform);
+        gameManager.AddCharacterToCameraTargetGroup(character.transform, 1.0f, speakerCameraRadius);
         StartCoroutine(SetCharacterPosition(character));
-        speakerList.Add(character.transform);
-        activeSpeakers.Add(character);
 
         if (queuedPlayerInfo.Count == 0 && gameManager.reportManager != null)
         {
             gameManager.reportManager.InitManager(trackerData.ToArray());
         }
+
+        speakerPlayer = character;
     }
     protected void AddStaminaUIForCharacter(BaseSpeaker character, MatchData.PlayerInfo info)
     {
@@ -205,35 +203,28 @@ public class SpeakerDuelMode : BaseGameMode
         }
         gameManager.RemoveCharacterFromCameraTargetGroup(character.transform);
         character.DeactivatePlayer();
-        activeSpeakers.Remove(character.GetComponent<BaseSpeaker>());
     }
     protected override void OnCharacterDefeated(DamageInfo info, HealthComponent victim)
     {
-        if (!victim.hurtboxOwner.TryGetComponent(out BaseSpeaker defeated))
+        if (!victim.hurtboxOwner.TryGetComponent(out BaseSpeaker _))
         {
             Debug.Log("Couldn't find base char component");
             return;
         }
-        RemoveCharacter(defeated);
-        Debug.Log(defeated.name + " has been defeated, " + activeSpeakers.Count + " characters remain");
-        if (activeSpeakers.Count == 1)
-        {
-            StartCoroutine(OnCharacterVictorious());
-        }
+        matchActive = false;
+        StartCoroutine(OnCharacterVictorious());
     }
-       protected override IEnumerator OnCharacterVictorious()
+    protected override IEnumerator OnCharacterVictorious()
     {
         if (gameManager.reportManager != null)
         {
             gameManager.reportManager.OnMatchEnd();
         }
-        BaseSpeaker winner = activeSpeakers.ElementAt(0);
-        winText.text = winner.name + " Wins";
-        winner.staminaComponent.foresightAuraHum.Stop();
-        winner.staminaComponent.foresightElectricityCrackle.Stop();
+        TimeSpan timeSpan = TimeSpan.FromSeconds(timerTracker);
+        winText.text = "Survived for " + timeSpan.Minutes + ":" + timeSpan.Seconds + ":" + timeSpan.Milliseconds;
         if (scoreText != null)
         {
-            UpdateScoreText(winner);
+            UpdateScoreText(speakerPlayer);
         }
         gameManager.bgmPlayer.Stop();
         gameManager.winBGMPlayer.PlayOneShot(gameManager.winSFX);
@@ -253,22 +244,23 @@ public class SpeakerDuelMode : BaseGameMode
         winScreen.SetActive(true);
         Time.timeScale = 0.0f;
     }
-    
+
 
 
 
     protected override void UpdateScoreText(BaseCharacter winner)
     {
-        if (winner.teamIndex == 1)
+        if (timerTracker > scoreTracker.timeToBeat)
         {
-            scoreTracker.teamOneWins += 1;
+            scoreTracker.timeToBeat = timerTracker;
+            scoreText.text = "NEW HIGH SCORE";
         }
         else
         {
-            scoreTracker.teamTwoWins += 1;
+            TimeSpan timeSpan = TimeSpan.FromSeconds(scoreTracker.timeToBeat);
+            scoreText.text = "High Score: " + timeSpan.Minutes + ":" + timeSpan.Seconds + ":" + timeSpan.Milliseconds;
         }
 
-        scoreText.text = scoreTracker.teamOneWins + "/" + scoreTracker.teamTwoWins;
     }
 
     private void Update()
@@ -278,43 +270,20 @@ public class SpeakerDuelMode : BaseGameMode
 
     protected virtual void TimerLogic()
     {
-        timerTracker -= Time.deltaTime;
-        if (timerTracker <= 0.0f)
+        timerTracker += Time.deltaTime;
+        timeUntilNextEcho -= Time.deltaTime;
+        if (timeUntilNextEcho <= 0.0f)
         {
-            if (!inSuddenDeath)
-            {
-                inSuddenDeath = true;
-                EnterSuddenDeath();
-            }
+            timeUntilNextEcho = TIME_UNTIL_NEW_ECHO_CREATED;
+            AddNewEcho();
         }
-        else
-        {
-            timerTracker = Mathf.Clamp(timerTracker, 0.0f, MatchData.instance.gameLength);
-            timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
-        }
+        matchDuration = TimeSpan.FromSeconds(timerTracker);
+        timerDisplay.text = matchDuration.Minutes + ":" + matchDuration.Seconds + ":" + matchDuration.Milliseconds;
+
     }
     protected override void EnterSuddenDeath()
     {
-        Debug.Log("Entering sudden death");
-        foreach (var cha in activeSpeakers)
-        {
-            cha.staminaComponent.EnterSuddenDeath();
-        }
-        gameEcho.EnterSuddenDeath();
-        timerDisplay.text = "X";
-
-        gameManager.postProcessingManager.OnSuddenDeathStarted();
-
-        AnnouncementData suddenDeathAnnouncement = new()
-        {
-            announcementDuration = SUDDEN_DEATH_SLOW_DOWN_DURATION,
-            announcementText = "SUDDEN DEATH",
-            customTimescale = SUDDEN_DEATH_SLOW_DOWN_AMOUNT,
-            priority = 999
-        };
-        gameManager.announcementManager.QueueNewAnnouncement(suddenDeathAnnouncement);
-
-        inSuddenDeath = true;
+       
     }
 
     public override void ResetGame()
@@ -332,17 +301,18 @@ public class SpeakerDuelMode : BaseGameMode
         }
         timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
 
-        foreach (Transform cha in speakerList)
-        {
-            BaseSpeaker speaker = cha.GetComponent<BaseSpeaker>();
-            ResetSpeaker(speaker);
-            speaker.DeactivatePlayer();
-        }
+
+        ResetSpeaker(speakerPlayer);
+        speakerPlayer.DeactivatePlayer();
+        
         InitEchoes();
 
         winScreen.SetActive(false);
         gameManager.ResetManager();
         StartCoroutine(StartGame());
+
+        timerTracker = 0.0f;
+        timeUntilNextEcho = TIME_UNTIL_NEW_ECHO_CREATED;
 
     }
 
@@ -356,10 +326,7 @@ public class SpeakerDuelMode : BaseGameMode
         cha.ResetComponents();
 
         StartCoroutine(SetCharacterPosition(cha));
-        activeSpeakers.Add(cha);
         characterUI[cha].gameObject.SetActive(true);
     }
 
-
 }
-

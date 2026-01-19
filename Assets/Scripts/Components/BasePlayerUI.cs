@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class BasePlayerUI : MonoBehaviour
 {
-    BaseSpeaker speakerOwner;
+    BaseCharacter speakerOwner;
     [SerializeField] TMP_Text staminaDisplay;
     [SerializeField] TMP_Text maxStaminaDisplay;
     [SerializeField] RawImage UIBackdrop;

@@ -20,6 +20,7 @@ public class StrikeBounceState : BounceState
     public override void ApplyBounceVelocity()
     {
         echo.UpdateSpeed(echoData.minSpeed);
+        base.ApplyBounceVelocity();
     }
 
     public virtual void OnHitboxCollision(HealthComponent hp)

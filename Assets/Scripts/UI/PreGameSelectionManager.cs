@@ -75,8 +75,6 @@ public class PreGameSelectionManager : MonoBehaviour
         }
         verticalSpacing = Mathf.Abs(verticalSpacing) * -1;
         InitSelectionManager();
-
-        InitMatchData();
     }
 
 
@@ -117,6 +115,7 @@ public class PreGameSelectionManager : MonoBehaviour
         MatchData.GameModeName gameModeName = (MatchData.GameModeName) Enum.Parse(typeof(MatchData.GameModeName), modeString);
         matchData.selectedGameMode = matchData.gameModeDictionary[gameModeName];
         modeDescription.text = matchData.selectedGameMode.modeDescription;
+        InitMatchData();
     }
     public void ContinueToGameSelect()
     {
@@ -139,7 +138,7 @@ public class PreGameSelectionManager : MonoBehaviour
     void InitMatchData()
     {
         matchData.gameTeams.Clear();
-        for (int i = 0; i < matchData.numberOfTeams; i++)
+        for (int i = 0; i < matchData.selectedGameMode.maximumTeams; i++)
         {
             matchData.gameTeams.Add(new MatchData.TeamInfo());
         }
@@ -151,10 +150,14 @@ public class PreGameSelectionManager : MonoBehaviour
         selector.Init(this, playerInfo.Count + 1);
 
         StartCoroutine(InitSelector(selector, newPlayer));
+        if (inputManager.playerCount == matchData.selectedGameMode.maximumTeams * (matchData.selectedGameMode.numberOfSpeakers + matchData.selectedGameMode.numberOfEchoes))
+        {
+            inputManager.DisableJoining();
+        }
     }
     public void AddNewKeyboardPlayer()
     {
-        if (hasExtraKeyboardPlayer || playerInfo.Count == 0) return;
+        if (hasExtraKeyboardPlayer || playerInfo.Count == 0 || playerInfo.Count + 1 > matchData.selectedGameMode.maximumTeams) return;
         hasExtraKeyboardPlayer = true;
 
         var manager = GetComponent<PlayerInputManager>();
@@ -276,21 +279,29 @@ public class PreGameSelectionManager : MonoBehaviour
 
         var p1SkillOneName = infoKeys[0].skillOne;
         var p1SkillTwoName = infoKeys[0].skillTwo;
-        var p2SkillOneName = infoKeys[1].skillOne;
-        var p2SkillTwoName = infoKeys[1].skillTwo;
 
-        p1SkillOneDisplay.texture  = matchData.skillIconDictionary[p1SkillOneName];
+        p1SkillOneDisplay.texture = matchData.skillIconDictionary[p1SkillOneName];
         p1SkillTwoDisplay.texture = matchData.skillIconDictionary[p1SkillTwoName];
-        p2SkillOneDisplay.texture = matchData.skillIconDictionary[p2SkillOneName];
-        p2SkillTwoDisplay.texture = matchData.skillIconDictionary[p2SkillTwoName];
 
         p1SkillOneDescription.text = matchData.skillDatabase.prefabDictionary[p1SkillOneName].skillDescription;
         p1SkillTwoDescription.text = matchData.skillDatabase.prefabDictionary[p1SkillTwoName].skillDescription;
-        p2SkillOneDescription.text = matchData.skillDatabase.prefabDictionary[p2SkillOneName].skillDescription;
-        p2SkillTwoDescription.text = matchData.skillDatabase.prefabDictionary[p2SkillTwoName].skillDescription;
 
         p1SkillOneTitle.text = p1SkillOneName.ToString();
         p1SkillTwoTitle.text = p1SkillTwoName.ToString();
+
+        if (infoKeys.Count() < 2) return;
+
+        var p2SkillOneName = infoKeys[1].skillOne;
+        var p2SkillTwoName = infoKeys[1].skillTwo;
+
+        p2SkillOneDisplay.texture = matchData.skillIconDictionary[p2SkillOneName];
+        p2SkillTwoDisplay.texture = matchData.skillIconDictionary[p2SkillTwoName];
+
+
+        p2SkillOneDescription.text = matchData.skillDatabase.prefabDictionary[p2SkillOneName].skillDescription;
+        p2SkillTwoDescription.text = matchData.skillDatabase.prefabDictionary[p2SkillTwoName].skillDescription;
+
+
         p2SkillOneTitle.text = p2SkillOneName.ToString();
         p2SkillTwoTitle.text = p2SkillTwoName.ToString();
     }
@@ -323,7 +334,7 @@ public class PreGameSelectionManager : MonoBehaviour
     public void ContinueToNextScreen(UISelector locked)
     {
         if (locked != null) SetPlayerTeam(locked);
-        if (playerInfo.Keys.Count < 2)
+        if (playerInfo.Keys.Count < matchData.selectedGameMode.minimumTeams)
         {
             return;
         }

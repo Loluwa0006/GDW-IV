@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-
     [HideInInspector] public static bool gamePaused = false;
     [HideInInspector] public static bool inSpecialStop = false; //hitstop, parrystop etc
     [HideInInspector] public static bool frameAfterSpecialStop = false; // cannot deflect the frame after special stop happens
@@ -26,20 +25,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] protected CinemachineTargetGroup targetGroup;
     [SerializeField] protected Animator mapAnimator;
     [SerializeField] protected Canvas canvas;
-    
-
-    //[SerializeField] protected BasePlayerUI healthUIPrefab;
-    //[SerializeField] protected GameObject UIHolder;
-    //[SerializeField] protected List<GameObject> spawnPositions = new();
-    //[SerializeField] protected TMP_Text timerDisplay;
-    //[SerializeField] protected GameObject winScreen;
-    //[SerializeField] protected TMP_Text winText;
 
     static int stopFrames = 0;
-
-
-
-
 
     BaseGameMode currentGameMode;
     private void Start()
@@ -130,4 +117,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;
         SceneManager.LoadScene(SceneRegistry.MainMenu.ToString());
     }
+
+
 }

@@ -20,9 +20,10 @@ public class MatchData : ScriptableObject
         SpeakerDuel, // 1v1 no echo players
         Classic, // 2v2 
         ScoreRace, // Get as many points as possible completing objectives
-        SkillDraft //Speaker duel, but with draft system
+        SkillDraft, //Speaker duel, but with draft system
+        EchoSurvival // Survive against waves of echoes
 
-            //these game modes probably won't make it into the game on release but idk 100%, maybe
+        //these game modes probably won't make it into the game on release but idk 100%, maybe
     }
     [System.Serializable]
     public class PlayerInfo
@@ -53,18 +54,11 @@ public class MatchData : ScriptableObject
         public int minimumTeams = 2;
         public int maximumTeams = 2;
         public int numberOfSpeakers = 2;
-        public int numberOfEchoes = 1;
-        public bool echoIsAI = true;
+        public int numberOfEchoes = 0;
+        public int numberOfRounds = 1;
     }
 
-
-
-    [HideInInspector] public int numberOfTeams = 2;
-
     [HideInInspector] public List<TeamInfo> gameTeams = new();
-
-    [HideInInspector] public int numberOfRounds = 2;
-
 
     [HideInInspector] public bool initPrefabs = false;
 

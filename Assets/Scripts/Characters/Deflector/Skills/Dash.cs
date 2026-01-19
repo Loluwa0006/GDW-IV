@@ -92,17 +92,8 @@ public class Dash : SpeakerBaseSkill
 
     public override void Process()
     {
-
-        if (oppositeSkillBuffer != null)
-        {
-            if (oppositeSkillBuffer.Buffered)
-            {
-                oppositeSkillBuffer.Consume();
-                fsm.TransitionToSkill(oppositeSkillIndex);
-            }
-        }
+        CancelSkillIfOppositeSkillBuffered();
     }
-
     public override void Exit()
     {
         SetDashParticleEmission(false);

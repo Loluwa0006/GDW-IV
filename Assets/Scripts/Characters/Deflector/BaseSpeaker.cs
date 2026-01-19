@@ -8,6 +8,8 @@ public class BaseSpeaker : BaseCharacter
     {
         base.DeactivatePlayer();
         deflectManager.gameObject.SetActive(false);
+        staminaComponent.foresightAuraHum.Stop();
+        staminaComponent.foresightElectricityCrackle.Stop();
     }
     public override void ActivatePlayer()
     {

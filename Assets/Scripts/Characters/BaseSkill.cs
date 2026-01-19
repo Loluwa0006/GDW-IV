@@ -103,4 +103,17 @@ public class BaseSkill : BaseState
 
     }
     
+    protected bool CancelSkillIfOppositeSkillBuffered()
+    {
+        if (oppositeSkillBuffer != null)
+        {
+            if (oppositeSkillBuffer.Buffered)
+            {
+                oppositeSkillBuffer.Consume();
+                fsm.TransitionToSkill(oppositeSkillIndex);
+                return true;
+            }
+        }
+        return false;
+    }
 }

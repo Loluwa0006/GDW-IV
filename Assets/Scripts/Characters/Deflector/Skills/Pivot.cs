@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class Pivot : SpeakerBaseSkill
 {
@@ -145,17 +144,9 @@ public class Pivot : SpeakerBaseSkill
         if (moveDir.magnitude > MOVE_DEADZONE)
         {
             AirStrafeLogic();
-        }     
-
-        if (oppositeSkillBuffer != null)
-        {
-            if (oppositeSkillBuffer.Buffered)
-            {
-                oppositeSkillBuffer.Consume();
-                fsm.TransitionToSkill(oppositeSkillIndex);
-            }
         }
 
+        if (CancelSkillIfOppositeSkillBuffered()) return;
         HitboxCollisionLogic();
     }
 

@@ -38,7 +38,16 @@ public class BounceState : EchoBaseState
 
     public virtual void ApplyBounceVelocity()
     {
-        character.velocityManager.OverwriteInternalSpeed(oldSpeed);
+
+        if (echo.viableTargets.Count == 1)
+        {
+            character.velocityManager.OverwriteInternalSpeed(oldSpeed * -1.0f);
+            Debug.Log("Flipping velocity due to no viable targets.");
+        }
+        else
+        {
+            echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
+        }
     }
 
 

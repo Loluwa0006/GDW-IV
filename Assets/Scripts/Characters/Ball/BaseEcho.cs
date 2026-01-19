@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
-using UnityEngine.TextCore.Text;
 [RequireComponent(typeof(Rigidbody))]
 
 public class BaseEcho : BaseCharacter
 {
 
-    public HashSet<Transform> characterList = new();
+    public HashSet<Transform> viableTargets = new();
     public UnityEvent<BaseEcho> echoCollision = new();
     public UnityEvent<BaseEcho> echoDeflected = new();
     public UnityEvent<Vector3> echoWarped = new();
@@ -32,29 +30,16 @@ public class BaseEcho : BaseCharacter
 
     protected Transform currentTarget;
 
-    protected Vector2 startingPos;
+    Vector3 resetPos;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Awake()
-    {
-        startingPos = transform.position;
-    }
     public override void InitPlayer(MatchData.PlayerInfo info, int index)
     {
         teamIndex = index;
         name = "Echo " + index;
         groundIndicator.Init(playerColors[index - 1], index);
-
-
      
         StartCoroutine(InitStateMachine(info));
     }
-
-    private void Start()
-    {
-        SuspendProjectile();
-    }
-
 
     protected override IEnumerator InitStateMachine(MatchData.PlayerInfo info)
     {
@@ -65,10 +50,8 @@ public class BaseEcho : BaseCharacter
         init = true;
     }
 
-   public virtual void InitProjectile(HashSet<Transform> charList)
+   public virtual void InitProjectile(HashSet<Transform> charList, Vector3 startingPos)
     {
-        if (charList.Count < 2) { return; }
-
         if (inputManager == null)
         {
             inputManager = GetComponentInChildren<InputManager>();
@@ -78,9 +61,10 @@ public class BaseEcho : BaseCharacter
             unscaledAudioSource = GetComponent<AudioSource>();
         }
 
-        characterList = charList;
-        currentTarget = characterList.ElementAt(0);
+        viableTargets = charList;
+        currentTarget = viableTargets.ElementAt(0);
         transform.position = startingPos;
+        resetPos = startingPos;
 
         unscaledAudioSource.outputAudioMixerGroup.audioMixer.updateMode = UnityEngine.Audio.AudioMixerUpdateMode.UnscaledTime;
 
@@ -92,7 +76,7 @@ public class BaseEcho : BaseCharacter
     }
     public void EnableProjectile()
     {
-        transform.position = startingPos;
+        transform.position = resetPos;
         UpdateSpeed(echoData.activeMinSpeed);
         ResumeProjectile();
     }
@@ -133,6 +117,7 @@ public class BaseEcho : BaseCharacter
         playerModel.enabled = !hide;
         ballActive = hitboxActive;
         velocityManager.freeze = true;
+        Debug.Log("Suspending projectile for echo " + name);
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -151,7 +136,12 @@ public class BaseEcho : BaseCharacter
 
     public virtual void FindNewTarget(Transform lastHitCharacter)
     {
-        HashSet<Transform> targetList = new (characterList);
+        if (viableTargets.Count <= 1)
+        {
+            Debug.LogWarning("Echo " + name + " has no viable targets to switch to!");
+            return;
+        }
+        HashSet<Transform> targetList = new (viableTargets);
         targetList.Remove(lastHitCharacter);
         int randomIndex = Random.Range(0, targetList.Count);
         currentTarget = targetList.ElementAt(randomIndex);

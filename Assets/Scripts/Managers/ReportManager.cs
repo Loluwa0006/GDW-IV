@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using XCharts.Runtime;
 
 public class ReportManager : MonoBehaviour
@@ -31,7 +32,8 @@ public class ReportManager : MonoBehaviour
     [SerializeField] LineChart p2StaminaChart;
 
     [Header("Other")]
-    [SerializeField] GameObject reportDisplay;
+    public GameObject reportDisplay;
+
     public class PlayerData
     {
         public List<StaminaEntry> staminaTracker = new();
@@ -198,5 +200,4 @@ public class ReportManager : MonoBehaviour
         }
 
     }
-
 }

@@ -14,5 +14,10 @@ public class TerrainBounceState : BounceState
         if (bounceParticles != null) bounceParticles.Play();
         base.Enter(msg);
     }
- 
+
+
+    public override void ApplyBounceVelocity()
+    {
+        echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
+    }
 }

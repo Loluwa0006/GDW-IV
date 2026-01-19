@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +5,6 @@ using UnityEngine.Events;
 
 public class BaseCharacter : MonoBehaviour
 {
-
     public UnityEvent<BaseCharacter> requestedPause =  new();
 
     public CharacterStateMachine characterStateMachine;
@@ -45,7 +43,6 @@ public class BaseCharacter : MonoBehaviour
         StartCoroutine(InitStateMachine(info));
         StartCoroutine(AssignLookTarget());
     }
-
     protected virtual IEnumerator InitStateMachine(MatchData.PlayerInfo info)
     {
         yield return new WaitForFixedUpdate();

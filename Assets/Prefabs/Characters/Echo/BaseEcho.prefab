@@ -10642,6 +10642,7 @@ MonoBehaviour:
     m_NumColorKeys: 2
     m_NumAlphaKeys: 3
   ignitionTravelParticles: {fileID: 3503571176607604448}
+  bounceCooldown: 7
 --- !u!1 &7003127194190110033
 GameObject:
   m_ObjectHideFlags: 0

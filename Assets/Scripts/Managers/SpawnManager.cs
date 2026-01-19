@@ -6,6 +6,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] Transform speakerDuelSpawns;
     [SerializeField] Transform classicSpawns;
     [SerializeField] Transform timeRaceSpawns;
+    [SerializeField] Transform echoSpawn;
 
 
     public List<Vector3> GetSpawnsFromTransform(Transform spawnHolder)
@@ -34,4 +35,8 @@ public class SpawnManager : MonoBehaviour
         return GetSpawnsFromTransform(timeRaceSpawns);
     }
 
+    public Vector3 GetAIEchoSpawn()
+    {
+        return echoSpawn.position;
+    }
 }
