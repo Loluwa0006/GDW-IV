@@ -7,7 +7,7 @@ public class BaseCharacter : MonoBehaviour
 {
     public UnityEvent<BaseCharacter> requestedPause =  new();
 
-    public CharacterStateMachine characterStateMachine;
+    public CharacterStateMachine fsm;
 
     public StaminaComponent staminaComponent;
     public InputManager inputManager;
@@ -47,8 +47,8 @@ public class BaseCharacter : MonoBehaviour
     {
         yield return new WaitForFixedUpdate();
         inputManager.InitInputComponent(info); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
-        characterStateMachine.CreateSkills(info);
-        characterStateMachine.InitMachine();
+        fsm.CreateSkills(info);
+        fsm.InitMachine();
         init = true;
     }
   
@@ -66,13 +66,13 @@ public class BaseCharacter : MonoBehaviour
             requestedPause.Invoke(this);
         }
         if (GameManager.inSpecialStop || !init) { return; }
-        characterStateMachine.UpdateState();
+        fsm.UpdateState();
     }
 
     private void FixedUpdate()
     {
         if (GameManager.inSpecialStop || !init) { return; }
-        characterStateMachine.FixedUpdateState();
+        fsm.FixedUpdateState();
         if (lookTarget != null)
         {
             playerModel.transform.LookAt(lookTarget);
@@ -122,7 +122,7 @@ public class BaseCharacter : MonoBehaviour
 
         staminaComponent.ResetComponent(true);
         velocityManager.ResetComponent();
-        characterStateMachine.ResetComponent();
+        fsm.ResetComponent();
     }
 
 }

@@ -25,9 +25,9 @@ public class Dash : SpeakerBaseSkill
     List<HealthComponent> struckTargets = new();
 
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         dashSpeed = dashDistance / dashDuration;
         SetDashParticleEmission(false);
     }

@@ -23,9 +23,8 @@ public class TutorialTrigger : MonoBehaviour
 
     [SerializeField, ShowIf(nameof(RequiresCamera))] CinemachineGroupFraming groupFraming;
     [SerializeField, ShowIf(nameof(RequiresCamera))] float newFrameSize = 12.0f;
-        
 
-    
+
 
     [System.Serializable]
     public enum TriggerType
@@ -154,7 +153,7 @@ public class TutorialTrigger : MonoBehaviour
                     manager.StartSection(instantSectionSwap);
                     break;
                 case TriggerType.GrantSkill:
-                    player.characterStateMachine.AddNewSkill(skillIndex, skill);
+                    player.fsm.AddNewSkill(skillIndex, skill);
                     if (mesh != null) mesh.enabled = false;
                     break;
                 case TriggerType.AdjustCamera:

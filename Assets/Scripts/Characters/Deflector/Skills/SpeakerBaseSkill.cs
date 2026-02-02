@@ -4,9 +4,9 @@ using UnityEngine;
 public class SpeakerBaseSkill : BaseSkill
 {
     [HideInInspector] public BaseSpeaker speaker;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         speaker = cha.GetComponent<BaseSpeaker>();
     }
     public override bool OnCharacterHit(DamageInfo info)

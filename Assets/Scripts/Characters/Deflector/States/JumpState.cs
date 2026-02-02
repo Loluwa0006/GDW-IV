@@ -5,9 +5,9 @@ public class JumpState : SpeakerAirState
     public AirStateResource.JumpInfo currentJumpInfo;
     [SerializeField] int airJumps = 1;
     int remainingAirJumps = 1;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         currentJumpInfo.InitJumpInfo();
     }
     public override void Enter(Dictionary<string, object> msg)

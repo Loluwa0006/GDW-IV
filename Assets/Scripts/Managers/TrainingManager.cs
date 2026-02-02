@@ -163,8 +163,8 @@ public class TrainingManager : GameManager
     public void AssignNewSkill(SkillName name)
     {
         if (playerSpeaker == null) { return; }
-        if (!playerSpeaker.inputManager.GetAction("SkillTwo").IsPressed()) playerSpeaker.characterStateMachine.AddNewSkill(1, name);
-        else playerSpeaker.characterStateMachine.AddNewSkill(2, name);
+        if (!playerSpeaker.inputManager.GetAction("SkillTwo").IsPressed()) playerSpeaker.fsm.AddNewSkill(1, name);
+        else playerSpeaker.fsm.AddNewSkill(2, name);
     }
 
     public void EnableInfiniteForesight()

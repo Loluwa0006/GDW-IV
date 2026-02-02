@@ -52,7 +52,7 @@ MonoBehaviour:
     functionalAggression: 0.5
     functionalDeflectionChance: 85
     aggressionLimiter: 0.75
-  velocityManager: {fileID: 7059601144015743186}
+  velocityManager: {fileID: 0}
   character: {fileID: 3089438711533713663}
   deflectBuffer: {fileID: 2405198557784916279}
   groundMask:
@@ -172,6 +172,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f70bde8934a86554db11bcd77d1a738c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStateMachine
+--- !u!114 &1965806799636224381 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 634869520480553850, guid: 2e5faa123585e3441b221f9a4c4cb8a9, type: 3}
+  m_PrefabInstance: {fileID: 1407498756377154055}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3225170875418683762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdaaf474c4df3aa4286a4571a3342edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
 --- !u!114 &2405198557784916279 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3668335764512920368, guid: 2e5faa123585e3441b221f9a4c4cb8a9, type: 3}
@@ -208,11 +219,11 @@ MonoBehaviour:
   requestedPause:
     m_PersistentCalls:
       m_Calls: []
-  characterStateMachine: {fileID: 1073364874637614035}
+  fsm: {fileID: 1073364874637614035}
   staminaComponent: {fileID: 7878698330900051193}
   inputManager: {fileID: 6075940958530980313}
   playerModel: {fileID: 7206696546718447780}
-  velocityManager: {fileID: 7059601144015743186}
+  velocityManager: {fileID: 1965806799636224381}
   groundIndicator: {fileID: 4935460837617292291}
   unscaledAudioSource: {fileID: 2576714988844713140}
   playerColors:
@@ -281,17 +292,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83e763827717a9242a577b844181c5e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeflectManager
---- !u!114 &7059601144015743186 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8246316863854082773, guid: 2e5faa123585e3441b221f9a4c4cb8a9, type: 3}
-  m_PrefabInstance: {fileID: 1407498756377154055}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bdaaf474c4df3aa4286a4571a3342edd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
 --- !u!23 &7206696546718447780 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8614019372539046563, guid: 2e5faa123585e3441b221f9a4c4cb8a9, type: 3}

@@ -8,9 +8,9 @@ public class Polarity : SpeakerBaseSkill
     [SerializeField] PolarityGrenade grenade;
     [SerializeField] VelocityManager grenadeVelocityManager;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         grenade.InitProjectile();
     }
 

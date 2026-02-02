@@ -57,9 +57,9 @@ public class Pivot : SpeakerBaseSkill
         public Vector3 point;
     }
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         maxFallSpeed = Mathf.Abs(maxFallSpeed) * -1; //make sure its negative;
         gravity = Mathf.Abs(gravity);
         pivotingParticles.Clear();

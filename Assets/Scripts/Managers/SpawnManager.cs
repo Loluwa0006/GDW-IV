@@ -11,7 +11,7 @@ public class SpawnManager : MonoBehaviour
 
     public List<Vector3> GetSpawnsFromTransform(Transform spawnHolder)
     {
-        List<Vector3> spawns = new ();
+        List<Vector3> spawns = new();
         foreach (Transform spawn in spawnHolder)
         {
             Debug.Log("Looking at spawn: " + spawn.name + " at position " + spawn.position);

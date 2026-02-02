@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -54,10 +55,9 @@ public class Afterimage : SpeakerBaseSkill
 
 
     BaseEcho deflectTarget;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
-        targetGroup = FindFirstObjectByType<CinemachineTargetGroup>();
+        base.InitState(cha, fsm);
         cloneObject.transform.parent = null; // it shouldn't follow the player around
         DestroyClone();
         wallMask = LayerMask.GetMask("Wall");
@@ -72,10 +72,24 @@ public class Afterimage : SpeakerBaseSkill
 
         cloneObject.Disable();
 
+        StartCoroutine(FindTargetGroup());
+    }
+
+    IEnumerator FindTargetGroup()
+    {
+        int emergencyExit = 0;
+        yield return new WaitForFixedUpdate();
+        do { 
+            targetGroup = FindFirstObjectByType<CinemachineTargetGroup>();
+            yield return new WaitForFixedUpdate();
+            emergencyExit += 1;
+        } while (targetGroup == null || emergencyExit < 100);
+
     }
 
     public override void Enter(Dictionary<string, object> msg = null)
     {
+        
         placementTracker = 0.0f;
         Debug.Log("Entered afterimage state");
         base.Enter(msg);

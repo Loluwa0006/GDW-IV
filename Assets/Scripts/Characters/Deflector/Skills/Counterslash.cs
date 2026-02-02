@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class Counterslash : SpeakerBaseSkill
 {
@@ -50,12 +51,12 @@ public class Counterslash : SpeakerBaseSkill
         main.startColor = chargedColor;
     }
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         manager = FindFirstObjectByType<GameManager>();
 
-        deflectBuffer = s_machine.TryGetBuffer("DeflectBuffer");
+        deflectBuffer = fsm.TryGetBuffer("DeflectBuffer");
         if (deflectBuffer == null)
         {
             Debug.LogError("Character " + cha + " missing deflect buffer");
@@ -63,13 +64,20 @@ public class Counterslash : SpeakerBaseSkill
 
         for (int i = 0; i < NUMBER_OF_DEFLECT_PARTICLE_OBJECTS; i++) 
         {
-            var particles = Instantiate(specialDeflectParticles, transform);
-            particlesList.Add(particles);
-            particles.Stop();
+            var particle = Instantiate(specialDeflectParticles, transform);
+            particlesList.Add(particle);
+           StartCoroutine(InitDeflectionParticle(particle));
         }
         windSwirler.Stop();
     }
 
+    IEnumerator InitDeflectionParticle(ParticleSystem ps)
+    {
+        ps.transform.position = new Vector3(0, -1000, 0); //move it out of sight
+        ps.Play();
+        yield return new WaitForFixedUpdate();
+        ps.Stop();
+    }
     public override void Enter(Dictionary<string, object> msg = null)
     {
         base.Enter(msg);

@@ -28,6 +28,7 @@ public class EchoSurvivalMode : BaseGameMode
 
     [Header("Other Settings")]
     [SerializeField] protected float speakerCameraRadius = 12.0f;
+    [SerializeField] protected float echoCameraWeight = 0.45f; // less weight because there may be multiple echoes
 
     //public HashSet<Transform> speakerList = new();
     //static HashSet<BaseSpeaker> activeSpeakers = new();
@@ -87,7 +88,7 @@ public class EchoSurvivalMode : BaseGameMode
             speakerPlayer.transform
         };
         newEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
-        gameManager.AddCharacterToCameraTargetGroup(newEcho.transform, 1.0f, 2.5f);
+        gameManager.AddCharacterToCameraTargetGroup(newEcho.transform, echoCameraWeight, 2.5f);
         gameEchoes.Add(newEcho);
         newEcho.EnableProjectile();
         newEcho.transform.name = "Echo " + gameEchoes.Count;
@@ -278,8 +279,7 @@ public class EchoSurvivalMode : BaseGameMode
             AddNewEcho();
         }
         matchDuration = TimeSpan.FromSeconds(timerTracker);
-        timerDisplay.text = matchDuration.Minutes + ":" + matchDuration.Seconds + ":" + matchDuration.Milliseconds;
-
+        timerDisplay.text = $"<mspace=0.6em>{matchDuration.ToString("mm\\:ss\\.ff")}</mspace>";
     }
     protected override void EnterSuddenDeath()
     {
@@ -313,7 +313,6 @@ public class EchoSurvivalMode : BaseGameMode
 
         timerTracker = 0.0f;
         timeUntilNextEcho = TIME_UNTIL_NEW_ECHO_CREATED;
-
     }
 
     protected void ResetSpeaker(BaseSpeaker cha)

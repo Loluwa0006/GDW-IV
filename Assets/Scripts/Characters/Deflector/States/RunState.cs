@@ -6,9 +6,9 @@ public class RunState : SpeakerMoveState
 
     [SerializeField] ParticleSystem runTrails;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         if (runTrails != null) runTrails.Stop();
     }
 

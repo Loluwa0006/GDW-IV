@@ -5628,7 +5628,7 @@ MonoBehaviour:
   requestedPause:
     m_PersistentCalls:
       m_Calls: []
-  characterStateMachine: {fileID: 2120398294676015572}
+  fsm: {fileID: 2120398294676015572}
   staminaComponent: {fileID: 9141940878194550526}
   inputManager: {fileID: 5157131815780730791}
   playerModel: {fileID: 8614019372539046563}

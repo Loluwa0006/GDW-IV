@@ -45,8 +45,8 @@ public class BaseEcho : BaseCharacter
     {
         yield return new WaitForFixedUpdate();
         if (playerControlled) inputManager.InitInputComponent(info);        //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
-        characterStateMachine.CreateSkills(info);
-        characterStateMachine.InitMachine();
+        fsm.CreateSkills(info);
+        fsm.InitMachine();
         init = true;
     }
 
@@ -71,7 +71,7 @@ public class BaseEcho : BaseCharacter
 
         echoData.InitData();
       
-        if (!characterStateMachine.initMachine) characterStateMachine.InitMachine();
+        if (!fsm.initMachine) fsm.InitMachine();
 
     }
     public void EnableProjectile()
@@ -85,7 +85,7 @@ public class BaseEcho : BaseCharacter
     {
         playerModel.enabled = true;
         ballActive = true;
-        characterStateMachine.TransitionTo<FlyingState>();
+        fsm.TransitionTo<FlyingState>();
         velocityManager.freeze = false;
     }
 
@@ -124,13 +124,13 @@ public class BaseEcho : BaseCharacter
     {
         if (GameManager.inSpecialStop || !ballActive || currentTarget == null) { return; }
         playerModel.transform.LookAt(currentTarget.transform.position);
-        characterStateMachine.FixedUpdateState();
+        fsm.FixedUpdateState();
     }
 
     private void Update()
     {
         if (GameManager.inSpecialStop || !ballActive || currentTarget == null) { return; }
-        characterStateMachine.UpdateState();
+        fsm.UpdateState();
     }
 
 
@@ -169,7 +169,7 @@ public class BaseEcho : BaseCharacter
     public void EnterSuddenDeath()
     {
         echoData.activeMinSpeed = echoData.igniteSpeed;
-       if ( characterStateMachine.currentState.TryGetComponent(out EchoBaseState state) )
+       if ( fsm.currentState.TryGetComponent(out EchoBaseState state) )
         {
             state.OnBallIgnited();
         }
@@ -197,7 +197,7 @@ public class BaseEcho : BaseCharacter
             ["deflector"] = speaker,
             ["usedSkill"] = true,  
         };
-        characterStateMachine.TransitionTo<DeflectionBounceState>(msg);
+        fsm.TransitionTo<DeflectionBounceState>(msg);
         Debug.Log("Forcing deflect of echo " + name + " by speaker " + speaker.name);
     }
 

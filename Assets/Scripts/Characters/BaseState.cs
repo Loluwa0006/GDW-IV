@@ -21,9 +21,9 @@ public class BaseState : MonoBehaviour
     protected PlayerInput playerInput;
 
 
-    public virtual void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public virtual void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        fsm = s_machine;
+        this.fsm = fsm;
         character = cha;
         groundMask = LayerMask.GetMask("Ground");
         _rbCollider = cha.GetComponent<Collider>();

@@ -33,6 +33,8 @@ public class HealthComponent : MonoBehaviour
     Dictionary<string, StatusEffect> statusEffects = new();
 
     bool playerDead = false;
+    List<string> expiredEffects = new();
+
 
     public void AddStatusEffect(StatusEffect effect, string ID)
     {
@@ -73,42 +75,39 @@ public class HealthComponent : MonoBehaviour
     }
     public virtual DamageResult Damage(DamageInfo originalInfo)
     {
-
         DamageInfo modifiedInfo = originalInfo.CloneInfo();
-        Debug.Log("OG damage = " + originalInfo.damage);
 
         foreach (var effect in statusEffects.Values)
         {
             modifiedInfo.damage = effect.ModifyDamage(originalInfo);
         }
-        Debug.Log("new damage = " + modifiedInfo.damage);
         if (modifiedInfo.damage <= 0) modifiedInfo.damage = 0; //if damage is negative, entity heals, which is wrong;
+
         else if (!playerDead)
         {
-
             entityDamaged.Invoke(modifiedInfo);
             GameManager.ApplySpecialStop(modifiedInfo.hitstop);
         }
             
         OnEntityDamaged(modifiedInfo);
 
+        return GetDamageResult(originalInfo, modifiedInfo);
+    }
+    DamageResult GetDamageResult(DamageInfo originalInfo, DamageInfo modifiedInfo)
+    {
         if (originalInfo.damage > modifiedInfo.damage)
         {
-            Debug.Log("Weakened, taking extra dmg");
             return DamageResult.Weakened;
         }
         else if (originalInfo.damage < modifiedInfo.damage)
         {
             if (modifiedInfo.damage == 0)
             {
-                Debug.Log("invuln to type " + originalInfo.damageSource);
                 return DamageResult.InvincibleToType;
             }
-            Debug.Log("armored, taking less dmg");
             return DamageResult.Armored;
         }
-        Debug.Log("taking normal damage");
-            return DamageResult.Success;
+        return DamageResult.Success;
     }
     public virtual void KillEntity(DamageInfo info, HealthComponent hp)
     {
@@ -121,7 +120,7 @@ public class HealthComponent : MonoBehaviour
         if (playerDead) { Debug.Log("Player " + hurtboxOwner.name + " is dead.");  return; }
         if (!hurtboxOwner.TryGetComponent(out BaseSpeaker speaker)) return;
         
-        if (speaker.characterStateMachine.currentState.OnCharacterHit(info))
+        if (speaker.fsm.currentState.OnCharacterHit(info))
         {
             Vector3 currentSpeed = speaker.velocityManager.GetInternalSpeed();
             currentSpeed.y = info.knockbackLaunch;
@@ -139,7 +138,6 @@ public class HealthComponent : MonoBehaviour
 
     private void FixedUpdate()
     {
-        List<string> expiredEffects = new();
 
         if (GameManager.inSpecialStop || GameManager.gamePaused) return;
         

@@ -33,9 +33,9 @@ public class Recall : SpeakerBaseSkill
 
     Rigidbody _rb;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         StartCoroutine(FindOppositeSpeaker());
         blade.Holster();
         _rb = speaker.GetComponent<Rigidbody>();

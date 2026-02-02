@@ -110,7 +110,6 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetInt("ResolutionY", y);
         OnChangeMade();
     }
-
     public void OnChangeMade()
     {
         saveButton.gameObject.SetActive(true);

@@ -338,7 +338,7 @@ public class SpeakerDuelMode : BaseGameMode
             ResetSpeaker(speaker);
             speaker.DeactivatePlayer();
         }
-        InitEchoes();
+        ResetEcho(gameEcho);
 
         winScreen.SetActive(false);
         gameManager.ResetManager();
@@ -352,7 +352,6 @@ public class SpeakerDuelMode : BaseGameMode
         cha.ActivatePlayer();
         gameManager.AddCharacterToCameraTargetGroup(cha.transform);
 
-
         cha.ResetComponents();
 
         StartCoroutine(SetCharacterPosition(cha));
@@ -360,6 +359,12 @@ public class SpeakerDuelMode : BaseGameMode
         characterUI[cha].gameObject.SetActive(true);
     }
 
+    protected void ResetEcho(BaseEcho echo)
+    {
+        echo.EnableProjectile();
+        echo.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
+        echo.SuspendProjectile();
+    }
+
 
 }
-

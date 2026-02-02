@@ -26,6 +26,7 @@ public class Takeback : SpeakerBaseSkill
     [SerializeField] float decelRate = 0.9f;
     [SerializeField] float tacklePushback = 8.0f;
     [SerializeField] int staminaFreeHoldFrames = 12;
+    [SerializeField] int postSuccessfulTackleIFames = 10;
 
 
     [SerializeField] Transform ballHolder;
@@ -56,9 +57,9 @@ public class Takeback : SpeakerBaseSkill
     BaseEcho heldBall;
     BaseSpeaker enemySpeaker;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         catchDuration = speaker.deflectManager.GetGoodDeflectDuration();
         StartCoroutine(FindOppositeSpeaker());
         throwParticle.transform.SetParent(null);
@@ -88,7 +89,6 @@ public class Takeback : SpeakerBaseSkill
             staminaComponent.DamageStamina(staminaCost, 0, false);
         }
         skillBuffer.Consume();
-        ballHolder.parent = speaker.playerModel.transform;
         ballHolder.transform.position = speaker.deflectManager.transform.position;
     }
 
@@ -206,7 +206,7 @@ public class Takeback : SpeakerBaseSkill
     {
         if (heldBall == null) return;
         heldBall.transform.parent = null;
-        heldBall.characterStateMachine.TransitionTo<FlyingState>();
+        heldBall.fsm.TransitionTo<FlyingState>();
         character.unscaledAudioSource.PlayOneShot(throwSFX);
         EnableHeldEcho();
         heldBall.FindNewTarget(speaker.transform);
@@ -245,7 +245,7 @@ public class Takeback : SpeakerBaseSkill
         if (heldBall == null) return;
         DropBall();
         RemoveSignals();
-        speaker.healthComponent.AddStatusEffect(new InvulnerabilityEffect(DamageSource.Ball, 10, false), "TakebackPostSuccessfulTackle");// remove infinite, replace with temp
+        speaker.healthComponent.AddStatusEffect(new InvulnerabilityEffect(DamageSource.Ball, postSuccessfulTackleIFames, false), "TakebackPostSuccessfulTackle");// remove infinite, replace with temp
     }
 
 

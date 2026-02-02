@@ -15,7 +15,7 @@ public class AISpeaker : BaseSpeaker
     private void FixedUpdate()
     {
         if (GameManager.inSpecialStop || !init) { return; }
-        characterStateMachine.FixedUpdateState();
+        fsm.FixedUpdateState();
         if (lookTarget != null)
         {
             playerModel.transform.LookAt(lookTarget);

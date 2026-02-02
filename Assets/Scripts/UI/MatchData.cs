@@ -79,6 +79,11 @@ public class MatchData : ScriptableObject
 
     public void InitData()
     {
+        if (skillDatabase.skillPrefabs.Count <= 0)
+        {
+            Debug.LogError("Missing skill prefabs");
+            return;
+        }
         foreach (var kvp in skillDatabase.skillPrefabs)
         {
             skillPrefabDictionary[kvp.skillName] = kvp.skillPrefab;

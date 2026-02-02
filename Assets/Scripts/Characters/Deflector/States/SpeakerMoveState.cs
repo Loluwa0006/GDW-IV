@@ -16,9 +16,9 @@ public class SpeakerMoveState : SpeakerBaseState
 
     protected Vector3 moveDir = new();
     
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         _rb = cha.GetComponent<Rigidbody>();
         playerInput = cha.GetComponent<PlayerInput>();
     }
@@ -58,7 +58,7 @@ public class SpeakerMoveState : SpeakerBaseState
             fsm.TransitionTo<IdleState>();
             return;
         }
-        Vector3 newSpeed = moveDir.normalized * moveAcceleration;
+        Vector3 newSpeed = moveDir * moveAcceleration;
      
         character.velocityManager.AddInternalVelocity(newSpeed);
         character.velocityManager.ClampInternalVelocity(moveSpeed);

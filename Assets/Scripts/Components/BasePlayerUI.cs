@@ -41,7 +41,7 @@ public class BasePlayerUI : MonoBehaviour
         speakerOwner = cha;
         if (UIBackdrop != null) UIBackdrop.color = UIColors[cha.teamIndex - 1];
         if (info != null)  SetSkillIcons(info.skillOne, info.skillTwo);
-        cha.characterStateMachine.updatedSkills.AddListener(SetSkillIcons);
+        cha.fsm.updatedSkills.AddListener(SetSkillIcons);
 
         if (info.teamIndex == 2)
         {
@@ -65,8 +65,8 @@ public class BasePlayerUI : MonoBehaviour
     void SetSkillIconColors()
     {
         if (speakerOwner == null) return;
-        var skillOne = speakerOwner.characterStateMachine.TryGetSkill(1);
-        var skillTwo = speakerOwner.characterStateMachine.TryGetSkill(2);
+        var skillOne = speakerOwner.fsm.TryGetSkill(1);
+        var skillTwo = speakerOwner.fsm.TryGetSkill(2);
         if (skillOneIcon.gameObject.activeSelf && skillOne != null)
         {
             skillOneIcon.color = skillOne.SkillAvailable()? skillAvailable : skillUnavailable;

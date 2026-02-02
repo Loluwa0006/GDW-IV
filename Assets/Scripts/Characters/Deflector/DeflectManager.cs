@@ -67,7 +67,7 @@ public class DeflectManager : MonoBehaviour
         {
             mesh = GetComponent<MeshRenderer>();
         }
-        character.characterStateMachine.transitionedStates.AddListener(OnStateTransitioned);
+        character.fsm.transitionedStates.AddListener(OnStateTransitioned);
         partialDeflectBrokenParticles.Stop();
         cooldownTracker = 0.0f;
         mesh.enabled = false;
@@ -191,11 +191,11 @@ public class DeflectManager : MonoBehaviour
         yield return null;
         cooldownTracker = 0.0f;
 
-        if (wasPartial || character.characterStateMachine.currentState is GetHitState)
+        if (wasPartial || character.fsm.currentState is GetHitState)
         {
             partialDeflectSparks.Play();
             partialDeflectInfo.knockbackDir = (ball.transform.position - character.transform.position).normalized;
-            character.characterStateMachine.TransitionTo<GetHitState>(getHitData);
+            character.fsm.TransitionTo<GetHitState>(getHitData);
         }
 
         else deflectSparks.Play();
@@ -217,9 +217,9 @@ public class DeflectManager : MonoBehaviour
     {
         wasDeflectingBeforeFreeze = IsDeflecting();
 
-        var skillOne = character.characterStateMachine.TryGetSkill(1);
+        var skillOne = character.fsm.TryGetSkill(1);
        if (skillOne != null) skillOne.OnSpecialStopStarted();
-       var skillTwo = character.characterStateMachine.TryGetSkill(2);
+       var skillTwo = character.fsm.TryGetSkill(2);
         if (skillTwo != null) skillTwo.OnSpecialStopStarted();
     }
 

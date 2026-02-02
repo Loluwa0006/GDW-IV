@@ -9,11 +9,9 @@ public class SpeakerAirState : SpeakerBaseState
     [SerializeField] protected BufferHelper skillTwoBuffer;
     protected float DAMPING_RATE = 0.985f;
     protected Rigidbody _rb;
-
-
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         _rb = cha.GetComponent<Rigidbody>();
     }
 
@@ -37,13 +35,13 @@ public class SpeakerAirState : SpeakerBaseState
 
         Vector3 currentVel = character.velocityManager.GetInternalSpeed();
         Vector3 moveSpeed = new (currentVel.x, 0, currentVel.z);
-        if (moveSpeed.magnitude < airStateHelper.airStrafeSpeed)
+        if (moveSpeed.magnitude < airStateHelper.airMoveSpeed)
         {
-            Vector3 strafeSpeed = new Vector3(moveDir.x, 0, moveDir.z).normalized * airStateHelper.airAcceleration;
+            Vector3 strafeSpeed = new Vector3(moveDir.x, 0, moveDir.z).normalized * airStateHelper.AirAcceleration;
             moveSpeed.x += strafeSpeed.x;
             moveSpeed.z += strafeSpeed.z;
 
-            moveSpeed = Vector3.ClampMagnitude(moveSpeed, airStateHelper.airStrafeSpeed);
+            moveSpeed = Vector3.ClampMagnitude(moveSpeed, airStateHelper.airMoveSpeed);
         }
         else
         {

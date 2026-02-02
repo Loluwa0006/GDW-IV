@@ -8,9 +8,9 @@ public class FallState : SpeakerAirState
     [Header("Particles")]
     [SerializeField] ParticleSystem landParticles;
     AirStateResource.JumpInfo currentJumpInfo;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         JumpState jumpState =  (JumpState) fsm.TryGetState<JumpState>();
         if (jumpState != null )
         {

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Provoke : SpeakerBaseSkill
 {
-    BaseEcho[] activeEchoes;
     [SerializeField] int tauntDuration = 12;
     [SerializeField] int maxStaminaRecoveryRate = 9;
     [SerializeField] GameObject warningCanvas;
@@ -15,10 +14,9 @@ public class Provoke : SpeakerBaseSkill
     AirStateResource.JumpInfo jumpInfo;
 
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
-        activeEchoes = FindObjectsByType<BaseEcho>(FindObjectsSortMode.None);
+        base.InitState(cha, fsm);
         JumpState jumpState = (JumpState) fsm.TryGetState<JumpState>();
         if (jumpState != null )
         {
@@ -30,6 +28,7 @@ public class Provoke : SpeakerBaseSkill
     {
         base.Enter(msg);
         durationTracker = tauntDuration;
+        var activeEchoes = FindObjectsByType<BaseEcho>(FindObjectsSortMode.None);
         foreach (var e in activeEchoes)
         {
             e.SetNewTarget(speaker.transform);

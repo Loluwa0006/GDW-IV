@@ -34,9 +34,10 @@ public class AirStateResource : ScriptableObject
 
 
 
-    public float airAcceleration = 2.0f;
-    public float airStrafeSpeed = 20.0f;
+    public int accelerationFrames = 12;
+    public float airMoveSpeed = 20.0f;
 
-  
+
+    public float AirAcceleration => airMoveSpeed / (float) accelerationFrames;
     
 }

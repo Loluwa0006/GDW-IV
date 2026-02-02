@@ -37,9 +37,9 @@ public class FlyingState : EchoBaseState
 
     int cooldownTracker = 0;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine s_machine)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
     {
-        base.InitState(cha, s_machine);
+        base.InitState(cha, fsm);
         _rb = echo.GetComponent<Rigidbody>();
         _rbCollider = hitbox.hitboxCollider;
         groundMask = LayerMask.GetMask("Ground");
