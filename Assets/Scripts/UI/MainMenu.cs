@@ -48,6 +48,15 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    public void OnTrainingPressed()
+    {
+        //Special case since there's no side select for training
+
+        MatchData.instance.selectedGameMode = MatchData.instance.gameModeDictionary[MatchData.GameModeName.Training];
+        TransitionToScene(SceneRegistry.Training.ToString());
+
+    }
 }
 
 

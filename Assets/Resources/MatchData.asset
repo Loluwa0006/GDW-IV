@@ -59,7 +59,7 @@ MonoBehaviour:
     numberOfEchoes: 0
     numberOfRounds: 1
   - gameType: 4
-    gameModePrefab: {fileID: 1252133990287811319, guid: 04a76f84338a2c241b9580a38ffa316a, type: 3}
+    gameModePrefab: {fileID: 1199899196247709771, guid: 7788205f9d0a1304c9598d54ae459118, type: 3}
     modeDescription: Survive aganist an ever increasing onslaught of Echoes.
     minimumTeams: 1
     maximumTeams: 1

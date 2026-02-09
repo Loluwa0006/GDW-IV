@@ -18,12 +18,12 @@ public class MatchData : ScriptableObject
     public enum GameModeName
     {
         SpeakerDuel, // 1v1 no echo players
-        Classic, // 2v2 
+        // RIP 2v2 unlucky
         ScoreRace, // Get as many points as possible completing objectives
         SkillDraft, //Speaker duel, but with draft system
-        EchoSurvival // Survive against waves of echoes
+        EchoSurvival, // Survive against waves of echoes
+        Training
 
-        //these game modes probably won't make it into the game on release but idk 100%, maybe
     }
     [System.Serializable]
     public class PlayerInfo

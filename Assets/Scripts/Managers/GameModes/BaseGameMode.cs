@@ -151,4 +151,7 @@ public class BaseGameMode : MonoBehaviour
     {
         gameManager.reportManager.reportDisplay.SetActive(status);
     }
+
+
+
 }

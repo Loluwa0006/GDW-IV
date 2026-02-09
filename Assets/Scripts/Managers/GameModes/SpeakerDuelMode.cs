@@ -54,21 +54,12 @@ public class SpeakerDuelMode : BaseGameMode
         Debug.Log("Initializing Players");
         InitSpeakers();
         Debug.Log("Initializing Echoes");
-        InitEchoes();
+        InitEcho();
         Debug.Log("Starting Game");
         StartCoroutine(StartGame());
     }
 
-    protected virtual void InitEchoes()
-    {
-        gameEcho = Instantiate(echoPrefab);
-
-        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
-        gameManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
-        gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
-        gameEcho.SuspendProjectile();
-
-    }
+ 
 
     protected override IEnumerator StartGame()
     {
@@ -156,6 +147,16 @@ public class SpeakerDuelMode : BaseGameMode
 
             }
         }
+    }
+    protected virtual void InitEcho()
+    {
+        gameEcho = Instantiate(echoPrefab);
+
+        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
+        gameManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
+        gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
+        gameEcho.SuspendProjectile();
+
     }
     public override void OnPlayerJoined(PlayerInput playerInput)
     {
@@ -361,8 +362,8 @@ public class SpeakerDuelMode : BaseGameMode
 
     protected void ResetEcho(BaseEcho echo)
     {
-        echo.EnableProjectile();
         echo.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
+        echo.ResetProjectile();
         echo.SuspendProjectile();
     }
 

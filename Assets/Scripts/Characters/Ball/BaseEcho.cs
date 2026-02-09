@@ -89,6 +89,16 @@ public class BaseEcho : BaseCharacter
         velocityManager.freeze = false;
     }
 
+    public void ResetProjectile()
+    {
+        transform.position = resetPos;
+        UpdateSpeed(echoData.minSpeed);
+        playerModel.enabled = false;
+        ballActive = false;
+        fsm.TransitionTo<FlyingState>();
+        velocityManager.ResetComponent();
+    }
+
 
 
     public override void ActivatePlayer()

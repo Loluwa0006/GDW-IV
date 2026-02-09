@@ -157,6 +157,7 @@ public class HealthComponent : MonoBehaviour
 
         foreach (var id in expiredEffects)
         {
+            if (!statusEffects.ContainsKey(id)) continue;
             statusEffects[id].OnExpire();
             statusEffects.Remove(id);
             Debug.Log("Removed status effect " + id);

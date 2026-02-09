@@ -4,7 +4,6 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     [SerializeField] Transform speakerDuelSpawns;
-    [SerializeField] Transform classicSpawns;
     [SerializeField] Transform timeRaceSpawns;
     [SerializeField] Transform echoSpawn;
 
@@ -23,11 +22,6 @@ public class SpawnManager : MonoBehaviour
     public List<Vector3> GetSpeakerDuelSpawns()
     {
         return GetSpawnsFromTransform(speakerDuelSpawns);
-    }
-
-    public List<Vector3> GetClassicSpawns()
-    {
-        return GetSpawnsFromTransform(classicSpawns);
     }
 
     public List<Vector3> GetTimeRaceSpawns()

@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class TrainingManager : GameManager
 {
 
+
     [SerializeField] Transform respawnPoint;
     [SerializeField] Transform dummySpawnpoint;
 

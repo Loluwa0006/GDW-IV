@@ -5002,7 +5002,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
+  - {fileID: 2100000, guid: c81aa0b76dcba484fbb399c06ac15a14, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6494,7 +6494,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 4.591775e-39, y: 2.2227777e-38, z: 9.1858e-41, w: -2.4405384e-30}
+  m_BoundingSphereOverride: {x: 2.5381154e+11, y: 7.1449484e+31, z: 5.4213887e-11, w: 4.6809042e+20}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -7055,19 +7055,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2762897183231848475, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 2.1e-44
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2762897183231848475, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_BoundingSphereOverride.x
-      value: 2.288e-42
+      value: NaN
       objectReference: {fileID: 0}
     - target: {fileID: 2762897183231848475, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: 2.332e-42
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2762897183231848475, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 2.342e-42
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4263142153145821290, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: LightsModule.ratio
@@ -7132,6 +7132,10 @@ PrefabInstance:
     - target: {fileID: 6517372951216079942, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_Name
       value: PartialDeflectParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517372951216079942, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7731247718448163541, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier

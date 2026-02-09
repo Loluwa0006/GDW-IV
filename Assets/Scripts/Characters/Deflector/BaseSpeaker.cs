@@ -4,6 +4,12 @@ public class BaseSpeaker : BaseCharacter
 {
     public HealthComponent healthComponent;
     public DeflectManager deflectManager;
+
+    public override void InitPlayer(MatchData.PlayerInfo info, int index)
+    {
+        base.InitPlayer(info, index);
+        playerModel.material.SetColor("_BaseColor", playerColors[index - 1].color);
+    }
     public override void DeactivatePlayer()
     {
         base.DeactivatePlayer();

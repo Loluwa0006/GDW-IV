@@ -62,12 +62,12 @@ public class EchoSurvivalMode : BaseGameMode
         Debug.Log("Initializing Players");
         InitSpeakers();
         Debug.Log("Initializing Echoes");
-        InitEchoes();
+        InitEcho();
         Debug.Log("Starting Game");
         StartCoroutine(StartGame());
     }
 
-    protected virtual void InitEchoes()
+    protected virtual void InitEcho()
     {
         foreach(var echo in gameEchoes)
         {
@@ -305,7 +305,7 @@ public class EchoSurvivalMode : BaseGameMode
         ResetSpeaker(speakerPlayer);
         speakerPlayer.DeactivatePlayer();
         
-        InitEchoes();
+        InitEcho();
 
         winScreen.SetActive(false);
         gameManager.ResetManager();
