@@ -26,10 +26,15 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
+    - _AmbientPower: 2.45
+    - _MaxLight: 2.5
     - _Min: 0.15
-    - _NumberOfShades: 3
+    - _MinLight: 0.103
+    - _NumberOfShades: 5.75
+    - _RimPower: 7.67
+    - _RimSize: 44.7
     m_Colors:
-    - _BaseColor: {r: 0.75, g: 0.1875, b: 0.1875, a: 1}
+    - _BaseColor: {r: 0.85, g: 0.2125, b: 0.2125, a: 1}
     - _Color: {r: 0.9411765, g: 0.16000001, b: 0.16000001, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

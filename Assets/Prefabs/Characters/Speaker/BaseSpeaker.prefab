@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 814318614021965023}
   - component: {fileID: 1349414487311401283}
   - component: {fileID: 4723143344350789450}
-  m_Layer: 9
+  m_Layer: 3
   m_Name: GuardbreakParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4954,7 +4954,7 @@ GameObject:
   - component: {fileID: 8614019372539046563}
   - component: {fileID: 5405179668912101799}
   - component: {fileID: 1637655925779867785}
-  m_Layer: 15
+  m_Layer: 3
   m_Name: PlayerModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5002,7 +5002,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c81aa0b76dcba484fbb399c06ac15a14, type: 2}
+  - {fileID: 2100000, guid: f9fe5a107ef158544b8e1c8b8e5e869e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5178,7 +5178,7 @@ GameObject:
   - component: {fileID: 8973534880129242715}
   - component: {fileID: 5574547391124761937}
   - component: {fileID: 1621729451994594262}
-  m_Layer: 9
+  m_Layer: 3
   m_Name: DeflectManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7042,6 +7042,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 7484667591112450759}
     m_Modifications:
     - target: {fileID: 244977484317329353, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 244977484317329353, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -7132,6 +7136,10 @@ PrefabInstance:
     - target: {fileID: 6517372951216079942, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_Name
       value: PartialDeflectParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 6517372951216079942, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6517372951216079942, guid: ba64fc259bceb1842b669a0ade8f5169, type: 3}
       propertyPath: m_IsActive
@@ -7247,6 +7255,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeflectParticles
       objectReference: {fileID: 0}
+    - target: {fileID: 3278552286064582584, guid: 84e6d31179dec8342b9fc81ff3f04d93, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3523132686703521361, guid: 84e6d31179dec8342b9fc81ff3f04d93, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -7345,7 +7357,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8389019172102855735, guid: 84e6d31179dec8342b9fc81ff3f04d93, type: 3}
       propertyPath: m_Layer
-      value: 15
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8389019172102855735, guid: 84e6d31179dec8342b9fc81ff3f04d93, type: 3}
       propertyPath: m_IsActive
@@ -7843,7 +7855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 639627408708554602, guid: 03327d2e04e7c5a42bc8eccfba702219, type: 3}
       propertyPath: m_Layer
-      value: 14
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8371760149339472803, guid: 03327d2e04e7c5a42bc8eccfba702219, type: 3}
       propertyPath: lengthInSec

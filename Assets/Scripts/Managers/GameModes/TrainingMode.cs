@@ -4,13 +4,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using static ReportManager;
 public class TrainingMode : BaseGameMode
 {
-
-    const float SUDDEN_DEATH_SLOW_DOWN_DURATION = 2.5f;
-    const float SUDDEN_DEATH_SLOW_DOWN_AMOUNT = 0.1f;
 
     [Header("UI Objects")]
 
@@ -28,29 +23,23 @@ public class TrainingMode : BaseGameMode
 
     public HashSet<Transform> speakerList = new();
     static HashSet<BaseSpeaker> activeSpeakers = new();
+    [HideInInspector] public BaseSpeaker playerSpeaker;
 
     Dictionary<BaseCharacter, BasePlayerUI> characterUI = new();
 
-    struct ScoreTracker
-    {
-        public int teamOneWins;
-        public int teamTwoWins;
-    }
-
-    ScoreTracker scoreTracker;
     float timerTracker;
-
-    List<TrackerData> trackerData = new();
 
     BaseEcho gameEcho;
 
     public override void InitGameMode(GameManager manager)
     {
+        Debug.Log("Initializing Training Mode");
         base.InitGameMode(manager);
         spawnPositions = gameManager.spawnManager.GetSpeakerDuelSpawns();
         InitUI();
         InitTimer();
         InitSpeakers();
+        InitEcho();
         StartCoroutine(StartGame());
     }
 
@@ -61,34 +50,10 @@ public class TrainingMode : BaseGameMode
         yield return new WaitForFixedUpdate();
 
         if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true); // make sure cam is in right spot before starting
-        AnnouncementData countdownDataOne = new()
-        {
-            announcementDuration = 1.0f,
-            announcementText = "3",
-            customTimescale = 0.0f,
-            priority = 5
-        };
-        AnnouncementData countdownDataTwo = new(countdownDataOne);
-        AnnouncementData countdownDataThree = new(countdownDataTwo);
-        AnnouncementData countdownDataFour = new(countdownDataThree);
-        countdownDataTwo.announcementText = "2";
-        countdownDataThree.announcementText = "1";
-        countdownDataFour.announcementText = "BEGIN";
-        countdownDataFour.customTimescale = 1.0f;
-        gameManager.announcementManager.QueueNewAnnouncement(countdownDataOne, countdownDataTwo, countdownDataThree, countdownDataFour);
-        foreach (var speaker in activeSpeakers)
-        {
-            speaker.ShowPlayer();
-        }
-        yield return new WaitUntil(() => gameManager.announcementManager.annoucementPlaying);
-        yield return new WaitUntil(() => !gameManager.announcementManager.annoucementPlaying);
-        if (gameManager.reportManager != null)
-        {
-            gameManager.reportManager.OnMatchStart();
-        }
+        
         matchActive = true;
 
-        gameEcho.EnableProjectile();
+        //gameEcho.EnableProjectile();
 
         foreach (var speaker in activeSpeakers)
         {
@@ -104,42 +69,19 @@ public class TrainingMode : BaseGameMode
         }
         winScreen.SetActive(false);
     }
-    protected virtual void InitTimer()
+    protected void InitTimer()
     {
-        timerDisplay.gameObject.SetActive(true);
-        Debug.Log("match length is " + MatchData.instance.gameLength);
-        timerTracker = MatchData.instance.gameLength;
-        timerDisplay.text = timerTracker.ToString();
+        timerDisplay.gameObject.SetActive(false);
     }
 
-    protected virtual void InitSpeakers()
+    protected void InitSpeakers()
     {
-        if (MatchData.instance == null) { return; }
-        activeSpeakers.Clear();
-        int memberIndex = 0;
-        int teamIndex = 0;
-        List<TrackerData> speakerData = new();
-        foreach (MatchData.TeamInfo team in MatchData.instance.gameTeams)
+        if (MatchData.instance == null)
         {
-            teamIndex++;
-            foreach (MatchData.PlayerInfo member in team.teamMembers)
-            {
-                member.teamIndex = teamIndex;
-                memberIndex++;
-               
-                if (member.isAI)
-                {
-                    inputManager.playerPrefab = aiSpeakerPrefab.gameObject;
-                }
-                else
-                {
-                    inputManager.playerPrefab = speakerPrefab.gameObject;
-                }
-                queuedPlayerInfo.Enqueue(member);
-                inputManager.JoinPlayer(pairWithDevice: member.device);
-            }
+            Debug.LogWarning("No match data found, cannot initialize speakers");
+            return; 
         }
-
+        activeSpeakers.Clear();
         MatchData.PlayerInfo playerSpeakerInfo = new()
         {
             teamIndex = 1, 
@@ -147,11 +89,12 @@ public class TrainingMode : BaseGameMode
         inputManager.playerPrefab = speakerPrefab.gameObject;
         playerSpeakerInfo.device = Gamepad.all.Count > 0 ? Gamepad.all[0] : Keyboard.current;
         queuedPlayerInfo.Enqueue(playerSpeakerInfo);
+        inputManager.JoinPlayer(pairWithDevice: playerSpeakerInfo.device);
 
     }        
     public void InitEcho()
     {
-        BaseEcho gameEcho = Instantiate(echoPrefab);
+        gameEcho = Instantiate(echoPrefab);
 
         gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
         gameManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
@@ -161,35 +104,40 @@ public class TrainingMode : BaseGameMode
     public override void OnPlayerJoined(PlayerInput playerInput)
     {
 
-        if (!playerInput.gameObject.TryGetComponent(out BaseSpeaker character)) { return; }
-        if (speakerList.Contains(character.transform)) { return; }
+        if (!playerInput.gameObject.TryGetComponent(out BaseSpeaker character))
+        {
+            Debug.LogWarning("Player prefab doesn't have BaseSpeaker component");
+            return;
+        }
+        if (speakerList.Contains(character.transform))
+        {
+            Debug.LogWarning("Player " + character.name + " already joined");
+            return;
+        }
         int index = playerInput.playerIndex + 1;
         MatchData.PlayerInfo info = null;
         if (queuedPlayerInfo.Count > 0)
         {
             info = queuedPlayerInfo.Dequeue();
             character.InitPlayer(info, index);
-            trackerData.Add(new TrackerData()
-            {
-                speaker = character,
-                speakerInfo = info,
-            });
         }
         else
         {
             Debug.LogWarning("No queued data for char " + character.name + ", using base speaker KB 1 controls");
         }
+
+        Debug.Log("Added new player: " + character.name);
         StartCoroutine(InitSpeakerSignals(character));
         AddStaminaUIForCharacter(character, info);
         gameManager.AddCharacterToCameraTargetGroup(character.transform);
+        if (speakerList.Count == 0)
+        {
+            character.ActivatePlayer();
+            playerSpeaker = character;
+        }
         StartCoroutine(SetCharacterPosition(character));
         speakerList.Add(character.transform);
         activeSpeakers.Add(character);
-
-        if (queuedPlayerInfo.Count == 0 && gameManager.reportManager != null)
-        {
-            gameManager.reportManager.InitManager(trackerData.ToArray());
-        }
     }
     protected void AddStaminaUIForCharacter(BaseSpeaker character, MatchData.PlayerInfo info)
     {
@@ -212,11 +160,9 @@ public class TrainingMode : BaseGameMode
     {
         if (!victim.hurtboxOwner.TryGetComponent(out BaseSpeaker defeated))
         {
-            Debug.Log("Couldn't find base char component");
             return;
         }
         RemoveCharacter(defeated);
-        Debug.Log(defeated.name + " has been defeated, " + activeSpeakers.Count + " characters remain");
         if (activeSpeakers.Count == 1)
         {
             StartCoroutine(OnCharacterVictorious());
@@ -224,99 +170,10 @@ public class TrainingMode : BaseGameMode
     }
     protected override IEnumerator OnCharacterVictorious()
     {
-        if (gameManager.reportManager != null)
-        {
-            gameManager.reportManager.OnMatchEnd();
-        }
-        BaseSpeaker winner = activeSpeakers.ElementAt(0);
-        winText.text = winner.name + " Wins";
-        winner.staminaComponent.foresightAuraHum.Stop();
-        winner.staminaComponent.foresightElectricityCrackle.Stop();
-        if (scoreText != null)
-        {
-            UpdateScoreText(winner);
-        }
-        gameManager.bgmPlayer.Stop();
-        gameManager.winBGMPlayer.PlayOneShot(gameManager.winSFX);
-        AnnouncementData winAnnouncement = new()
-        {
-            announcementDuration = 2.0f,
-            announcementText = "VERDICT",
-            customTimescale = 0.1f,
-            priority = 9999999
-        };
-        gameManager.announcementManager.QueueNewAnnouncement(winAnnouncement);
-        yield return null;
-        gameManager.postProcessingManager.ResetManager();
-        yield return new WaitUntil(() => gameManager.announcementManager.annoucementPlaying);
-        yield return new WaitUntil(() => !gameManager.announcementManager.annoucementPlaying);
-        gameManager.winBGMPlayer.Play();
-        winScreen.SetActive(true);
-        Time.timeScale = 0.0f;
+        yield break;
     }
 
 
-
-
-    protected override void UpdateScoreText(BaseCharacter winner)
-    {
-        if (winner.teamIndex == 1)
-        {
-            scoreTracker.teamOneWins += 1;
-        }
-        else
-        {
-            scoreTracker.teamTwoWins += 1;
-        }
-
-        scoreText.text = scoreTracker.teamOneWins + "/" + scoreTracker.teamTwoWins;
-    }
-
-    private void Update()
-    {
-        if (matchActive && !GameManager.gamePaused) TimerLogic();
-    }
-
-    protected virtual void TimerLogic()
-    {
-        timerTracker -= Time.deltaTime;
-        if (timerTracker <= 0.0f)
-        {
-            if (!inSuddenDeath)
-            {
-                inSuddenDeath = true;
-                EnterSuddenDeath();
-            }
-        }
-        else
-        {
-            timerTracker = Mathf.Clamp(timerTracker, 0.0f, MatchData.instance.gameLength);
-            timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
-        }
-    }
-    protected override void EnterSuddenDeath()
-    {
-        Debug.Log("Entering sudden death");
-        foreach (var cha in activeSpeakers)
-        {
-            cha.staminaComponent.EnterSuddenDeath();
-        }
-        gameEcho.EnterSuddenDeath();
-        timerDisplay.text = "X";
-
-        gameManager.postProcessingManager.OnSuddenDeathStarted();
-
-        AnnouncementData suddenDeathAnnouncement = new()
-        {
-            announcementDuration = SUDDEN_DEATH_SLOW_DOWN_DURATION,
-            announcementText = "SUDDEN DEATH",
-            customTimescale = SUDDEN_DEATH_SLOW_DOWN_AMOUNT,
-            priority = 999
-        };
-        gameManager.announcementManager.QueueNewAnnouncement(suddenDeathAnnouncement);
-
-        inSuddenDeath = true;
-    }
 
     public override void ResetGame()
     {

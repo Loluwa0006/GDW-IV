@@ -49,8 +49,8 @@ MonoBehaviour:
   chargeMeterOver: {fileID: 3587297123430655319}
   chargeMeterUnder: {fileID: 2890964613682412346}
   chargeMeterOverMesh: {fileID: 4987615614641012399}
-  chargeMeterMax: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
-  chargeMeterProgress: {fileID: 2100000, guid: f9936cf6a22af4646bee388e3d57063a, type: 2}
+  chargeMeterMax: {fileID: 2100000, guid: 9c26af3b780a9ab4b90e81da72f8022c, type: 2}
+  chargeMeterProgress: {fileID: 2100000, guid: c3e6c8626eea0d140981218e8551b9f4, type: 2}
   enableOnAwake: 0
 --- !u!1 &1103746159203952797
 GameObject:
@@ -63,7 +63,6 @@ GameObject:
   - component: {fileID: 3587297123430655319}
   - component: {fileID: 4337953427628147337}
   - component: {fileID: 4987615614641012399}
-  - component: {fileID: 8800166827411489575}
   m_Layer: 15
   m_Name: ChargeMeterOver
   m_TagString: Untagged
@@ -141,28 +140,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8800166827411489575
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1103746159203952797}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5572145361284500349
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,7 +153,6 @@ GameObject:
   - component: {fileID: 2890964613682412346}
   - component: {fileID: 2665766277791736117}
   - component: {fileID: 1727709135488262298}
-  - component: {fileID: 6815312277219750332}
   m_Layer: 15
   m_Name: ChargeMeterUnder
   m_TagString: Untagged
@@ -252,25 +230,5 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6815312277219750332
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5572145361284500349}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}

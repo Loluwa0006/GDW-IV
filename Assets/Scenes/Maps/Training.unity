@@ -522,22 +522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: AssignTakeback
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 5
 --- !u!135 &166100428
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1534,7 +1519,7 @@ GameObject:
   - component: {fileID: 398435397}
   - component: {fileID: 398435396}
   m_Layer: 10
-  m_Name: Counterslash
+  m_Name: Rebuttal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1567,22 +1552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: AssignCounterslash
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 1
 --- !u!135 &398435397
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2444,22 +2414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: EnableInfiniteForesight
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 0
 --- !u!64 &542867272
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -4198,22 +4153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: ActivateTutorialDummy
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 0
 --- !u!64 &717838016
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -5924,7 +5864,7 @@ GameObject:
   - component: {fileID: 974258020}
   - component: {fileID: 974258019}
   m_Layer: 10
-  m_Name: Grapple
+  m_Name: Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5957,22 +5897,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: AssignGrapple
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 3
 --- !u!135 &974258020
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -6440,6 +6365,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3377598212650019644, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: FramingSize
+      value: 0.324
+      objectReference: {fileID: 0}
     - target: {fileID: 5270565161033016881, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_LocalPosition.x
       value: -103.6
@@ -6491,6 +6420,10 @@ PrefabInstance:
     - target: {fileID: 8391816268220784264, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_Name
       value: GameComponents
+      objectReference: {fileID: 0}
+    - target: {fileID: 8523505512645565694, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6886,7 +6819,7 @@ GameObject:
   - component: {fileID: 1047535591}
   - component: {fileID: 1047535590}
   m_Layer: 10
-  m_Name: Redirect
+  m_Name: Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6919,22 +6852,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: AssignRedirect
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 4
 --- !u!135 &1047535591
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -8303,7 +8221,7 @@ GameObject:
   - component: {fileID: 1751308904}
   - component: {fileID: 1751308903}
   m_Layer: 10
-  m_Name: Dash
+  m_Name: Advance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8336,22 +8254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: AssignDash
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 0
 --- !u!135 &1751308904
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -8464,22 +8367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: DisableInfiniteForesight
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 0
 --- !u!64 &1753218338
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -8830,7 +8718,7 @@ GameObject:
   - component: {fileID: 1762126761}
   - component: {fileID: 1762126760}
   m_Layer: 10
-  m_Name: Afterimage
+  m_Name: Precedent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8863,22 +8751,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: AssignAfterimage
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 2
 --- !u!135 &1762126761
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -9480,22 +9353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da0aa9eb3df3d844a0cb5c13d526785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrainingTrigger
-  manager: {fileID: 0}
-  trainingTriggerActivated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TrainingManager, Assembly-CSharp
-        m_MethodName: DeactivateTutorialDummy
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  skillToActivate: 0
 --- !u!64 &1979667106
 MeshCollider:
   m_ObjectHideFlags: 0

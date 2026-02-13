@@ -1,6 +1,7 @@
 Shader "Custom/OutlineShader"
 {   
     // Shader from https://medium.com/@chitranshnishad27/creating-a-full-screen-outline-shader-in-unity-urp-6c70744932c1
+    
     Properties
     {
          _OutlineColor("Outline Color", Color) = (0, 0, 0, 1)

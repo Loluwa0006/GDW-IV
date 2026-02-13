@@ -11,8 +11,8 @@ public class EchoParticleManager : MonoBehaviour
     [SerializeField] MeshRenderer mesh;
 
     [Header("Colors")]
-    [SerializeField] Material normalColor;
-    [SerializeField] Material igniteColor;
+    [SerializeField] Material normalMaterial;
+    [SerializeField] Material igniteMaterial;
 
     [Header("Particles")]
     [SerializeField] protected TrailRenderer echoTrail;
@@ -45,8 +45,8 @@ public class EchoParticleManager : MonoBehaviour
 
     public virtual void OnSpeedUpdated(float newSpeed, bool isIgnited)
     {
-        if (igniteColor == null || normalColor == null || ignitionGradient == null || regularGradient == null) return;
-        mesh.material = isIgnited ? igniteColor : normalColor;
+        if (igniteMaterial == null || normalMaterial == null || ignitionGradient == null || regularGradient == null) return;
+        mesh.material = isIgnited ? igniteMaterial : normalMaterial;
         echoTrail.colorGradient = isIgnited ? ignitionGradient : regularGradient;
         if (!isIgnited)
         {

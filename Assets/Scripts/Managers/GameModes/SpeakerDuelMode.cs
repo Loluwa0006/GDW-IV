@@ -365,6 +365,7 @@ public class SpeakerDuelMode : BaseGameMode
         echo.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         echo.ResetProjectile();
         echo.SuspendProjectile();
+        echo.SetNewTarget(speakerList.ElementAt(0));
     }
 
 

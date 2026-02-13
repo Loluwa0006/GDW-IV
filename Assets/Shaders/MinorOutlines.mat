@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OutlineShader
+  m_Name: MinorOutlines
   m_Shader: {fileID: 4800000, guid: 69d894750275c3248bcb8af4bf92203a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -92,20 +92,20 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DepthSensitivity: 0.005
+    - _DepthSensitivity: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeThreshold: 0.633
+    - _EdgeThreshold: 0.822
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NormalSensitivty: 2.29
+    - _NormalSensitivty: 4.53
     - _OcclusionStrength: 1
-    - _OutlineThickness: 2.73
+    - _OutlineThickness: 0.33
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1

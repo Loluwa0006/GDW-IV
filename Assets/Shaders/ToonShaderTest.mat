@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ToonShaderTest
-  m_Shader: {fileID: 4800000, guid: 14a9b7a4ca6940e48b5bd6a40184904c, type: 3}
+  m_Shader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,18 +29,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AmbientPower: 1
-    - _MaxLight: 1
+    - _AmbientPower: 0.5
+    - _MaxLight: 2.5
     - _MaxShadow: 0.6
-    - _MinLight: 0.039
+    - _MinLight: 0.1
     - _MinShadow: 0.082
-    - _NumberOfShades: 0.31
+    - _NumberOfShades: 7.5
     - _OutlineSize: 0.024
-    - _RimPower: 2
-    - _RimSize: 16.5
+    - _RimPower: 4.81
+    - _RimSize: 5.8
     - _Shininess: 32.9
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0.08679241, g: 0.045688834, b: 0.085640416, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

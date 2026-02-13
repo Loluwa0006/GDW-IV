@@ -127,6 +127,7 @@ public class Counterslash : SpeakerBaseSkill
         }
 
         float chargeAsPercent = chargeTracker / chargeDuration;
+        Debug.Log("Rebuttal at " + chargeAsPercent + " percent power");
         chargeMeter.SetProgress(chargeAsPercent);
         
         var emission = chargeParticles.emission;

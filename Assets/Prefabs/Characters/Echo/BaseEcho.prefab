@@ -10944,8 +10944,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EchoParticleManager
   mesh: {fileID: 1620446999860772885}
-  normalColor: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
-  igniteColor: {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
+  normalMaterial: {fileID: 2100000, guid: 59987e40ba9f73d478edeb5ba1083e17, type: 2}
+  igniteMaterial: {fileID: 2100000, guid: dfa3fe59590bd804496587f75669a6b9, type: 2}
   echoTrail: {fileID: 617450825031257723}
   regularGradient:
     serializedVersion: 2

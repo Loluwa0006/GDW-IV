@@ -29,15 +29,14 @@ public class ProgressBar : MonoBehaviour
 
         chargeMeterOverMesh.material = percent >= 0.999f ? chargeMeterMax : chargeMeterProgress;
 
-        //float chargeAsPercent = chargeTracker / chargeDuration;
         //Vector3 newScale = chargeMeterOver.localScale;
-        //newScale.x = originalChargeSize * chargeAsPercent;
+        //newScale.x = originalSize * chargeAsPercent;
         //chargeMeterOver.localScale = newScale;
         //Vector3 newPos = chargeMeterOver.transform.localPosition;
-        //newPos.x = (originalChargeSize - newScale.x) / 2.0f;
+        //newPos.x = (originalSize - newScale.x) / 2.0f;
         //chargeMeterOver.transform.localPosition = newPos;
 
-        //chargeMeterMesh.material = chargeTracker >= chargeDuration ? chargeMeterMax : chargeMeterProgress;
+        //chargeMeterOverMesh.material = percent > 0.99f ? chargeMeterMax : chargeMeterProgress;
     }
 
     public void SetDisplayStatus(bool status)

@@ -7,19 +7,67 @@ Shader "Custom/ToonShader"
         _Shininess("Shininess", Range(1, 100)) = 20
         _MinLight("Min Light", Range(0, 1)) = 0.3
         _MaxLight("Max Light", Range(0, 5)) = 1
-        _NumberOfShades("Number of Shades", Range(0, 1)) = 0.49
+        _NumberOfShades("Number of Shades", Range(0, 10)) = 4
         _AmbientPower("Ambient Power", Range(0, 10)) = 1
         _RimPower("Rim Power", Range(0, 10)) = 1
         _RimSize("Rim Size", Range(0, 100)) = 2
         _MinShadow("Min Shadow", Range(0, 1)) = 0.3
         _MaxShadow("Max Shadow", Range(0, 1)) = 0.6
-        _OutlineColor("OutlineColor", Color) = (0, 0, 0, 1)
-        _OutlineSize("OutlineSize", Range(-0.01, 0.2)) = 0.00
     }
 
     SubShader
     {
+
+
+
         Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
+
+        ZWrite On
+        ZTest LEqual
+
+        Pass
+{
+    Name "DepthNormals"
+    Tags { "LightMode" = "DepthNormals" }
+
+    ZWrite On
+    Cull Back
+
+    HLSLPROGRAM
+    #pragma vertex DepthNormalsVertex
+    #pragma fragment DepthNormalsFragment
+
+    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+    struct Attributes
+    {
+        float4 positionOS : POSITION;
+        float3 normalOS : NORMAL;
+    };
+
+    struct Varyings
+    {
+        float4 positionCS : SV_POSITION;
+        float3 normalWS : TEXCOORD0;
+    };
+
+    Varyings DepthNormalsVertex(Attributes input)
+    {
+        Varyings output;
+        output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+        output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+        return output;
+    }
+
+    float4 DepthNormalsFragment(Varyings input) : SV_TARGET
+    {
+        // Normalize the world space normal
+        float3 normalWS = normalize(input.normalWS);
+        // Convert to view space and encode
+        return float4(PackNormalOctRectEncode(TransformWorldToViewDir(normalWS, true)), 0.0, 0.0);
+    }
+    ENDHLSL
+}
 
         Pass
         {
@@ -75,8 +123,13 @@ Shader "Custom/ToonShader"
 
             float3 FresnelEffect(float3 normalVector, float3 viewDirection, float power, float size, float3 lighting)
             {
-                float fresnelFactor = pow( saturate(1 - dot(viewDirection, normalVector)), 2) * size;
+                float fresnelFactor = pow( saturate(1 - dot(viewDirection, normalVector)), power) * size;
                 return lighting * fresnelFactor;
+            }
+
+            float Quantize(float value, float steps) 
+            {
+                return floor(value * steps) / steps;
             }
 
             Varyings vert(Attributes IN)
@@ -97,7 +150,9 @@ Shader "Custom/ToonShader"
                 //Lambertian diffuse
                 float nDotL = saturate(dot(IN.normalWS, light.direction) * 1);
                 float shadowToon = smoothstep(_MinShadow, _MaxShadow, light.shadowAttenuation);
-                float3 diffuse = ((light.color * light.distanceAttenuation) * nDotL) * shadowToon;
+                float lambertDiffuse = ((light.color * light.distanceAttenuation) * nDotL) * shadowToon;
+                float diffuseAsPercent = Quantize(lambertDiffuse, _NumberOfShades);
+                float diffuse = lerp(_MinLight, _MaxLight, diffuseAsPercent);
                 //Add specular highlight
                 float3 viewDir = normalize(_WorldSpaceCameraPos - IN.positionWS);
                 float3 halfVector = normalize(light.direction + viewDir);
@@ -116,18 +171,18 @@ Shader "Custom/ToonShader"
                     
                     float additionalNdotL = saturate(dot(IN.normalWS, additionalLight.direction));
                      float additionalShadowToon = smoothstep(_MinShadow, _MaxShadow, additionalLight.shadowAttenuation);
-                    float3 additionalDiffuse = ((additionalLight.color * additionalLight.distanceAttenuation) * additionalNdotL) * additionalShadowToon;
+                    float additionalDiffuseBase = ((additionalLight.color * additionalLight.distanceAttenuation) * additionalNdotL) * additionalShadowToon;
+                    float additionalDiffuseAsPercent = Quantize(additionalDiffuseBase, _NumberOfShades);
+                    float additionalDiffuse = lerp(_MinLight, _MaxLight, additionalDiffuseAsPercent);
                     float3 additionalHalfVector = normalize(additionalLight.direction + viewDir);
                     float3 additionalSpecular = pow(saturate(dot(IN.normalWS, additionalHalfVector)), _Shininess) * additionalLight.color * additionalLight.distanceAttenuation * additionalShadowToon;
                     float3 additionalColor = additionalDiffuse + additionalSpecular;
                     float3 additionalFresnel = FresnelEffect(IN.normalWS, viewDir, _RimPower, _RimSize, additionalDiffuse);
                     lightColor += additionalColor + additionalFresnel;
                     }
-                //Quantize the light color to create a toon shading effect
-                float4 lightColor4 = float4(lightColor, 1);
-                Remap(lightColor4, float2(-1, 1), float2(0,1), lightColor4);
-                Remap(lightColor4, float2(0, 1/_NumberOfShades), float2(_MinLight, _MaxLight), lightColor4);
                 //Sample the texture and multiply by the quantized light color
+                float4 lightColor4 = float4(lightColor, 1);
+
                 half4 baseColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor;
                 half4 color = baseColor * lightColor4;
                 return color;

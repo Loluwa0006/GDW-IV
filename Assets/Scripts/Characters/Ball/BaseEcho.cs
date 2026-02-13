@@ -92,11 +92,12 @@ public class BaseEcho : BaseCharacter
     public void ResetProjectile()
     {
         transform.position = resetPos;
-        UpdateSpeed(echoData.minSpeed);
         playerModel.enabled = false;
         ballActive = false;
         fsm.TransitionTo<FlyingState>();
         velocityManager.ResetComponent();
+        echoData.InitData();
+        UpdateSpeed(echoData.minSpeed);
     }
 
 

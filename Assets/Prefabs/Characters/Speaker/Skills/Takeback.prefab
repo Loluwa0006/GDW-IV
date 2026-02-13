@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 1113554931114942156}
   - component: {fileID: 6488898101463656346}
   - component: {fileID: 4578682697458077028}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: ThrowEffects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5103,6 +5103,7 @@ MonoBehaviour:
   decelRate: 0.9
   tacklePushback: 8
   staminaFreeHoldFrames: 12
+  postSuccessfulTackleIFames: 10
   ballHolder: {fileID: 585141929474522712}
   catchParticle: {fileID: 671634154379870470}
   throwParticle: {fileID: 6488898101463656346}
@@ -5122,7 +5123,7 @@ GameObject:
   - component: {fileID: 8950751905925965774}
   - component: {fileID: 671634154379870470}
   - component: {fileID: 3534937299398602502}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: CatchEffects
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,25 +1,32 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 public class TrainingTrigger : MonoBehaviour
 {
-    [SerializeField] TrainingManager manager;
+     TrainingMode manager;
+    [SerializeField] SkillName skillToActivate;
 
-    public UnityEvent trainingTriggerActivated = new();
 
-    private void Awake()
+    private void Start()
     {
-        if (manager == null) manager = FindFirstObjectByType<TrainingManager>();
+        manager = FindFirstObjectByType<TrainingMode>();
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.TryGetComponent(out BaseSpeaker speaker)) return;
+        if (!other.TryGetComponent(out BaseSpeaker speaker) || manager == null) return;
 
 
         if (speaker == manager.playerSpeaker)
         {
-            trainingTriggerActivated.Invoke();
+            AssignNewSkill(skillToActivate, speaker);
         }
 
     }
+
+    public void AssignNewSkill(SkillName name, BaseSpeaker playerSpeaker)
+    {
+        if (playerSpeaker == null) { return; }
+        if (!playerSpeaker.inputManager.GetAction("SkillTwo").IsPressed()) playerSpeaker.fsm.AddNewSkill(1, name);
+        else playerSpeaker.fsm.AddNewSkill(2, name);
+    }
+
 }

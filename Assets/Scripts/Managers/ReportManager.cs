@@ -71,6 +71,10 @@ public class ReportManager : MonoBehaviour
     }
     public void OnSpeakerDeflect(BaseSpeaker speaker,bool partial, float time)
     {
+        if (!speakerDictionary.ContainsKey(speaker))
+        {
+            return;
+        }
         PlayerData data = speakerDictionary[speaker];
         if (partial) data.partialDeflects += 1;
         else data.perfectDeflects += 1;
@@ -198,6 +202,5 @@ public class ReportManager : MonoBehaviour
                 speakerDictionary[speaker].staminaTracker.Add(newEntry);
             }
         }
-
     }
 }

@@ -8,7 +8,6 @@ public class SkillDatabase : ScriptableObject
 
     public Dictionary<SkillName, SkillPrefabs> prefabDictionary = new();
 }
-[System.Serializable]
 public enum SkillName
 {
     Advance,

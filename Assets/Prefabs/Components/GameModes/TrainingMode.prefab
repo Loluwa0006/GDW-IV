@@ -98,7 +98,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrainingMode
   gameManager: {fileID: 0}
   inputManager: {fileID: 0}
-  healthUIPrefab: {fileID: 0}
+  healthUIPrefab: {fileID: 7603735769058187820, guid: f39f83fb50d04af4ab531f817557b8bb, type: 3}
   UIHolder: {fileID: 2743069094471222917}
   timerDisplay: {fileID: 4634380260672076347}
   winScreen: {fileID: 5132238080161202535}
