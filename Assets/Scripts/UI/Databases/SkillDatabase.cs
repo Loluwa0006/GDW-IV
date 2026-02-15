@@ -32,22 +32,43 @@ public enum SkillType
 
 public enum SkillTags
 {
+    //Stats
     Mobility,
-    Space_Control, 
+    SpaceControl, 
     Tempo,
     Offense,
     Defense,
+    AllRounder,
+    //
+
+    //Playstyle
     Unorthodox,
     Trickster,
+    Fundamentals,
+    
+    //
+
+    //Difficulty
     Difficult,
     Easy,
     Simplistic,
     Complex,
+    //
+
+    //Misc
     Tackle,
     EchoManipulation,
+    SpeakerManipulation,
+    //
+
+    //Skill Type
     Declare, 
     Sustain,
-    Hybrid
+    //
+
+    Cheap,
+    Expensive
+    //
 }
 [System.Serializable]
 public class SkillPrefabs
