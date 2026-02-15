@@ -53,7 +53,7 @@ public class MainMenu : MonoBehaviour
     {
         //Special case since there's no side select for training
 
-        MatchData.instance.selectedGameMode = MatchData.instance.gameModeDictionary[MatchData.GameModeName.Training];
+        MatchData.instance.selectedGameMode = MatchData.instance.gameModeDictionary[GamemodeDatabase.GameModeName.Training];
         TransitionToScene(SceneRegistry.Training.ToString());
 
     }

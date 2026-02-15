@@ -112,7 +112,7 @@ public class PreGameSelectionManager : MonoBehaviour
     }
     public void SetSelectedGameMode(string modeString)
     {
-        MatchData.GameModeName gameModeName = (MatchData.GameModeName) Enum.Parse(typeof(MatchData.GameModeName), modeString);
+        GamemodeDatabase.GameModeName gameModeName = (GamemodeDatabase.GameModeName) Enum.Parse(typeof(GamemodeDatabase.GameModeName), modeString);
         matchData.selectedGameMode = matchData.gameModeDictionary[gameModeName];
         modeDescription.text = matchData.selectedGameMode.modeDescription;
         InitMatchData();

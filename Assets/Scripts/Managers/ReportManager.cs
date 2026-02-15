@@ -82,12 +82,12 @@ public class ReportManager : MonoBehaviour
         else data.perfectDeflects += 1;
         data.deflectTimings.Add(time);
     }
-    public void InitManager(MatchData.GameModeName currentGameMode, params TrackerData[] speakerData)
+    public void InitManager(GamemodeDatabase.GameModeName currentGameMode, params TrackerData[] speakerData)
     {
         switch (currentGameMode)
         {
-            case MatchData.GameModeName.SpeakerDuel:
-            case MatchData.GameModeName.EchoSurvival:
+            case GamemodeDatabase.GameModeName.SpeakerDuel:
+            case GamemodeDatabase.GameModeName.EchoSurvival:
             speakerDictionary.Clear();
             int index = 0;
             foreach (var data in speakerData)

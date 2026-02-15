@@ -8,23 +8,14 @@ public class MatchData : ScriptableObject
 {
 
     public SkillDatabase skillDatabase;
+    public GamemodeDatabase gamemodeDatabase;
     public enum PlayerType
     {
         Speaker,
         Echo
     }
 
-    [System.Serializable]
-    public enum GameModeName
-    {
-        SpeakerDuel, // 1v1 no echo players
-        // RIP 2v2 unlucky
-        ScoreRace, // Get as many points as possible completing objectives
-        SkillDraft, //Speaker duel, but with draft system
-        EchoSurvival, // Survive against waves of echoes
-        Training
-
-    }
+ 
     [System.Serializable]
     public class PlayerInfo
     {
@@ -45,18 +36,6 @@ public class MatchData : ScriptableObject
         public int handicapLevel = 0;
     }
 
-    [System.Serializable]
-    public class GameModeInfo
-    {
-        public GameModeName gameType = GameModeName.SpeakerDuel;
-        public BaseGameMode gameModePrefab;
-        public string modeDescription;
-        public int minimumTeams = 2;
-        public int maximumTeams = 2;
-        public int numberOfSpeakers = 2;
-        public int numberOfEchoes = 0;
-        public int numberOfRounds = 1;
-    }
 
     [HideInInspector] public List<TeamInfo> gameTeams = new();
 
@@ -67,15 +46,11 @@ public class MatchData : ScriptableObject
 
     public Dictionary<SkillName, SpeakerBaseSkill> skillPrefabDictionary = new();
     public Dictionary<SkillName, Texture> skillIconDictionary = new();
-    public Dictionary<GameModeName, GameModeInfo> gameModeDictionary = new();
+    public Dictionary<GamemodeDatabase.GameModeName,GamemodeDatabase.GameModeInfo> gameModeDictionary = new();
 
     public static MatchData instance;
 
-   [HideInInspector] public GameModeInfo selectedGameMode;
-
-
-    [SerializeField] List<GameModeInfo> availableGameModes = new();
-
+   [HideInInspector] public GamemodeDatabase.GameModeInfo selectedGameMode;
 
     public void InitData()
     {
@@ -91,11 +66,11 @@ public class MatchData : ScriptableObject
             skillDatabase.prefabDictionary[kvp.skillName] = kvp;
         }
 
-        foreach (var kvp in availableGameModes)
+        foreach (var kvp in gamemodeDatabase.availableGameModes)
         {
             gameModeDictionary[kvp.gameType] = kvp;
         }
-         selectedGameMode = gameModeDictionary[GameModeName.SpeakerDuel];
+         selectedGameMode = gameModeDictionary[GamemodeDatabase.GameModeName.SpeakerDuel];
         initPrefabs = true;
     }
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SkillDatabase", menuName = "Scriptable Objects/SkillDatabase")]
+[CreateAssetMenu(fileName = "SkillDatabase", menuName = "Scriptable Objects/Databases/SkillDatabase")]
 public class SkillDatabase : ScriptableObject
 {
     public List<SkillPrefabs> skillPrefabs = new();

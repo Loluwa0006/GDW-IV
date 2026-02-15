@@ -108,7 +108,7 @@ MonoBehaviour:
   - skillName: 6
     skillPrefab: {fileID: 999454113503776721, guid: aba795a7a2f7af747b6322198dd3fc60, type: 3}
     skillSubtitle: Umbra Manuplator
-    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillIcon: {fileID: 2800000, guid: 6d78a0ad19c2628438539259513c1e34, type: 3}
     skillDescription: Enhance your movement, preparing a slash that deflect echoes
       and stuns speakers.
     skillFloor: 2
@@ -124,7 +124,7 @@ MonoBehaviour:
   - skillName: 7
     skillPrefab: {fileID: 333516544351708634, guid: 6fbd23461eca52f45a4271de08750d8d, type: 3}
     skillSubtitle: Daredevil
-    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillIcon: {fileID: 2800000, guid: bdd82b1c012bc7b408e7401eac37acf3, type: 3}
     skillDescription: Insult the echo, causing it to fly back towards you.
     skillFloor: 4
     skillCeiling: 4
@@ -139,7 +139,7 @@ MonoBehaviour:
   - skillName: 8
     skillPrefab: {fileID: 790086623164798323, guid: ed334cc1f35202449bed27c85c2af8cf, type: 3}
     skillSubtitle: Vanishing Assassin
-    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillIcon: {fileID: 2800000, guid: 7762c7a0a48a8ec4dafe2a585488191d, type: 3}
     skillDescription: Throw out a steerable sticky projectile that you can warp to,
       stunning enemy speakers.
     skillFloor: 4
@@ -155,7 +155,7 @@ MonoBehaviour:
   - skillName: 9
     skillPrefab: {fileID: 2707250658487227898, guid: 8356f90502225104fae7f9ab712ea668, type: 3}
     skillSubtitle: Technical Specialist
-    skillIcon: {fileID: 2800000, guid: bbc469cf3513a1d499118d5da0bc38c7, type: 3}
+    skillIcon: {fileID: 2800000, guid: 8173036e1abef0a43a348eb6bdbcf806, type: 3}
     skillDescription: Deploy a grenade that either pulls or attracts nearby entities.
     skillFloor: 2
     skillCeiling: 4
