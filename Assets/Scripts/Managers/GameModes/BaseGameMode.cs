@@ -149,6 +149,7 @@ public class BaseGameMode : MonoBehaviour
 
     public void ToggleReportDisplay(bool status)
     {
+        Debug.Log("Setting report display status to " + status);
         gameManager.reportManager.reportDisplay.SetActive(status);
     }
 

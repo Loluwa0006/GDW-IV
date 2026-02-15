@@ -184,7 +184,7 @@ public class EchoSurvivalMode : BaseGameMode
 
         if (queuedPlayerInfo.Count == 0 && gameManager.reportManager != null)
         {
-            gameManager.reportManager.InitManager(trackerData.ToArray());
+            gameManager.reportManager.InitManager(MatchData.instance.selectedGameMode.gameType, trackerData.ToArray());
         }
 
         speakerPlayer = character;

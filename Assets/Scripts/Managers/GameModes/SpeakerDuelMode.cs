@@ -123,7 +123,6 @@ public class SpeakerDuelMode : BaseGameMode
         activeSpeakers.Clear();
         int memberIndex = 0;
         int teamIndex = 0;
-        List<TrackerData> speakerData = new();
         foreach (MatchData.TeamInfo team in MatchData.instance.gameTeams)
         {
             teamIndex++;
@@ -188,7 +187,7 @@ public class SpeakerDuelMode : BaseGameMode
 
         if (queuedPlayerInfo.Count == 0 && gameManager.reportManager != null)
         {
-            gameManager.reportManager.InitManager(trackerData.ToArray());
+            gameManager.reportManager.InitManager(MatchData.instance.selectedGameMode.gameType, trackerData.ToArray());
         }
     }
     protected void AddStaminaUIForCharacter(BaseSpeaker character, MatchData.PlayerInfo info)

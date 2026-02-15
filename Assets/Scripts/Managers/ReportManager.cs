@@ -19,6 +19,7 @@ public class ReportManager : MonoBehaviour
     [SerializeField] TMP_Text p1PartialDeflects;
     [SerializeField] TMP_Text p1AverageDeflectTiming;
     [SerializeField] LineChart p1StaminaChart;
+    [SerializeField] GameObject p1Report;
 
     [Header("P2 Data")]
     [SerializeField] TMP_Text p2SkillOneUsage;
@@ -30,6 +31,7 @@ public class ReportManager : MonoBehaviour
     [SerializeField] TMP_Text p2PartialDeflects;
     [SerializeField] TMP_Text p2AverageDeflectTiming;
     [SerializeField] LineChart p2StaminaChart;
+    [SerializeField] GameObject p2Report;
 
     [Header("Other")]
     public GameObject reportDisplay;
@@ -80,30 +82,36 @@ public class ReportManager : MonoBehaviour
         else data.perfectDeflects += 1;
         data.deflectTimings.Add(time);
     }
-    public void InitManager(params TrackerData[] speakerData)
+    public void InitManager(MatchData.GameModeName currentGameMode, params TrackerData[] speakerData)
     {
-        Debug.Log("init manager with speaker counter of " + speakerData.Length);
-        speakerDictionary.Clear();
-        int index = 0;
-        foreach (var data in speakerData)
+        switch (currentGameMode)
         {
-            speakerDictionary.Add(data.speaker, new PlayerData());
-            speakerDictionary[data.speaker].skillOneName = data.speakerInfo.skillOne.ToString();
-            speakerDictionary[data.speaker].skillTwoName = data.speakerInfo.skillTwo.ToString();
+            case MatchData.GameModeName.SpeakerDuel:
+            case MatchData.GameModeName.EchoSurvival:
+            speakerDictionary.Clear();
+            int index = 0;
+            foreach (var data in speakerData)
+            {
+                speakerDictionary.Add(data.speaker, new PlayerData());
+                speakerDictionary[data.speaker].skillOneName = data.speakerInfo.skillOne.ToString();
+                speakerDictionary[data.speaker].skillTwoName = data.speakerInfo.skillTwo.ToString();
 
-            if (index == 0)
-            {
-                p1SkillOneName.text = data.speakerInfo.skillOne.ToString() + " Uses";
-                p1SkillTwoName.text = data.speakerInfo.skillTwo.ToString() + " Uses";
+                if (index == 0)
+                {
+                    p1SkillOneName.text = data.speakerInfo.skillOne.ToString() + " Uses";
+                    p1SkillTwoName.text = data.speakerInfo.skillTwo.ToString() + " Uses";
+                }
+                else
+                {
+                    p2SkillOneName.text = data.speakerInfo.skillOne.ToString() + " Uses";
+                    p2SkillTwoName.text = data.speakerInfo.skillTwo.ToString() + " Uses";
+                }
+                index++;
             }
-            else
-            {
-                p2SkillOneName.text = data.speakerInfo.skillOne.ToString() + " Uses";
-                p2SkillTwoName.text = data.speakerInfo.skillTwo.ToString() + " Uses";
-            }
-            index++;
-        }
+                break;
     }
+    }
+    
 
     public void OnMatchStart()
     {
@@ -160,6 +168,9 @@ public class ReportManager : MonoBehaviour
             }
             index++;
         }
+
+        p2Report.SetActive(speakerDictionary.Count >= 2);
+        
     }
 
     void InitStaminaChart(LineChart chart, BaseCharacter cha)

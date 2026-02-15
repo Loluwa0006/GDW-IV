@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
 
         currentGameMode = Instantiate(MatchData.instance.selectedGameMode.gameModePrefab, canvas.transform);
         currentGameMode.InitGameMode(this);
+        if (reportManager != null) reportManager.transform.SetAsLastSibling();
         pauseMenu.transform.SetAsLastSibling();//make sure pause menu is on top
     }
     private void FixedUpdate()

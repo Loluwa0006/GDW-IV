@@ -5,7 +5,6 @@ public class TrainingTrigger : MonoBehaviour
      TrainingMode manager;
     [SerializeField] SkillName skillToActivate;
 
-
     private void Start()
     {
         manager = FindFirstObjectByType<TrainingMode>();
