@@ -21,7 +21,6 @@ public class Polarity : SpeakerBaseSkill
         if (throwDir.magnitude <= MOVE_DEADZONE) throwDir = GetDirectionToNearestSpeaker();
         Vector3 speakerSpeed = character.velocityManager.GetTotalSpeed();
         grenadeVelocityManager.OverwriteInternalSpeed((throwDir * throwDistance) + speakerSpeed);
-        grenade.transform.position = character.transform.position;
         grenade.OnGrenadeThrown();
         OnSkillUsed();
         OnSkillOver();
@@ -88,5 +87,10 @@ public class Polarity : SpeakerBaseSkill
     public override void ResetSkill()
     {
         grenade.HolsterGrenade();
+    }
+
+    public bool IsActionPressed()
+    {
+        return skillAction.IsPressed();
     }
 }

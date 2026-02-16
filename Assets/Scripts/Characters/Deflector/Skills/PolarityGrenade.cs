@@ -1,19 +1,19 @@
-using NUnit.Framework;
-using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.ProBuilder.MeshOperations;
+using UnityEngine;
 public class PolarityGrenade : MonoBehaviour
 {
     [SerializeField] MeshRenderer grenadeModel;
     [SerializeField] LayerMask grenadeMask;
     [SerializeField] Collider pullCollider;
     [SerializeField] Collider grenadeCollider;
-    [SerializeField] Polarity stateOwner;
+    [SerializeField] Polarity polarityManager;
     [SerializeField] VelocityManager velocityManager;
+    [SerializeField] Rigidbody rb;
 
     [Header("Grenade Attributes")]
     [SerializeField] float grenadePower = 20.0f; //strength of grenade's pull
     [SerializeField] float collisionSafeMargin = 0.1f;
+    [SerializeField] int framesUntilGrenadeReturns = 60 * 5;
     [SerializeField] LayerMask pullMask;
     [Header("VFX")]
     [SerializeField] MeshRenderer effectDisplay;
@@ -39,15 +39,18 @@ public class PolarityGrenade : MonoBehaviour
 
     string grenadeSpeedSource;
 
+    int grenadeReturnTracker = 0;
+
 
     public void InitProjectile()
     {
         speakerMask = LayerMask.GetMask("Speaker");
-        grenadeSpeedSource = "PolarityGrenade" + stateOwner.speaker.name;
+        grenadeSpeedSource = "PolarityGrenade" + polarityManager.speaker.name;
     }
 
     public void OnGrenadeThrown()
     {
+        rb.MovePosition(polarityManager.character.transform.position);
         effectDisplay.enabled = false;
         state = GrenadeState.Travelling;
         grenadeModel.enabled = true;
@@ -57,23 +60,34 @@ public class PolarityGrenade : MonoBehaviour
         switch (state)
         {
             case GrenadeState.Travelling:
-                var info = ProjectileHelper.CollisionLogic(previousGrenadePosition, transform.position, grenadeMask, grenadeCollider);
+                var info = ProjectileHelper.CollisionLogic(previousGrenadePosition, transform.position, grenadeMask, grenadeCollider, QueryTriggerInteraction.Ignore);
                 previousGrenadePosition = transform.position;
                 if (info.collider != null)
                 {
-                    Debug.Log("Polarity grenade hit collider " + info.collider.name);
+                    if (info.collider.transform.parent != null)
+                    {
+                        Debug.Log("Polarity grenade hit collider " + info.collider.name + " with parent " + info.collider.transform.parent.name); ;
+                    }
+                    else
+                    {
+                        Debug.Log("Polarity grenade hit collider " + info.collider.name);
+                    }
                     if (info.collider == grenadeCollider) return;
 
                     var safeMarginAdjustment = info.point + info.normal * collisionSafeMargin;
                     transform.position = safeMarginAdjustment;
                     ActivateGrenade();
                 }
-                break;
+                else if (!polarityManager.IsActionPressed())
+                {
+                    ActivateGrenade();
+                }
+                    break;
             case GrenadeState.Attracting:
             case GrenadeState.Repulsing:
                 ActiveGrenadeLogic();
                 var speakerCheck = ProjectileHelper.GetOverlappingEntities<BaseSpeaker>(grenadeCollider, speakerMask, false);
-                if (speakerCheck.Contains(stateOwner.speaker))
+                if (speakerCheck.Contains(polarityManager.speaker))
                 {
                     HolsterGrenade();
                 }
@@ -99,9 +113,7 @@ public class PolarityGrenade : MonoBehaviour
 
         foreach (var entity in pulledEntities)
         {
-            Debug.Log("Polarity grenade affecting entity " + entity.name);
             if (entity == velocityManager) continue;
-            Vector3 prevSpeed = entity.GetTotalSpeed();
             if (entity.GetExternalSpeed(grenadeSpeedSource) == VelocityManager.MISSING_VELOCITY_VALUE)
             {
                 entity.AddExternalSpeed((transform.position - entity.transform.position).normalized * pull, grenadeSpeedSource);
@@ -110,9 +122,14 @@ public class PolarityGrenade : MonoBehaviour
             {
                 entity.EditExternalSpeed(grenadeSpeedSource, (entity.transform.position - transform.position).normalized * pull);
             }
-            Debug.Log("Entity " + entity.name + " speed changed from " + prevSpeed + " to " + entity.GetTotalSpeed());
-
         }
+
+        grenadeReturnTracker += 1;
+        if (grenadeReturnTracker > framesUntilGrenadeReturns)
+        {
+            HolsterGrenade();
+        }
+
     }
 
     public void HolsterGrenade()
@@ -143,11 +160,14 @@ public class PolarityGrenade : MonoBehaviour
 
     public void ActivateGrenade()
     {
+        grenadeReturnTracker = 0;
         state = GrenadeState.Attracting;
         velocityManager.OverwriteInternalSpeed(Vector3.zero);
         effectDisplay.enabled = true;
         effectDisplay.material = attractMaterial;
         grenadeModel.enabled = true;
     }
+
+
 
 }

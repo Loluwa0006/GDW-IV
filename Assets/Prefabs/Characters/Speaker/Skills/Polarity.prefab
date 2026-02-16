@@ -138,7 +138,7 @@ Transform:
   m_GameObject: {fileID: 5587651673081467545}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 693.15985, y: 466.33475, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -225,10 +225,12 @@ MonoBehaviour:
     m_Bits: 1376448
   pullCollider: {fileID: 9019828297023581247}
   grenadeCollider: {fileID: 3446111369981814240}
-  stateOwner: {fileID: 2707250658487227898}
+  polarityManager: {fileID: 2707250658487227898}
   velocityManager: {fileID: 4996842155191490861}
+  rb: {fileID: 630453453500058521}
   grenadePower: 7
   collisionSafeMargin: 0.1
+  framesUntilGrenadeReturns: 300
   pullMask:
     serializedVersion: 2
     m_Bits: 1114376

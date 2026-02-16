@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public static class ProjectileHelper
 {
-    public static RaycastHit CollisionLogic(Vector3 previous, Vector3 current, LayerMask collisionMask, Collider collider)
+    public static RaycastHit CollisionLogic(Vector3 previous, Vector3 current, LayerMask collisionMask, Collider collider, QueryTriggerInteraction collideWithTriggers)
     {
         Vector3 travelVector = current - previous;
         float checkerDistance = travelVector.magnitude;
@@ -11,7 +11,7 @@ public static class ProjectileHelper
 
         Ray ray = new(previous, travelVector.normalized);
 
-        var hits = Physics.RaycastAll(ray, checkerDistance, collisionMask, QueryTriggerInteraction.Collide);
+        var hits = Physics.RaycastAll(ray, checkerDistance, collisionMask, collideWithTriggers);
         foreach ( var hit in hits)
         {
             if (hit.collider != collider)
