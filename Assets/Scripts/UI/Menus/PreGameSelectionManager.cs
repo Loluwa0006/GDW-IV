@@ -14,14 +14,14 @@ public class PreGameSelectionManager : MonoBehaviour
     [System.Serializable]
     public class MapThumbnails
     {
-        public MapRegistry map;
+        public MapName map;
         public Sprite thumbnail;
     }
 
     public Dictionary<UISelector, MatchData.PlayerInfo> playerInfo = new();
 
     [HideInInspector] public SelectionScreen selectionScreen = SelectionScreen.TeamSelect;
-    [HideInInspector] public MapRegistry selectedMap = MapRegistry.The_Forum;
+    [HideInInspector] public MapName selectedMap = MapName.The_Forum;
 
     [Header("Team Select Data")]
     [SerializeField] float verticalSpacing = -200;
@@ -63,7 +63,7 @@ public class PreGameSelectionManager : MonoBehaviour
 
     bool hasExtraKeyboardPlayer = false;
 
-    Dictionary<MapRegistry, Sprite> mapThumbnailDict = new();
+    Dictionary<MapName, Sprite> mapThumbnailDict = new();
     MatchData matchData;
 
     private void Start()
@@ -85,13 +85,13 @@ public class PreGameSelectionManager : MonoBehaviour
         teamSelectScreen.SetActive(false);
         modeSelectScreen.SetActive(true);
 
-        selectedMap = MapRegistry.The_Forum;
+        selectedMap = MapName.The_Forum;
 
         int index = 0;
         foreach (Transform t in mapButtonHolder.transform)
         {
             if (!t.TryGetComponent(out Button button)) { continue; }
-            MapRegistry currentMap = (MapRegistry) index;
+            MapName currentMap = (MapName) index;
 
             string formattedName = currentMap.ToString().Replace("_", " ");
             button.GetComponentInChildren<TMP_Text>().text = formattedName;
@@ -104,7 +104,7 @@ public class PreGameSelectionManager : MonoBehaviour
         {
             mapThumbnailDict[thumbnail.map] = thumbnail.thumbnail;
         }
-        SetSelectedMap(MapRegistry.The_Forum);
+        SetSelectedMap(MapName.The_Forum);
         SetSelectedGameMode("SpeakerDuel");
         modeDescription.text = matchData.selectedGameMode.modeDescription;
 
@@ -124,7 +124,7 @@ public class PreGameSelectionManager : MonoBehaviour
         teamSelectScreen.SetActive(true);
         selectionScreen = SelectionScreen.TeamSelect;
     }
-    public void SetSelectedMap(MapRegistry newMap)
+    public void SetSelectedMap(MapName newMap)
     {
         selectedMap = newMap;
         mapDisplay.text = selectedMap.ToString().Replace("_", " ");

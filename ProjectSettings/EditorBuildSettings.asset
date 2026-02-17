@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/UI/Codex.unity
     guid: 31ac71bf7e967aa42b2b5b4db9f4b619
+  - enabled: 1
+    path: Assets/Scenes/UI/OnlineMenu.unity
+    guid: 82b33677d09dca94a877463d9381babc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

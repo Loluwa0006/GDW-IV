@@ -1,13 +1,12 @@
-using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Jobs;
+using Tweens;
 using UnityEngine;
 
 public class AnnouncementManager : MonoBehaviour
 {
-    public const float TWEEN_TO_REGULAR_SPEED_DURATION = 1.0f;
+    public const int TWEEN_TO_REGULAR_SPEED_DURATION = 60;
 
 
     [SerializeField] GameObject UIPanel;
@@ -16,7 +15,12 @@ public class AnnouncementManager : MonoBehaviour
     List<AnnouncementData> queuedAnnouncements = new();
     AnnouncementData currentAnnouncement;
 
-    public bool annoucementPlaying = false;
+    [HideInInspector] public bool announcementPlaying = false;
+
+    int tweenTracker = 0;
+    int announcementTracker = 0;
+    float originalTimescale = 1f;
+
 
     public void QueueNewAnnouncement(params AnnouncementData[]  data)
     {
@@ -34,7 +38,7 @@ public class AnnouncementManager : MonoBehaviour
 
     public void DisplayAnnouncement(AnnouncementData data)
     {
-        annoucementPlaying = true;
+        announcementPlaying = true;
         currentAnnouncement = data;
         UIPanel.SetActive(true);
         announcementDisplay.text = data.announcementText;
@@ -46,11 +50,17 @@ public class AnnouncementManager : MonoBehaviour
     {
         if (currentAnnouncement != null)
         {
-            currentAnnouncement.announcementDuration -= Time.unscaledDeltaTime;
-            if (currentAnnouncement.announcementDuration <= 0.0f)
+            currentAnnouncement.announcementDuration--;
+            if (currentAnnouncement.announcementDuration == 0)
             {
                 OnAnnouncementOver();
             }
+        }
+
+        if (tweenTracker < TWEEN_TO_REGULAR_SPEED_DURATION)
+        {
+            Time.timeScale = Mathf.Lerp(originalTimescale, 1.0f, TWEEN_TO_REGULAR_SPEED_DURATION);
+            tweenTracker++;
         }
     }
 
@@ -59,17 +69,19 @@ public class AnnouncementManager : MonoBehaviour
         queuedAnnouncements.Clear();
         OnAnnouncementOver();
     }
-
+ 
     void OnAnnouncementOver()
     {
     
         if (queuedAnnouncements.Count <= 0)
         {
             UIPanel.SetActive(false);
-            DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 1f, TWEEN_TO_REGULAR_SPEED_DURATION)
-            .SetEase(Ease.OutQuad);
+            originalTimescale = Time.timeScale;
+            tweenTracker = 0;
+            
+           
             currentAnnouncement = null;
-            annoucementPlaying = false;
+            announcementPlaying = false;
         }
         else
         {
@@ -81,13 +93,11 @@ public class AnnouncementManager : MonoBehaviour
     }
 
 }
-
-
 public class AnnouncementData
 {
     public float customTimescale = 1.0f;
     public string announcementText = string.Empty;
-    public float announcementDuration = 1.0f;
+    public int announcementDuration = 60;
     public int priority = 1;
 
 

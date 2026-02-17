@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+
 public class VelocityManager : MonoBehaviour
 {
     public static Vector3 MISSING_VELOCITY_VALUE = new (-1.0f, -1.0f, -1.0f);
@@ -12,7 +12,6 @@ public class VelocityManager : MonoBehaviour
     Dictionary<string, Vector3> externalVelocities = new();
 
    [HideInInspector] public bool freeze = false;
-
     public void AddInternalVelocity(Vector3 speed)
     {
         intervalVelocity += speed;

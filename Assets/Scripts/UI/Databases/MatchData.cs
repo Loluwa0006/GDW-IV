@@ -7,8 +7,10 @@ using UnityEngine.InputSystem;
 public class MatchData : ScriptableObject
 {
 
+
     public SkillDatabase skillDatabase;
     public GamemodeDatabase gamemodeDatabase;
+    public StageDatabase stageDatabase;
     public enum PlayerType
     {
         Speaker,
@@ -59,18 +61,23 @@ public class MatchData : ScriptableObject
             Debug.LogError("Missing skill prefabs");
             return;
         }
-        foreach (var kvp in skillDatabase.skillPrefabs)
+        foreach (var entry in skillDatabase.skillPrefabs)
         {
-            skillPrefabDictionary[kvp.skillName] = kvp.skillPrefab;
-            skillIconDictionary[kvp.skillName] = kvp.skillIcon;
-            skillDatabase.prefabDictionary[kvp.skillName] = kvp;
+            skillPrefabDictionary[entry.skillName] = entry.skillPrefab;
+            skillIconDictionary[entry.skillName] = entry.skillIcon;
+            skillDatabase.prefabDictionary[entry.skillName] = entry;
         }
 
-        foreach (var kvp in gamemodeDatabase.availableGameModes)
+        foreach (var entry in gamemodeDatabase.availableGameModes)
         {
-            gameModeDictionary[kvp.gameType] = kvp;
+            gameModeDictionary[entry.gameType] = entry;
         }
-         selectedGameMode = gameModeDictionary[GamemodeDatabase.GameModeName.SpeakerDuel];
+
+        foreach (var entry in stageDatabase.entries)
+        {
+            stageDatabase.mapDatabase[entry.mapName] = entry;
+        }
+        selectedGameMode = gameModeDictionary[GamemodeDatabase.GameModeName.SpeakerDuel];
         initPrefabs = true;
     }
 

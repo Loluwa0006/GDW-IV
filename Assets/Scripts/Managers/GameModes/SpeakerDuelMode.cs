@@ -8,7 +8,7 @@ using static ReportManager;
 
 public class SpeakerDuelMode : BaseGameMode
 {
-    const float SUDDEN_DEATH_SLOW_DOWN_DURATION = 2.5f;
+    const int SUDDEN_DEATH_SLOW_DOWN_DURATION = 150;
     const float SUDDEN_DEATH_SLOW_DOWN_AMOUNT = 0.1f;
 
     [Header("UI Objects")]
@@ -68,7 +68,7 @@ public class SpeakerDuelMode : BaseGameMode
         if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true); // make sure cam is in right spot before starting
         AnnouncementData countdownDataOne = new()
         {
-            announcementDuration = 1.0f,
+            announcementDuration = 60,
             announcementText = "3",
             customTimescale = 0.0f,
             priority = 5
@@ -85,8 +85,8 @@ public class SpeakerDuelMode : BaseGameMode
         {
             speaker.ShowPlayer();
         }
-        yield return new WaitUntil(() => gameManager.announcementManager.annoucementPlaying);
-        yield return new WaitUntil(() => !gameManager.announcementManager.annoucementPlaying);
+        yield return new WaitUntil(() => gameManager.announcementManager.announcementPlaying);
+        yield return new WaitUntil(() => !gameManager.announcementManager.announcementPlaying);
         if (gameManager.reportManager != null)
         {
             gameManager.reportManager.OnMatchStart();
@@ -239,7 +239,7 @@ public class SpeakerDuelMode : BaseGameMode
         gameManager.winBGMPlayer.PlayOneShot(gameManager.winSFX);
         AnnouncementData winAnnouncement = new()
         {
-            announcementDuration = 2.0f,
+            announcementDuration = 120,
             announcementText = "VERDICT",
             customTimescale = 0.1f,
             priority = 9999999
@@ -247,8 +247,8 @@ public class SpeakerDuelMode : BaseGameMode
         gameManager.announcementManager.QueueNewAnnouncement(winAnnouncement);
         yield return null;
         gameManager.postProcessingManager.ResetManager();
-        yield return new WaitUntil(() => gameManager.announcementManager.annoucementPlaying);
-        yield return new WaitUntil(() => !gameManager.announcementManager.annoucementPlaying);
+        yield return new WaitUntil(() => gameManager.announcementManager.announcementPlaying);
+        yield return new WaitUntil(() => !gameManager.announcementManager.announcementPlaying);
         gameManager.winBGMPlayer.Play();
         winScreen.SetActive(true);
         Time.timeScale = 0.0f;

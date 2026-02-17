@@ -35,7 +35,7 @@ public class BaseGameMode : MonoBehaviour
 
         AnnouncementData countdownDataOne = new()
         {
-            announcementDuration = 1.0f,
+            announcementDuration = 60,
             announcementText = "3",
             customTimescale = 0.0f,
             priority = 5
@@ -48,8 +48,8 @@ public class BaseGameMode : MonoBehaviour
         countdownDataFour.announcementText = "BEGIN";
         countdownDataFour.customTimescale = 1.0f;
         gameManager.announcementManager.QueueNewAnnouncement(countdownDataOne, countdownDataTwo, countdownDataThree, countdownDataFour);
-        yield return new WaitUntil(() => gameManager.announcementManager.annoucementPlaying);
-        yield return new WaitUntil(() => !gameManager.announcementManager.annoucementPlaying);
+        yield return new WaitUntil(() => gameManager.announcementManager.announcementPlaying);
+        yield return new WaitUntil(() => !gameManager.announcementManager.announcementPlaying);
 
         matchActive = true;
     }

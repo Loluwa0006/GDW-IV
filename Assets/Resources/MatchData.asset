@@ -14,14 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MatchData
   skillDatabase: {fileID: 11400000, guid: 1d4ecb74ab6e2794c9c49dd738a2805e, type: 2}
   gamemodeDatabase: {fileID: 11400000, guid: ef6b2c8684ecb254294d175d911fd29b, type: 2}
+  stageDatabase: {fileID: 11400000, guid: 6f8f4872bd9fd2e4e9519421b64b19ea, type: 2}
   initPrefabs: 1
   gameLength: 60
   selectedGameMode:
-    gameType: 4
-    gameModePrefab: {fileID: 1199899196247709771, guid: 7788205f9d0a1304c9598d54ae459118, type: 3}
-    modeDescription: Practice your skills.
-    minimumTeams: 1
-    maximumTeams: 1
+    gameType: 0
+    gameModePrefab: {fileID: 3096040581361333721, guid: 0ed02db9269c21640bdc3f213c5168d7, type: 3}
+    modeDescription: 1v1 between 2 deflectors.
+    minimumTeams: 2
+    maximumTeams: 2
     numberOfSpeakers: 1
     numberOfEchoes: 0
     numberOfRounds: 1

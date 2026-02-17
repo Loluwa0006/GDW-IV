@@ -1,7 +1,5 @@
-using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -178,17 +176,15 @@ public class Afterimage : SpeakerBaseSkill
     {
         if (deflectTarget == null) { yield break; }
         DestroyClone();
-        yield return null;
         Vector3 oldPos = deflectTarget.transform.position;
         deflectTarget.WarpToLocation(cloneObject.transform.position);
         deflectTarget.velocityManager.OverwriteInternalSpeed((deflectTarget.GetTarget().transform.position - deflectTarget.transform.position).normalized * deflectTarget.GetSpeed());
 
-        warplines.transform.position = oldPos;
-        yield return null;
+       // warplines.transform.position = oldPos;
         staminaComponent.ConsumeForesight();
         OnSkillOver();
-        warplines.transform.LookAt(deflectTarget.transform.position);
-        warplines.transform.DOMove(deflectTarget.transform.position, warplineMoveDuration);
+        //warplines.transform.LookAt(deflectTarget.transform.position);
+      //  warplines.transform.DOMove(deflectTarget.transform.position, warplineMoveDuration);
     }
     public void DestroyClone()
     {

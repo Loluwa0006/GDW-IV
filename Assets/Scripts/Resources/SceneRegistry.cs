@@ -7,10 +7,11 @@ public enum SceneRegistry
     GameSelection,
     Tutorial,
     Training,
+    OnlineMenu,
     Codex
 }
 
-public enum MapRegistry
+public enum MapName
 {
     The_Forum,
     Snarling_Cauldron,

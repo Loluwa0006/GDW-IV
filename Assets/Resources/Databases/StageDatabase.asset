@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 987bd81ae1cf0ef4a9681fc9ecae95a6, type: 3}
+  m_Name: StageDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::StageDatabase
+  entries:
+  - mapThumbnail: {fileID: 2800000, guid: d2df3ce1759db0c4bbf94099e9a2ffbe, type: 3}
+    mapName: 0
+    mapDescription: A standard stage with no unique mechanics.
+  - mapThumbnail: {fileID: 2800000, guid: defbb0b2f96ff2640ac33e6eb282c8ab, type: 3}
+    mapName: 1
+    mapDescription: Moving platforms with a deadly pit of lava underneath.
