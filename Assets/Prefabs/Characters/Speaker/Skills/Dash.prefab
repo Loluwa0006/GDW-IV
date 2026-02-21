@@ -139,9 +139,10 @@ MonoBehaviour:
   skillName: 0
   staminaCost: 15
   speaker: {fileID: 0}
-  dashDistance: 10
-  dashDuration: 0.2
-  speedMaintained: 0.85
+  dashDistance: 750
+  dashDuration: 15
+  tackleDuration: 7
+  speedMaintained: 1
   dashParticles: {fileID: 461589977950343678}
   whooshClip: {fileID: 8300000, guid: 39a860e37237b9648bec2445c196f631, type: 3}
   hitbox: {fileID: 3205913212757977948}

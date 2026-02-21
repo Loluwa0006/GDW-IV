@@ -200,7 +200,7 @@
     },
     "com.unity.test-framework.performance": {
       "version": "3.2.0",
-      "depth": 1,
+      "depth": 3,
       "source": "registry",
       "dependencies": {
         "com.unity.test-framework": "1.1.33",
@@ -228,15 +228,6 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
-    },
-    "massive-ecs": {
-      "version": "https://github.com/nilpunch/massive-ecs.git#v19.1.0",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.test-framework.performance": "3.0.3"
-      },
-      "hash": "ca40dc6929898adbb6ce233a5a7d1c4c808e879a"
     },
     "nl.jeffreylanters.tweens": {
       "version": "file:C:/Users/temia/Downloads/unity-tweens-3.4.1/unity-tweens-3.4.1",

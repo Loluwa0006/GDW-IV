@@ -11,15 +11,10 @@ public class BaseGameMode : MonoBehaviour
     public const float TWEEN_TO_REGULAR_SPEED_DURATION = 0.35f;
 
     [HideInInspector] public GameManager gameManager;
+    [HideInInspector] public bool matchActive = false;
     [SerializeField] protected PlayerInputManager inputManager;
- 
     protected Queue<MatchData.PlayerInfo> queuedPlayerInfo = new();
-
-
-   protected bool inSuddenDeath = false;
-
-   protected bool matchActive = false;
-
+    protected bool inSuddenDeath = false;
     protected List<Vector3> spawnPositions = new();
 
 
@@ -40,9 +35,9 @@ public class BaseGameMode : MonoBehaviour
             customTimescale = 0.0f,
             priority = 5
         };
-        AnnouncementData countdownDataTwo = new(countdownDataOne);
-        AnnouncementData countdownDataThree = new(countdownDataTwo);
-        AnnouncementData countdownDataFour = new(countdownDataThree);
+        AnnouncementData countdownDataTwo = countdownDataOne;
+        AnnouncementData countdownDataThree = countdownDataTwo;
+        AnnouncementData countdownDataFour = countdownDataThree;
         countdownDataTwo.announcementText = "2";
         countdownDataThree.announcementText = "1";
         countdownDataFour.announcementText = "BEGIN";
@@ -71,7 +66,6 @@ public class BaseGameMode : MonoBehaviour
 
         if (gameManager.postProcessingManager != null)
         {
-            Debug.Log("Post processing manager not null");
             speaker.healthComponent.entityDamaged.AddListener(gameManager.postProcessingManager.OnSpeakerStruck);
             speaker.deflectManager.superDeflectPerformed.AddListener(gameManager.postProcessingManager.OnSuperDeflectPerformed);
         }
@@ -81,9 +75,9 @@ public class BaseGameMode : MonoBehaviour
             speaker.healthComponent.entityDamaged.AddListener(gameManager.HUDAnimator.OnSpeakerStruck);
             speaker.deflectManager.deflectedBall.AddListener((echo, partial, usedSkill) => gameManager.HUDAnimator.OnEchoDeflected());
         }
-        if (gameManager.camManager != null)
+        if (gameManager.cameraManager != null)
         {
-            speaker.healthComponent.entityDamaged.AddListener((info) => gameManager.camManager.OnSpeakerStruck(speaker, info));
+            speaker.healthComponent.entityDamaged.AddListener((info) => gameManager.cameraManager.OnSpeakerStruck(speaker, info));
         }
         if (gameManager.reportManager != null)
         {
@@ -91,9 +85,9 @@ public class BaseGameMode : MonoBehaviour
             speaker.staminaComponent.foresightPerformed.AddListener(gameManager.reportManager.OnForesightUsed);
         }
 
-        if (gameManager.pauseMenu != null)
+        if (gameManager.pauseManager != null)
         {
-            gameManager.pauseMenu.ConnectPauseSignals(speaker);
+            gameManager.pauseManager.ConnectPauseSignals(speaker);
         }
 
     }
@@ -103,7 +97,6 @@ public class BaseGameMode : MonoBehaviour
         int spawnIndex = (character.teamIndex - 1) % spawnPositions.Count;
         yield return new WaitForFixedUpdate();
         character.transform.position = spawnPositions[spawnIndex];
-        if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true);
     }
 
     public virtual void RemoveCharacter(BaseCharacter character)
@@ -149,7 +142,6 @@ public class BaseGameMode : MonoBehaviour
 
     public void ToggleReportDisplay(bool status)
     {
-        Debug.Log("Setting report display status to " + status);
         gameManager.reportManager.reportDisplay.SetActive(status);
     }
 

@@ -9,20 +9,20 @@ public class Afterimage : SpeakerBaseSkill
 
     [SerializeField] AfterimageClone cloneObject;
     [SerializeField] MeshFilter cloneMesh;
-    [SerializeField] float maxChargeDuration = 1.5f;
+    [SerializeField] int maxChargeDuration = 90;
     [SerializeField] float maxClonePlacement = 125.0f;
     [SerializeField] float minDistanceFromWall = 3.0f; //offset from wall to prevent clipping
     [SerializeField] int activeCloneStaminaDrain = 8;
 
-    [SerializeField] float chargeDuration = 4.5f;
+    [SerializeField] int chargeDuration = 270;
     public int chargedDeflectParrystop = 12;
 
 
 
     [Header("Run Variables")]
 
-    [SerializeField] float moveSpeed = 12.0f;
-    [SerializeField] float moveAcceleration = 12.0f / 7.0f;
+    [SerializeField] float maxSpeed = 12.0f;
+    [SerializeField] int accelerationFrames = 7;
 
 
 
@@ -36,13 +36,15 @@ public class Afterimage : SpeakerBaseSkill
 
     CinemachineTargetGroup targetGroup;
 
+    float moveSpeed;
+
     int idleFrames = 0;
     int timeUntilDrain = 0;
 
     
 
-    float placementTracker = 0.0f;
-    float chargeTracker = 0.0f;
+    int placementTracker = 0;
+    int chargeTracker = 0;
 
     Vector3 moveDir;
 
@@ -53,44 +55,32 @@ public class Afterimage : SpeakerBaseSkill
 
 
     BaseEcho deflectTarget;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    GameManager gameManager;
+
+    [HideInInspector] public short cloneID;
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
-        cloneObject.transform.parent = null; // it shouldn't follow the player around
+        gameManager = manager;
+        base.InitState(cha, fsm, manager);
         DestroyClone();
         wallMask = LayerMask.GetMask("Wall");
         warplines.transform.parent = null;
-
-        var echo = FindFirstObjectByType<BaseEcho>();
-
-        if (echo != null)
+        var echo = FindObjectsByType<BaseEcho>(FindObjectsSortMode.InstanceID);
+        if (echo.Length > 0)
         {
-            deflectTarget = echo;
+            deflectTarget = echo[0];
         }
+        targetGroup = gameManager.cameraManager.GetTargetGroup();
+        moveSpeed = maxSpeed / (float) accelerationFrames;
 
-        cloneObject.Disable();
-
-        StartCoroutine(FindTargetGroup());
+        cloneObject.InitClone(manager);
     }
 
-    IEnumerator FindTargetGroup()
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        int emergencyExit = 0;
-        yield return new WaitForFixedUpdate();
-        do { 
-            targetGroup = FindFirstObjectByType<CinemachineTargetGroup>();
-            yield return new WaitForFixedUpdate();
-            emergencyExit += 1;
-        } while (targetGroup == null || emergencyExit < 100);
 
-    }
-
-    public override void Enter(Dictionary<string, object> msg = null)
-    {
-        
-        placementTracker = 0.0f;
-        Debug.Log("Entered afterimage state");
-        base.Enter(msg);
+        placementTracker = 0;
+        base.EnterSimulated(msg);
         placingClone = !cloneObject.IsActive();
         skillBuffer.Consume();
         if (!placingClone)
@@ -101,7 +91,7 @@ public class Afterimage : SpeakerBaseSkill
         {
             cloneObject.ShowMesh();
         }
-        if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(staminaCost, 0, false);
+        if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(staminaCost, 0, false);
      }
 
 
@@ -110,7 +100,6 @@ public class Afterimage : SpeakerBaseSkill
         moveDir = GetMovementDir();
         if (placingClone)
         {
-            placementTracker += Time.deltaTime;
             if (placementTracker > maxChargeDuration) { placementTracker = maxChargeDuration; }
 
 
@@ -156,12 +145,13 @@ public class Afterimage : SpeakerBaseSkill
     {
         base.PhysicsProcess();
         Vector3 newSpeed = character.velocityManager.GetInternalSpeed();
-        newSpeed += moveDir.normalized * moveAcceleration;
+        newSpeed += moveDir.normalized * moveSpeed;
 
-        newSpeed = Vector3.ClampMagnitude(newSpeed, moveSpeed);
+        newSpeed = Vector3.ClampMagnitude(newSpeed, maxSpeed);
         if (placingClone)
         {
             newSpeed.y = 0;
+            placementTracker++;
         }
         character.velocityManager.OverwriteInternalSpeed(newSpeed);
 
@@ -176,7 +166,7 @@ public class Afterimage : SpeakerBaseSkill
     {
         if (deflectTarget == null) { yield break; }
         DestroyClone();
-        Vector3 oldPos = deflectTarget.transform.position;
+        //Vector3 oldPos = deflectTarget.transform.position;
         deflectTarget.WarpToLocation(cloneObject.transform.position);
         deflectTarget.velocityManager.OverwriteInternalSpeed((deflectTarget.GetTarget().transform.position - deflectTarget.transform.position).normalized * deflectTarget.GetSpeed());
 
@@ -210,21 +200,17 @@ public class Afterimage : SpeakerBaseSkill
         if (!cloneObject.IsActive()) { return;  }
 
         DrainStamina();
-    }
-
-    public override void InactiveProcess()
-    {
         ChargeMeterLogic();
     }
+
 
     void ChargeMeterLogic()
     {
         if (placingClone) return;
-        chargeTracker += Time.deltaTime;
+        chargeTracker++;
         if (chargeTracker > chargeDuration)
         {
             chargeTracker = chargeDuration;
-            Debug.Log("fully charged!");
         }
 
         float chargeAsPercent = chargeTracker / chargeDuration;
@@ -233,14 +219,13 @@ public class Afterimage : SpeakerBaseSkill
 
     void DrainStamina()
     {
-        timeUntilDrain -= 1;
+        timeUntilDrain--;
         if (timeUntilDrain <= 0)
         {
             timeUntilDrain = activeCloneStaminaDrain;
-           if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(1, 0, false);
-            if (staminaComponent.GetStamina() <= staminaCost && !staminaComponent.HasForesight())
+            if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(1, 0, false);
+            if (staminaComponent.Stamina <= staminaCost && !staminaComponent.ForesightEnabled)
             {
-                Debug.Log("Destroying clone, ran outta stamina ");
                 DestroyClone();
             }
         }
@@ -262,7 +247,7 @@ public class Afterimage : SpeakerBaseSkill
 
     public override bool SkillAvailable()
     {
-        if (!wasPlacingBeforeFreeze && (GameManager.inSpecialStop || GameManager.frameAfterSpecialStop))
+        if (!wasPlacingBeforeFreeze && (gameManager.hitstopManager.InSpecialStop || gameManager.hitstopManager.FrameAfterSpecialStop))
         {
             return false;
         }

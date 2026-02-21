@@ -7,7 +7,7 @@ public class BufferHelper : MonoBehaviour
 {
 
     List<InputAction> actions = new();
-    [SerializeField] List<string> inputNames = new();
+    [SerializeField] string inputName;
     [SerializeField] bool isHoldable = false;
     [SerializeField] private int defaultDuration = 8;
     int currentDuration = 0;
@@ -20,23 +20,22 @@ public class BufferHelper : MonoBehaviour
 
     string actionBuffered = "";
 
-    public void InitBuffer(InputManager pInput)
+    HitstopManager hitstopManager;
+    public void InitBuffer(InputManager pInput, GameManager manager)
     {
         if (initialized)
         {
             return;
         }
-
-        foreach (string input in inputNames)
-        {
-            InputAction action = pInput.GetAction(input);
+        hitstopManager = manager.hitstopManager;
+        InputAction action = pInput.GetAction(inputName);
             if (action == null)
             {
-                Debug.LogWarning("Could not find action of name " + input + " in player input.");
-                continue;
+                Debug.LogWarning("Could not find action of name " + inputName + " in player input.");
+                return;
             }
             actions.Add(action);
-        }
+        
         currentDuration = defaultDuration;
         initialized = true;
 
@@ -60,7 +59,7 @@ public class BufferHelper : MonoBehaviour
     {
         if (initialized && window > 0)
         {
-            if (GameManager.inSpecialStop) return;
+            if (hitstopManager.InSpecialStop) return;
             window--;
             if (window <= 0)
             {

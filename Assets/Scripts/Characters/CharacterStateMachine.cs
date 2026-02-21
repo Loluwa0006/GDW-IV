@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using static MatchData;
-public class CharacterStateMachine : MonoBehaviour
+public class CharacterStateMachine : MonoBehaviour, ISimulated, ISimulationSnapshot<FSMSnapshot>, ISnapshotable
 {
 
     public BaseState currentState;
@@ -40,6 +40,12 @@ public class CharacterStateMachine : MonoBehaviour
         }
     }
 
+    GameManager gameManager;
+
+    public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Default; set { } }
+    public bool UpdateDuringHitstop { get => false;  set {} }
+
+    FSMSnapshot[] FSMSnapshots = new FSMSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
     public void CreateSkills(PlayerInfo playerInfo)
     {
         ReportManager manager = FindFirstObjectByType<ReportManager>();
@@ -64,11 +70,10 @@ public class CharacterStateMachine : MonoBehaviour
         updatedSkills.Invoke(playerInfo.skillOne, playerInfo.skillTwo);
     }
 
-    public void AddNewSkill(int index, SkillName name)
+    public void AddNewSkill(int index, SkillName name, GameManager manager)
     {
-        if (!matchData.skillPrefabDictionary.ContainsKey(name)) matchData.InitData(); 
-        else  Debug.Log("Init skill prefabs."); 
-        if (!matchData.skillPrefabDictionary.ContainsKey(name)) { Debug.Log("skill " + name.ToString() + " doesn't have a prefab."); return; }
+        if (!matchData.skillPrefabDictionary.ContainsKey(name)) matchData.InitData();
+        if (!matchData.skillPrefabDictionary.ContainsKey(name)) return;
         if (skillLookup.ContainsKey(index))
         {
             Debug.LogWarning("Skill at index already exists, replacing it ");
@@ -79,7 +84,7 @@ public class CharacterStateMachine : MonoBehaviour
         }
 
         BaseSkill newSkill = Instantiate(matchData.skillPrefabDictionary[name], transform).GetComponent<BaseSkill>();
-        newSkill.InitState(character, this);
+        newSkill.InitState(character, this, manager);
         newSkill.SetSkillIndex(index);
         newSkill.InitSkill();
         skillLookup[index] = newSkill;
@@ -104,7 +109,7 @@ public class CharacterStateMachine : MonoBehaviour
         updatedSkills.Invoke(skillOne, skillTwo);
 
     }
-    public void InitMachine()
+    public void InitMachine(GameManager manager)
     {
 
         if (currentState == null)
@@ -117,12 +122,12 @@ public class CharacterStateMachine : MonoBehaviour
             Debug.LogWarning("State machine already initialized.");
             return;
         }
-
-            for (int i = 0; i < transform.childCount; i++)
+        gameManager = manager;
+        for (int i = 0; i < transform.childCount; i++)
             {
                 Transform child = transform.GetChild(i);
-                if (!child.TryGetComponent(out BaseState state)) { Debug.Log("Child " + child.name + " is not a state."); continue; }
-                state.InitState(character, this);
+                if (!child.TryGetComponent(out BaseState state)) continue; 
+                state.InitState(character, this, manager);
                 stateLookup[state.GetType()] = state;
 
                 if (state.hasInactiveProcess) statesWithInactiveProcess.Add(state);
@@ -130,28 +135,25 @@ public class CharacterStateMachine : MonoBehaviour
 
                 if (state is BaseSkill skill)
                 {
-                    if (!state.gameObject.activeSelf) { continue; } //for testing purposes, makes it easier to toggle current skills without ui
+                    if (!state.gameObject.activeSelf)  continue;  //for testing purposes, makes it easier to toggle current skills without ui
                     skillLookup.Add(skillLookup.Count + 1, skill);
                 }
-
-
             }
-
         foreach (Transform t in bufferHolder.transform)
         {
             if (!t.TryGetComponent<BufferHelper>(out var bufferHelper)) { continue; }
-            bufferHelper.InitBuffer(character.inputManager);
+            bufferHelper.InitBuffer(character.inputManager, manager);
             bufferList.Add(bufferHelper);
         }
         initMachine = true;
-        currentState.Enter();
-        
+        currentState.EnterSimulated();
+        currentState.EnterVisuals();
+
+        InitSimulated(gameManager.simulationManager);   
     }
-
-
     public void UpdateState()
     {
-        if (!initMachine || GameManager.gamePaused) { return; }
+        if (!initMachine || gameManager.pauseManager.GamePaused()) { return; }
         currentState.Process();
 
         foreach (var state in statesWithInactiveProcess)
@@ -164,28 +166,20 @@ public class CharacterStateMachine : MonoBehaviour
 
     public void FixedUpdateState()
     {
-        if (!initMachine || GameManager.gamePaused) { return; }
-
-        currentState.PhysicsProcess();
-
-        foreach (var state in statesWithInactivePhysicsProcess)
-        {
-            if (state == currentState) { continue; }
-            state.InactivePhysicsProcess();
-        }
+        
     }
 
     public void TransitionTo<T>(Dictionary<string, object> msg = null) where T : BaseState
     {
-        if (!initMachine) { return; }
+        if (!initMachine) return; 
         if (!stateLookup.ContainsKey(typeof(T)))
         {
             Debug.LogError("Could not find state of type " +  typeof(T));
+            return;
         }
         BaseState newState = stateLookup[typeof(T)];
         if (newState == currentState)
         {
-            Debug.Log("Can't transition to current state again");
             return;
         }
 
@@ -194,9 +188,9 @@ public class CharacterStateMachine : MonoBehaviour
             previousState = currentState;
             currentState.Exit();
         }
-        newState.Enter(msg);
+        newState.EnterSimulated(msg);
+        newState.EnterVisuals(msg);
         currentState = newState;
-        Debug.Log("Transitioning to state " + currentState.name + " from state " + previousState);
 
         transitionedStates.Invoke(new StateTransitionInfo(previousState, currentState, false)); ;
     }
@@ -211,12 +205,10 @@ public class CharacterStateMachine : MonoBehaviour
        var skill = skillLookup[index];
         if (!skill.SkillAvailable())
         {
-            Debug.Log("Skill not available.");
             return;
         }
         if (currentState == skill)
         {
-            Debug.Log("Cannot transition to same skill.");
             return;
         }
         if (currentState != null)
@@ -225,8 +217,8 @@ public class CharacterStateMachine : MonoBehaviour
             currentState.Exit();
         }
         currentState = skillLookup[index];
-        currentState.Enter(msg);
-        Debug.Log("Transitioning to state " + currentState.name + " from state " + previousState);
+        currentState.EnterSimulated(msg);
+        currentState.EnterVisuals(msg);
 
         transitionedStates.Invoke(new StateTransitionInfo(previousState, currentState, true));
     }
@@ -273,4 +265,58 @@ public class CharacterStateMachine : MonoBehaviour
             buffer.Consume();
         }
     }
+
+    public FSMSnapshot CaptureState()
+    {
+        int index = 0;
+        for (int i = 0; i < stateLookup.Count; i++)
+        {
+            if (stateLookup.ElementAt(i).Value == currentState)
+            {
+                index = i;
+                break;
+            }
+        }
+        return new FSMSnapshot()
+        {
+            activeStateIndex = index
+        };
+    }
+
+    public void RestoreState(FSMSnapshot state)
+    {
+        currentState = stateLookup.ElementAt(state.activeStateIndex).Value;
+    }
+
+    public void InitSimulated(SimulationManager simulationManager)
+    {
+        simulationManager.AddSimulatedObject(this);
+    }
+
+    public void SimulateUpdate(int currentTick)
+    {
+        if (!initMachine) return;
+        currentState.PhysicsProcess();
+
+        foreach (var state in statesWithInactivePhysicsProcess)
+        {
+            if (state == currentState) { continue; }
+            state.InactivePhysicsProcess();
+        }
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        FSMSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(FSMSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
+    }
+}
+
+public struct FSMSnapshot
+{
+    public int activeStateIndex;
 }

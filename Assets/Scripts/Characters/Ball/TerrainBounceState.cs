@@ -5,14 +5,19 @@ public class TerrainBounceState : BounceState
 {
 
     [SerializeField] ParticleSystem bounceParticles;
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
        if (echo.playerControlled)
         {
             echo.staminaComponent.EnableForesight();
         }
+        base.EnterSimulated(msg);
+    }
+
+    public override void EnterVisuals(Dictionary<string, object> msg = null)
+    {
+        base.EnterVisuals(msg);
         if (bounceParticles != null) bounceParticles.Play();
-        base.Enter(msg);
     }
 
 

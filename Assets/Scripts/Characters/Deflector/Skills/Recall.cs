@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Recall : SpeakerBaseSkill
+public class Recall : SpeakerBaseSkill, ITackleSkill
 {
     [SerializeField] RecallBlade blade;
     [SerializeField] Collider bladeCollider;
@@ -12,7 +12,7 @@ public class Recall : SpeakerBaseSkill
     [SerializeField] int activeBladeDrainRate = 9;
     [SerializeField] int warpCost = 10;
     [Header("Pulse Attributes")]
-    [SerializeField] Collider hitbox;
+    [SerializeField] HitboxComponent hitbox;
     [SerializeField] DamageInfo hitboxInfo;
     [SerializeField] int warpPulseActiveFrames = 7;
     [SerializeField] LayerMask pulseMask;
@@ -20,7 +20,7 @@ public class Recall : SpeakerBaseSkill
     [SerializeField] LayerMask holsterMask;
     [SerializeField] int framesUntilHolsterAllowed = 8;
 
-    List<HealthComponent> struckEntities = new();
+    List<int> struckEntities = new();
 
     bool releasedButton = true;
     int drainTracker = 9;
@@ -31,14 +31,26 @@ public class Recall : SpeakerBaseSkill
 
     Rigidbody _rb;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+
+    int tackleStartTick = 0;
+    public List<int> StruckTargets { get => struckEntities; set => struckEntities = value; }
+    public int TackleDuration { get => warpPulseActiveFrames; set => warpPulseActiveFrames = value ; }
+    public int TackleStartTick { get => tackleStartTick; set => tackleStartTick = value; }
+
+    ITackleSkill tackleManager;
+
+
+    GameManager gameManager;
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        gameManager = manager;
+        base.InitState(cha, fsm, manager);
         StartCoroutine(FindOppositeSpeaker());
         blade.Holster();
         _rb = speaker.GetComponent<Rigidbody>();
+        tackleManager = this;
     }
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
         releasedButton = false;
         framesRemainingUntilHolsterAllowed = framesUntilHolsterAllowed;
@@ -52,7 +64,7 @@ public class Recall : SpeakerBaseSkill
         }
         else
         {
-            if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(warpCost, 0, false);
+            if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(warpCost, 0, false);
             else staminaComponent.ConsumeForesight();
             TeleportToBlade();
         }
@@ -62,11 +74,10 @@ public class Recall : SpeakerBaseSkill
     IEnumerator FindOppositeSpeaker()
     {
         yield return new WaitForFixedUpdate();
-        var speakers = FindObjectsByType<BaseSpeaker>(FindObjectsSortMode.None);
+        var speakers = FindObjectsByType<BaseSpeaker>(FindObjectsSortMode.InstanceID);
         foreach (var speaker in speakers)
         {
-            if (speaker == character) { continue; }
-            Debug.Log(character.name + " is looking at char " + speaker.name);
+            if (speaker == character) continue; 
             enemySpeaker = speaker;
             break;
         }
@@ -75,11 +86,11 @@ public class Recall : SpeakerBaseSkill
     {
         blade.PhysicsUpdate();
         if (blade.status != RecallBlade.BladeState.Holstered) DrainLogic();
-        if (staminaComponent.GetStamina() < staminaCost) blade.Holster();
+        if (staminaComponent.Stamina < staminaCost) blade.Holster();
 
         Vector3 moveDir = GetMovementDir();
         if (skillAction.IsPressed() && CanSteer(moveDir)) blade.SteerFlight(moveDir);
-        if (hitboxActiveFramesRemaining > 0) HitboxLogic();
+        if (hitboxActiveFramesRemaining > 0) tackleManager.HitboxCollisionLogic(hitbox, gameManager.hitstopManager, pulseMask, speaker);
         if (blade.status != RecallBlade.BladeState.Holstered) HolsterLogic();
         if (framesRemainingUntilHolsterAllowed > 0) framesRemainingUntilHolsterAllowed--;
     }
@@ -100,25 +111,11 @@ public class Recall : SpeakerBaseSkill
         if (drainTracker <= 0)
         {
             drainTracker = activeBladeDrainRate;
-            if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(1, 0, false);
+            if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(1, 0, false);
         }
     }
 
-    void HitboxLogic()
-    {
-        var overlap = Physics.OverlapBox(hitbox.bounds.center, hitbox.bounds.size, speaker.transform.rotation, pulseMask, QueryTriggerInteraction.Collide);
-        foreach (var hurtbox in overlap)
-        {
-            if (!hurtbox.TryGetComponent(out HealthComponent hp)) continue;
-            else if (struckEntities.Contains(hp)) continue;
-            else if (hp == speaker.healthComponent) continue;
-            hp.Damage(hitboxInfo);
-            struckEntities.Add(hp);
-        }
-        hitboxActiveFramesRemaining--;
-        if (hitboxActiveFramesRemaining < 0) hitbox.enabled = false;
-    }
-
+    
     void TeleportToBlade()
     {
         Vector3 tpSpot = blade.transform.position;
@@ -143,7 +140,6 @@ public class Recall : SpeakerBaseSkill
         var overlap = Physics.OverlapBox(bladeCollider.bounds.center, bladeCollider.bounds.size, transform.rotation, holsterMask);
         foreach (Collider c in overlap)
         {
-            Debug.Log("Found collider " + c.name);
             if (c.TryGetComponent(out BaseSpeaker detectedSpeaker))
             {
                 if (detectedSpeaker != speaker) continue;
@@ -161,6 +157,6 @@ public class Recall : SpeakerBaseSkill
         if (blade.status == RecallBlade.BladeState.Deactivated) return false;
 
         int staCost = blade.status == RecallBlade.BladeState.Holstered ? staminaCost : warpCost;
-        return (staminaComponent.HasForesight() || staminaComponent.GetStamina() > staCost);
+        return (staminaComponent.ForesightEnabled || staminaComponent.Stamina > staCost);
     }
 }

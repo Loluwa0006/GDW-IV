@@ -5,6 +5,8 @@ using UnityEngine.Rendering;
 
 public class PostProcessingManager : MonoBehaviour
 {
+    [SerializeField] GameManager gameManager;
+
     [SerializeField] Animator postprocessingAnimator;
     [SerializeField] Volume BAndWProcessor;
     [SerializeField] Volume suddenDeathProcessor;
@@ -22,25 +24,23 @@ public class PostProcessingManager : MonoBehaviour
         {
             postprocessingAnimator = GetComponent<Animator>();
         }
+        if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
     }
     public void OnSpeakerStruck (DamageInfo info)
     {
         if (info.damageSource != DamageSource.Ball) { return; }
         StartCoroutine(OnSpeakerStruck());
-        Debug.Log("Setting screen to black and white");
     }
 
     public void OnSuperDeflectPerformed(BaseSpeaker speaker)
     {
         StartCoroutine(OnSuperDeflectPerformed());
-        Debug.Log("Setting screen to dark blue");
 
     }
 
     public void OnSuddenDeathStarted()
     {
         postprocessingAnimator.Play("SetSuddenDeath", (int) AnimatorLayers.WorldLayer, 0.0f);
-        Debug.Log("Playing sudden death");
     }
 
 
@@ -48,19 +48,17 @@ public class PostProcessingManager : MonoBehaviour
     {
         postprocessingAnimator.Play("SetB&W", (int) AnimatorLayers.AttackReactionLayer, 0.0f);
         yield return null;
-        Debug.Log("B & W Processor weight == " + BAndWProcessor.weight);
-        if (!GameManager.inSpecialStop) yield return new WaitUntil(() => GameManager.inSpecialStop);
-        yield return new WaitUntil(() => !GameManager.inSpecialStop);
+        if (!gameManager.hitstopManager.InSpecialStop) yield return new WaitUntil(() => gameManager.hitstopManager.InSpecialStop);
+        yield return new WaitUntil(() => !gameManager.hitstopManager.InSpecialStop);
         postprocessingAnimator.Play("EndB&W", (int) AnimatorLayers.AttackReactionLayer, 0.0f);
     }
 
     IEnumerator OnSuperDeflectPerformed()
     {
-        Debug.Log("Strong deflect performed");
         postprocessingAnimator.Play("SetStrongAttack", (int) AnimatorLayers.AttackReactionLayer, 0.0f);
         yield return null;
-        if (!GameManager.inSpecialStop) yield return new WaitUntil(() => GameManager.inSpecialStop);
-        yield return new WaitUntil(() => !GameManager.inSpecialStop);
+        if (!gameManager.hitstopManager.InSpecialStop) yield return new WaitUntil(() => gameManager.hitstopManager.InSpecialStop);
+        yield return new WaitUntil(() => !gameManager.hitstopManager.InSpecialStop);
         postprocessingAnimator.Play("EndStrongAttack", (int)AnimatorLayers.AttackReactionLayer, 0.0f);
     }
  

@@ -12,62 +12,56 @@ public class AnnouncementManager : MonoBehaviour
     [SerializeField] GameObject UIPanel;
     [SerializeField] TMP_Text announcementDisplay;
 
-    List<AnnouncementData> queuedAnnouncements = new();
+    Queue<AnnouncementData> queuedAnnouncements = new();
     AnnouncementData currentAnnouncement;
 
     [HideInInspector] public bool announcementPlaying = false;
 
-    int tweenTracker = 0;
-    int announcementTracker = 0;
-    float originalTimescale = 1f;
-
-
+    float timeRemaining;
     public void QueueNewAnnouncement(params AnnouncementData[]  data)
     {
         foreach (var item in data)
         {
-            queuedAnnouncements.Add(item);
+            queuedAnnouncements.Enqueue(item);
         }
-        queuedAnnouncements = queuedAnnouncements.OrderByDescending(a => a.priority).ToList();
-        if (currentAnnouncement == null)
+        if (!announcementPlaying)
         {
-            DisplayAnnouncement(queuedAnnouncements[0]);
+            DisplayAnnouncement();
         }
     }
 
 
-    public void DisplayAnnouncement(AnnouncementData data)
+    public void DisplayAnnouncement()
     {
+        AnnouncementData data = queuedAnnouncements.Dequeue();
         announcementPlaying = true;
         currentAnnouncement = data;
         UIPanel.SetActive(true);
         announcementDisplay.text = data.announcementText;
         Time.timeScale = data.customTimescale;
-
-       
+        timeRemaining = data.announcementDuration / 60;       
     }
     private void Update()
     {
-        if (currentAnnouncement != null)
+        if (announcementPlaying)
         {
-            currentAnnouncement.announcementDuration--;
-            if (currentAnnouncement.announcementDuration == 0)
+            timeRemaining -= Time.unscaledDeltaTime;
+            if (timeRemaining <= 0)
             {
                 OnAnnouncementOver();
             }
         }
 
-        if (tweenTracker < TWEEN_TO_REGULAR_SPEED_DURATION)
-        {
-            Time.timeScale = Mathf.Lerp(originalTimescale, 1.0f, TWEEN_TO_REGULAR_SPEED_DURATION);
-            tweenTracker++;
-        }
+        
     }
 
     public void ResetManager()
     {
         queuedAnnouncements.Clear();
-        OnAnnouncementOver();
+        UIPanel.SetActive(false);
+        gameObject.CancelTweens();
+        announcementPlaying = false;
+        Time.timeScale = 1.0f;
     }
  
     void OnAnnouncementOver()
@@ -76,40 +70,45 @@ public class AnnouncementManager : MonoBehaviour
         if (queuedAnnouncements.Count <= 0)
         {
             UIPanel.SetActive(false);
-            originalTimescale = Time.timeScale;
-            tweenTracker = 0;
-            
-           
-            currentAnnouncement = null;
+            FloatTween timescaleTween = new()
+            {
+                duration = TWEEN_TO_REGULAR_SPEED_DURATION,
+                easeType = EaseType.QuadOut,
+                useUnscaledTime = true,
+                from = Time.timeScale,
+                to = 1.0f,
+                onUpdate = (trans, value) => Time.timeScale = value
+            };
+            gameObject.AddTween(timescaleTween);
+
             announcementPlaying = false;
         }
         else
         {
-            var next = queuedAnnouncements[0];
-            queuedAnnouncements.RemoveAt(0);
-            DisplayAnnouncement(next);
+            DisplayAnnouncement();
         }
         
     }
 
 }
-public class AnnouncementData
+public struct AnnouncementData
 {
-    public float customTimescale = 1.0f;
-    public string announcementText = string.Empty;
-    public int announcementDuration = 60;
-    public int priority = 1;
 
-
-    public AnnouncementData() { }
-
-    public  AnnouncementData(AnnouncementData data)
+    public static readonly AnnouncementData winData = new ()
     {
-        customTimescale = data.customTimescale;
-        announcementText = data.announcementText;
-        announcementDuration = data.announcementDuration;
-        priority = data.priority;
-    }
+       customTimescale = 0.1f,
+       announcementDuration = 150,
+       priority = 99999,
+       announcementText = "VERDICT"
+    };
+
+    public float customTimescale;
+    public string announcementText;
+    public int announcementDuration;
+    public int priority;
+
+
+    
 }
 
 

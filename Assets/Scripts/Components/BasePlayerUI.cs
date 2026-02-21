@@ -26,8 +26,6 @@ public class BasePlayerUI : MonoBehaviour
     [SerializeField] Color foresightStamina = Color.lightBlue;
     [SerializeField] Color skillAvailable;
     [SerializeField] Color skillUnavailable;
-
-
     private void Awake()
     {
         if (staminaDisplay == null)
@@ -35,7 +33,6 @@ public class BasePlayerUI : MonoBehaviour
             staminaDisplay = GetComponent<TMP_Text>();
         }
     }
-
     public void InitDisplay(BaseSpeaker cha, MatchData.PlayerInfo info)
     {
         speakerOwner = cha;
@@ -49,16 +46,11 @@ public class BasePlayerUI : MonoBehaviour
             rectTransform.localScale = new Vector3(rectTransform.localScale.x * -1.0f, 1.0f, 1.0f);
             skillOneIcon.rectTransform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
             skillTwoIcon.rectTransform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
-
-
         }
     }
-
     private void Update()
     {
-        
-        SetStaminaWheelValues();
-
+        SetStaminaUIValues();
         SetSkillIconColors();
     }
 
@@ -78,17 +70,17 @@ public class BasePlayerUI : MonoBehaviour
 
     }
 
-    void SetStaminaWheelValues()
+    void SetStaminaUIValues()
     {
         if (speakerOwner == null) { return; }
         var staminaComponent = speakerOwner.staminaComponent;
-        float usableStamina = staminaComponent.GetStamina();
-        maxStaminaImage.fillAmount = staminaComponent.GetMaxStamina() / StaminaComponent.DEFAULT_MAX_STAMINA;
+        float usableStamina = staminaComponent.Stamina;
+        maxStaminaImage.fillAmount = staminaComponent.MaxStamina / StaminaComponent.DEFAULT_MAX_STAMINA;
         usableStaminaImage.fillAmount = usableStamina / StaminaComponent.DEFAULT_MAX_STAMINA;
-        grayStaminaImage.fillAmount = (usableStamina + staminaComponent.GetGrayStamina()) / StaminaComponent.DEFAULT_MAX_STAMINA;
+        grayStaminaImage.fillAmount = (usableStamina + staminaComponent.GrayStamina) / StaminaComponent.DEFAULT_MAX_STAMINA;
         if (grayStaminaImage.fillAmount > maxStaminaImage.fillAmount) { grayStaminaImage.fillAmount = maxStaminaImage.fillAmount; }
-        if (staminaComponent.HasForesight()) usableStaminaImage.color = foresightStamina;
-        else usableStaminaImage.color = staminaComponent.InDangerZone() ? dangerStamina : healthyStamina;
+        if (staminaComponent.ForesightEnabled) usableStaminaImage.color = foresightStamina;
+        else usableStaminaImage.color = staminaComponent.InDangerZone ? dangerStamina : healthyStamina;
      }
     public void SetSkillIcons(SkillName skillOne,SkillName skillTwo)
     {
@@ -104,7 +96,5 @@ public class BasePlayerUI : MonoBehaviour
             skillTwoIcon.texture = MatchData.instance.skillIconDictionary[skillTwo];
         }
         else skillTwoIcon.gameObject.SetActive(false);
-
-
     }
 }

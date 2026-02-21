@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class SpeakerAirState : SpeakerBaseState
 {
@@ -9,9 +7,9 @@ public class SpeakerAirState : SpeakerBaseState
     [SerializeField] protected BufferHelper skillTwoBuffer;
     protected float DAMPING_RATE = 0.985f;
     protected Rigidbody _rb;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         _rb = cha.GetComponent<Rigidbody>();
     }
 
@@ -19,12 +17,10 @@ public class SpeakerAirState : SpeakerBaseState
     {
         if (skillOneBuffer.Buffered)
         {
-            Debug.Log("Skill one pressed");
             fsm.TransitionToSkill(1);
         }
         else if (skillTwoBuffer.Buffered) 
         {
-            Debug.Log("Skill two pressed");
             fsm.TransitionToSkill(2);
         }
     }
@@ -54,7 +50,6 @@ public class SpeakerAirState : SpeakerBaseState
 
     public override void PhysicsProcess()
     {
-
         Vector3 newVel = character.velocityManager.GetInternalSpeed();
         Vector3 strafeSpeed = AirStrafeLogic();
         newVel.x = strafeSpeed.x;
@@ -63,9 +58,6 @@ public class SpeakerAirState : SpeakerBaseState
         newVel.y = Mathf.Max(GetJumpInfo().maxFallSpeed, newVel.y);
         
         character.velocityManager.OverwriteInternalSpeed(newVel);
-     
-
-        
     }
 
     protected virtual float GetGravity()

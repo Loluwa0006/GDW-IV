@@ -2,17 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
-public class Counterslash : SpeakerBaseSkill
+public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<CounterslashSnapshot>, ISnapshotable
 {
-    //counter slash is unique: it drains stamina as you charge it up. there's a flat cost when releasing the blade tho
-
-
     const int NUMBER_OF_DEFLECT_PARTICLE_OBJECTS = 10;
 
-
     [Header("Balance Attributes")]
-    [SerializeField] float chargeDuration = 1.5f;
-    [SerializeField] float timeUntilCancel = 0.6f;
+    [SerializeField] int chargeDuration = 90;
+    [SerializeField] int timeUntilCancel = 0;
     [SerializeField] int framesUntilStaminaDrain = 6;
     [SerializeField] float decelValue = 0.95f;
     [Header("Particles")]
@@ -32,34 +28,33 @@ public class Counterslash : SpeakerBaseSkill
     [Header("Other")]
     [SerializeField] ProgressBar chargeMeter;
 
-
     BufferHelper deflectBuffer;
 
-
-
-    float chargeTracker = 0;
-    int frameTracker;
-
-    GameManager manager;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    int drainStartTick;
+    int chargeStartTick;
 
     List<ParticleSystem> particlesList = new();
 
+    bool previouslyCharged;
+
+    GameManager gameManager;
+    public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Skill; set { } }
+    public bool UpdateDuringHitstop { get => false; set { } }
+
+    CounterslashSnapshot[] counterslashSnapshots = new CounterslashSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
     private void Start()
     {
         var main = releaseParticles.main;
         main.startColor = chargedColor;
     }
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
-        manager = FindFirstObjectByType<GameManager>();
-
+        base.InitState(cha, fsm, manager);
         deflectBuffer = fsm.TryGetBuffer("DeflectBuffer");
         if (deflectBuffer == null)
         {
-            Debug.LogError("Character " + cha + " missing deflect buffer");
+            Debug.LogError("Character " + cha + " missing deflect buffer for rebuttal skill");
         }
 
         for (int i = 0; i < NUMBER_OF_DEFLECT_PARTICLE_OBJECTS; i++) 
@@ -69,121 +64,73 @@ public class Counterslash : SpeakerBaseSkill
            StartCoroutine(InitDeflectionParticle(particle));
         }
         windSwirler.Stop();
+
+        gameManager = manager;
     }
 
     IEnumerator InitDeflectionParticle(ParticleSystem ps)
     {
         ps.transform.position = new Vector3(0, -1000, 0); //move it out of sight
+        //Let unity init it by running it
         ps.Play();
         yield return new WaitForFixedUpdate();
         ps.Stop();
     }
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
-        frameTracker = framesUntilStaminaDrain;
-        chargeTracker = 0.0f;
+        base.EnterSimulated(msg);
+        drainStartTick = simulationManager.CurrentTick;
+        chargeStartTick = simulationManager.CurrentTick;
 
         chargeMeter.SetDisplayStatus(true);
         deflectBuffer.Consume();
         chargeParticles.time = 0;
         chargeParticles.Play();
         windSwirler.Play();
-
     }
-    public override void Process()
+    void ChargeMeterLogic(int currentTick)
     {
-
-        if (!skillAction.IsPressed())
-        {
-
-            if (chargeTracker >= chargeDuration)
-            {
-                OnCounterslashReleased();
-            }
-            else if (chargeTracker >= timeUntilCancel)
-            {
-                OnSkillOver();
-            }
-        }
-
-        if (CancelSkillIfOppositeSkillBuffered()) return;
-        ChargeMeterLogic();
-    }
-    void ChargeMeterLogic()
-    {
-
-        bool chargedBefore = (chargeTracker == chargeDuration);
-        chargeTracker += Time.deltaTime;
-        if (chargeTracker > chargeDuration)
-        {
-            chargeTracker = chargeDuration;
-        }
-        bool nowCharged = (chargeTracker == chargeDuration);
-
-        if (!chargedBefore && nowCharged)
+        int chargeProgress = currentTick - chargeStartTick;
+        float chargeAsPercent = Mathf.Clamp01(chargeProgress / (float) chargeDuration);
+        bool fullyCharged = chargeAsPercent > 0.99f;
+        if (!previouslyCharged && fullyCharged)
         {
             sfxHandler.PlayOneShot(fullPower);
-        }
-
-        float chargeAsPercent = chargeTracker / chargeDuration;
-        Debug.Log("Rebuttal at " + chargeAsPercent + " percent power");
+        } 
         chargeMeter.SetProgress(chargeAsPercent);
         
         var emission = chargeParticles.emission;
         emission.rateOverTime = Mathf.Lerp(minWindTrails, maxWindTrails, chargeAsPercent);
 
         var main = chargeParticles.main;
-        main.startColor = nowCharged ? chargedColor : underchargedColor;
+        main.startColor = fullyCharged ? chargedColor : underchargedColor;
+        previouslyCharged = (currentTick - chargeStartTick >= chargeDuration);
     }
 
     void OnCounterslashReleased()
     {
-        if (chargeTracker < chargeDuration) return;
-        var echoList = FindObjectsByType<BaseEcho>(FindObjectsSortMode.InstanceID);
-        if (echoList.Length <= 0) { Debug.Log("nothing to deflect mr/mrs " + character.name); return;  }
+        var echoList = gameManager.entityManager.GetEntitiesOfType(EntityDatabaseID.Echo);
+        if (echoList.Count <= 0) return;
         int index = 0;
         int particleIndex = 0;
-        foreach (var ball in echoList)
+        foreach (var trans in echoList)
+        {
+            BaseEcho echo = trans.GetComponent<BaseEcho>(); 
+            if (echo.GetTarget() == character.transform)
             {
-                if (ball.GetTarget() == character.transform)
-                {
-                ball.ForceDeflect(speaker);
+                echo.ForceDeflect(speaker);
                 var particle = particlesList[particleIndex % NUMBER_OF_DEFLECT_PARTICLE_OBJECTS];
-                    particle.transform.position = ball.transform.position;
-                    particle.Play();
+                particle.transform.position = echo.transform.position;
+                particle.Play();
                 particleIndex++;
-                }
-            index++;
             }
-        if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(staminaCost, 0, false);
+        index++;
+        }
+        if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(staminaCost, 0, false);
         else staminaComponent.ConsumeForesight();
         OnSkillOver();
         releaseParticles.Play();
         sfxHandler.PlayOneShot(electricBurst, burstVolume);
-            
-        
-    }
-    public override void PhysicsProcess()
-    {
-    
-        frameTracker--;
-        if (frameTracker <= 0)
-        {
-            frameTracker = framesUntilStaminaDrain;
-            bool foresight = staminaComponent.HasForesight();
-            if (!foresight)
-            {
-                staminaComponent.DamageStamina(1, 0, false);
-            
-                if (staminaComponent.GetStamina() <= staminaCost)
-                {
-                        OnSkillOver();
-                }
-            }
-        }
-        Vector3 currentSpeed = character.velocityManager.GetInternalSpeed();
-        character.velocityManager.OverwriteInternalSpeed(currentSpeed * decelValue);
     }
 
     public override void Exit()
@@ -192,4 +139,77 @@ public class Counterslash : SpeakerBaseSkill
         chargeMeter.SetDisplayStatus(false);
         chargeParticles.Stop();
     }
+
+    public void InitSimulated(SimulationManager simulationManager)
+    {
+        this.simulationManager = simulationManager;
+        simulationManager.AddSimulatedObject(this);
+    }
+    public void SimulateUpdate(int currentTick)
+    {
+        if (fsm.currentState != this) return;
+        if (CancelSkillIfOppositeSkillBuffered()) return;
+        InputLogic(currentTick);
+        ChargeMeterLogic(currentTick);
+        DrainLogic(currentTick);
+        SpeedLogic();
+    }
+    void SpeedLogic()
+    {
+        Vector3 currentSpeed = character.velocityManager.GetInternalSpeed();
+        character.velocityManager.OverwriteInternalSpeed(currentSpeed * decelValue);
+    }
+    void DrainLogic(int currentTick)
+    {
+        if (staminaComponent.ForesightEnabled) return;
+        int elasped = currentTick - drainStartTick;
+        var currentDrains = elasped / framesUntilStaminaDrain;
+        int previousDrains = (elasped - 1) / framesUntilStaminaDrain;
+        if (currentDrains > previousDrains)
+        {   
+            staminaComponent.DamageStamina(1, 0, false);
+            if (staminaComponent.Stamina <= staminaCost) OnSkillOver();
+        }
+    }
+    void InputLogic(int currentTick)
+    {
+        if (!skillAction.IsPressed())
+        {
+            if (currentTick - chargeStartTick >= chargeDuration) OnCounterslashReleased();
+            else if (currentTick - chargeStartTick >= timeUntilCancel) OnSkillOver();
+
+            Debug.Log("Time elasped in counterslash state == " + (currentTick - chargeStartTick));
+        }
+    }
+    public CounterslashSnapshot CaptureState()
+    {
+        return new CounterslashSnapshot()
+        {
+            chargeStart = chargeStartTick,
+            charged = previouslyCharged,
+        };
+    }
+
+    public void RestoreState(CounterslashSnapshot snapshot)
+    {
+        chargeStartTick = snapshot.chargeStart;
+        previouslyCharged = snapshot.charged;
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        counterslashSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(counterslashSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
+    }
+}
+
+
+public struct CounterslashSnapshot
+{
+    public int chargeStart;
+    public bool charged;
 }

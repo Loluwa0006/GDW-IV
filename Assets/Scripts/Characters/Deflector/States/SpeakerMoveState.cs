@@ -15,12 +15,15 @@ public class SpeakerMoveState : SpeakerBaseState
     protected Rigidbody _rb;
 
     protected Vector3 moveDir = new();
+
+    SimulationManager simulationManager;
     
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         _rb = cha.GetComponent<Rigidbody>();
         playerInput = cha.GetComponent<PlayerInput>();
+        simulationManager = manager.simulationManager;
     }
 
     public override void Process()
@@ -34,16 +37,15 @@ public class SpeakerMoveState : SpeakerBaseState
         }
         if (skillOneBuffer.Buffered)
         {
-            //skillOneBuffer.Consume();
             fsm.TransitionToSkill(1);
             
         }
         else if (skillTwoBuffer.Buffered)
         {
-            //skillTwoBuffer.Consume();
            fsm.TransitionToSkill(2);
         }
     }
+
 
     public override void PhysicsProcess()
     {

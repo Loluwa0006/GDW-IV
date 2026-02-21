@@ -7,7 +7,7 @@ public class DeflectionBounceState : BounceState
     [Header("Deflection Settings")]
     public int deflectStopAmount;
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
         BaseSpeaker deflector;
         bool usedSkill = false;
@@ -31,17 +31,17 @@ public class DeflectionBounceState : BounceState
         {
             usedSkill = (bool)msg["usedSkill"];
         }
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         echo.FindNewTarget(deflector.transform);
         echo.echoDeflected.Invoke(echo);
-        StartCoroutine(deflector.deflectManager.OnSuccessfulDeflect(echo, usedSkill));
+        deflector.deflectManager.OnSuccessfulDeflect(echo, usedSkill);
     }
     public override void ApplyBounceVelocity()
     {
         float t = echoData.deflectStreak / (float)echoData.deflectsUntilMaxSpeed;
         echoData.deflectStreak += 1;
         echo.UpdateSpeed(Mathf.Lerp(echoData.minSpeed, echoData.maxSpeed, t));
-        GameManager.ApplySpecialStop(deflectStopAmount);
+        gameManager.hitstopManager.ApplySpecialStop(deflectStopAmount);
         base.ApplyBounceVelocity();
     }
 }

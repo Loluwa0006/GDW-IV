@@ -22,9 +22,6 @@ public class InputManager : MonoBehaviour
             playerInput.user.UnpairDevices(); //get rid of other gamepads / the keyboard
             InputUser.PerformPairingWithDevice(info.device, playerInput.user); // add this gamepad to the current player
         }
-
-        Debug.Log("device name is " + info.device.name);
-
         playerInput.SwitchCurrentActionMap(info.controlScheme);
     }
     public virtual Vector3 GetMovementDirection()

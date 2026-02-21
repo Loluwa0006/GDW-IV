@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class GetHitState : SpeakerBaseState
+public class GetHitState : SpeakerBaseState, ISimulated
 {
     const float MAX_FALL_SPEED = 15.0f;
 
@@ -16,11 +16,22 @@ public class GetHitState : SpeakerBaseState
 
     DamageInfo hitInfo;
 
-    int hitstunTracker = 0;
+    int tickWhereHitOccured = 0;
+    GameManager gameManager;
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public ISimulated.PriorityIndex Priority { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool UpdateDuringHitstop { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+    SimulationManager simulationManager;
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.Enter(msg);
+        base.InitState(cha, fsm, manager);
+        gameManager = manager;
+    }
+
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
+    {
+        base.EnterSimulated(msg);
         bool hasData = false;
         if (msg != null)
         {
@@ -29,7 +40,7 @@ public class GetHitState : SpeakerBaseState
                 hitInfo = (DamageInfo)data;
                 if (hitInfo.hitstunGravity == DamageInfo.USE_DEFAULT_HITSTUN_GRAVITY)  hitInfo.hitstunGravity = DamageInfo.DEFAULT_HITSTUN_GRAVITY;
                 hasData = true;
-                hitstunTracker = hitInfo.hitstun;
+                tickWhereHitOccured = simulationManager.CurrentTick;
             }
         } 
         if (!hasData)
@@ -40,20 +51,26 @@ public class GetHitState : SpeakerBaseState
         }
         if (hitInfo.leaveTargetInvincible)
         {
-            Debug.Log("Adding new invuln source to char " + character.name);
-            InvulnerabilityEffect invulnEffect = new (DamageSource.Ball, hitInfo.hitstun + additionalIFramesPostEchoHit);
-            speaker.healthComponent.AddStatusEffect(invulnEffect, "Invuln" + hitInfo.damageSource.ToString());
+            //InvulnerabilityEffect invulnerabilityEffect = new (DamageSource.Ball, simulationManager.CurrentTick, hitInfo.hitstun + additionalIFramesPostEchoHit);
+            InvulnerabilityEffect invulnerabilityEffect = new InvulnerabilityEffect(DamageSource.Ball, hitInfo.hitstun + additionalIFramesPostEchoHit, simulationManager.CurrentTick, -1);
+            speaker.healthComponent.AddStatusEffect(invulnerabilityEffect, StatusEffectIDs.EchoInvulnerability);
         }
-        if (hitsparkParticles != null) 
+    }
+
+    public override void EnterVisuals(Dictionary<string, object> msg = null)
+    {
+        base.EnterVisuals(msg);
+        if (hitsparkParticles != null)
         {
             var newSparks = Instantiate(hitsparkParticles, null);
             newSparks.transform.position = character.transform.position;
             newSparks.Play();
         }
-
     }
 
-   
+
+
+
     void ExitHitstunState()
     {
         Vector3 currentSpeed = character.velocityManager.GetInternalSpeed();
@@ -76,30 +93,31 @@ public class GetHitState : SpeakerBaseState
             fsm.TransitionTo<FallState>();
         }
     }
+    void HitstunLogic(int currentTick)
+    {
+        if (gameManager.hitstopManager.InSpecialStop) { return; }
+        if (currentTick - tickWhereHitOccured > hitInfo.hitstun)
+        {
+            ExitHitstunState();
+        }
+    }
 
-    public override void PhysicsProcess()
+    public void InitSimulated(SimulationManager simulationManager)
+    {
+        this.simulationManager = simulationManager;
+        simulationManager.AddSimulatedObject(this);
+    }
+
+    public void SimulateUpdate(int currentTick)
     {
         character.velocityManager.AddInternalVelocity(new Vector3(0, -hitInfo.hitstunGravity, 0));
         Vector3 currentSpeed = character.velocityManager.GetInternalSpeed();
-        if (currentSpeed.y < - MAX_FALL_SPEED)
+        if (currentSpeed.y < -MAX_FALL_SPEED)
         {
             currentSpeed.y = -MAX_FALL_SPEED;
             character.velocityManager.OverwriteInternalSpeed(currentSpeed);
         }
 
-        HitstunLogic();
-
+        HitstunLogic(currentTick);
     }
-
-    void HitstunLogic()
-    {
-        if (GameManager.inSpecialStop) { return; }
-        hitstunTracker -= 1;
-        if (hitstunTracker <= 0)
-        {
-            ExitHitstunState();
-        }
-
-    }
-
 }

@@ -13,7 +13,6 @@
     "com.unity.test-framework": "1.6.0",
     "com.unity.timeline": "1.8.9",
     "com.unity.ugui": "2.0.0",
-    "massive-ecs": "https://github.com/nilpunch/massive-ecs.git#v19.1.0",
     "nl.jeffreylanters.tweens": "file:C:/Users/temia/Downloads/unity-tweens-3.4.1/unity-tweens-3.4.1",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.adaptiveperformance": "1.0.0",

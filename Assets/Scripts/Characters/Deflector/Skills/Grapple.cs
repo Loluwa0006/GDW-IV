@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Grapple : SpeakerBaseSkill
+public class Grapple : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<GrappleSnapshot>, IRegisterableEntity
 {
     AirStateResource.JumpInfo currentJumpInfo;
 
@@ -20,14 +19,11 @@ public class Grapple : SpeakerBaseSkill
     [SerializeField] float grapplePull = 13.5f;
     [SerializeField] float decelRate = 0.975f;
 
-    int drainTracker = 0;
+    int timeSinceLastDrain = 0;
 
-    int jumpTracker = 0;
+    int timeSinceJumpStarted = 0;
 
     Vector3 previousHookPos = Vector3.zero;
-
-    BaseEcho targetEcho;
-
     public enum HookState
     {
         Travelling,
@@ -35,27 +31,36 @@ public class Grapple : SpeakerBaseSkill
         Holstered,
     }
     public HookState hookState = HookState.Holstered;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+
+    int grappleID;
+    int ownerID;
+
+    public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Position; set {} }
+    public EntityDatabaseID EntityType { get =>  EntityDatabaseID.PrecedentClone; set { } }
+    int IRegisterableEntity.OwnerID { get => ownerID; set => ownerID = value; }
+    public int ID { get => grappleID; set => grappleID = value; }
+    public bool UpdateDuringHitstop { get => false; set { } }
+
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         JumpState jumpState = (JumpState)fsm.TryGetState<JumpState>();
         if (jumpState != null)
         {
             currentJumpInfo = jumpState.currentJumpInfo;
-            Debug.Log("Found jump state, using that jump info ");
         }
         grappleRB.transform.parent = null; //shouldn't follow player  
         lineRenderer.enabled = false;
-        targetEcho = null;
+        grappleID = manager.entityManager.RegisterEntity(EntityDatabaseID.AnchorGrapple, transform, cha.characterID);
     }
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         skillBuffer.Consume();
         if (hookState == HookState.Holstered)
         {
             PerformJump();
-            jumpTracker = 0;
+            timeSinceJumpStarted = 0;
             FireGrapple();
         }
         else
@@ -95,8 +100,8 @@ public class Grapple : SpeakerBaseSkill
     public override void PhysicsProcess()
     {
         base.PhysicsProcess();
-        jumpTracker += 1;
-        if (jumpTracker >= jumpDuration)
+        timeSinceJumpStarted += 1;
+        if (timeSinceJumpStarted >= jumpDuration)
         {
             OnSkillOver();
             return;
@@ -104,7 +109,7 @@ public class Grapple : SpeakerBaseSkill
         GravityLogic();
     }
 
-    public override void InactivePhysicsProcess()
+    public  void InactiveSimulate(int currentTick)
     {
         switch (hookState)
         {
@@ -112,19 +117,18 @@ public class Grapple : SpeakerBaseSkill
                 HookTravelDetectionLogic();
                 break;
             case HookState.Hooked:
-                if (staminaComponent.HasForesight()) return; 
-                drainTracker -= 1;
-                if (drainTracker <= 0)
+                if (staminaComponent.ForesightEnabled) return; 
+                if (currentTick - timeSinceLastDrain >= staminaDrainRate)
                 {
-                    drainTracker = staminaDrainRate;
+                    timeSinceLastDrain = currentTick;
                     staminaComponent.DamageStamina(1, 0, false);
-                    if (staminaComponent.GetStamina() <= staminaCost) DestroyGrapple();
+                    if (staminaComponent.Stamina <= staminaCost) DestroyGrapple();
                 }
                 GrappleMotorPullLogic();
                 break;
 
         }
-        if (speaker.velocityManager.GetExternalSpeed("GrapplePull") != VelocityManager.MISSING_VELOCITY_VALUE)
+        if (speaker.velocityManager.GetExternalSpeed(VelocityIDRegistry.GrapplePull) != VelocityManager.MISSING_VELOCITY_VALUE)
         {
             RemoveGrapplePull();
         }
@@ -147,25 +151,25 @@ public class Grapple : SpeakerBaseSkill
 
     void RemoveGrapplePull()
     {
-        Vector3 speed = speaker.velocityManager.GetExternalSpeed("GrapplePull");
+        Vector3 speed = speaker.velocityManager.GetExternalSpeed(VelocityIDRegistry.GrapplePull);
         speed *= decelRate;
-        speaker.velocityManager.OverwriteExternalSpeed("GrapplePull", speed);
+        speaker.velocityManager.OverwriteExternalSpeed(VelocityIDRegistry.GrapplePull, speed);
         if (speed.magnitude <= 0.1f)
         {
-            speaker.velocityManager.RemoveExternalSpeedSource("GrapplePull");
+            speaker.velocityManager.RemoveExternalSpeedSource(VelocityIDRegistry.GrapplePull);
         }
 
     }
     void GrappleMotorPullLogic()
     {
-        if (hookState != HookState.Hooked) return;
-        Vector3 pullDir = grappleRB.transform.position - speaker.transform.position;
-        if (IsGrounded()) pullDir.y = 0;
-       if (speaker.velocityManager.GetExternalSpeed("GrapplePull") == VelocityManager.MISSING_VELOCITY_VALUE)
-        {
-            speaker.velocityManager.AddExternalSpeed(grapplePull * Time.fixedDeltaTime * pullDir, "GrapplePull");
-        }
-        else speaker.velocityManager.OverwriteExternalSpeed("GrapplePull", grapplePull * Time.fixedDeltaTime * pullDir);
+       if (hookState != HookState.Hooked) return;
+       Vector3 pullDir = grappleRB.transform.position - speaker.transform.position;
+       if (IsGrounded()) pullDir.y = 0;
+       if (speaker.velocityManager.GetExternalSpeed(VelocityIDRegistry.GrapplePull) == VelocityManager.MISSING_VELOCITY_VALUE)
+       {
+            speaker.velocityManager.AddExternalSpeed(grapplePull * Time.fixedDeltaTime * pullDir, VelocityIDRegistry.GrapplePull);
+       }
+       else speaker.velocityManager.OverwriteExternalSpeed(VelocityIDRegistry.GrapplePull, grapplePull * Time.fixedDeltaTime * pullDir);
     }
 
     void HookTravelDetectionLogic()
@@ -177,7 +181,6 @@ public class Grapple : SpeakerBaseSkill
         Ray ray = new (previousHookPos, travelVector.normalized);
         if( Physics.Raycast(ray, out RaycastHit hitInfo, checkerDistance, terrainMask))
         {
-            Debug.Log("Locking hook since it hit " + hitInfo.transform.name);
             ConnectHookToObject(hitInfo);
         }
         previousHookPos = grappleRB.transform.position;
@@ -190,6 +193,10 @@ public class Grapple : SpeakerBaseSkill
         grappleRB.transform.parent = hitInfo.transform;
         grappleRB.transform.position = hitInfo.point;
         hookState = HookState.Hooked;
+        if (hitInfo.collider is IRegisterableEntity entity)
+        {
+            ownerID = entity.ID;
+        }
     }
 
     void GravityLogic()
@@ -203,6 +210,7 @@ public class Grapple : SpeakerBaseSkill
         grappleRB.gameObject.SetActive(false);
         lineRenderer.enabled = false;
         hookState = HookState.Holstered;
+        ownerID = EntityManager.MISSING_OWNER_ID;
     }
 
     protected override void OnSkillOver()
@@ -228,6 +236,55 @@ public class Grapple : SpeakerBaseSkill
         {
             return true;
         }
-        return (staminaComponent.GetStamina() > staminaCost && hookState == HookState.Holstered);
+        return (staminaComponent.Stamina > staminaCost && hookState == HookState.Holstered);
     }
+
+    public GrappleSnapshot CaptureState()
+    {
+        return new GrappleSnapshot()
+        {
+            snapshotPosition = grappleRB.position,
+            snapshotRotation = grappleRB.rotation,
+            snapshotState = hookState,
+            jumpTrack = timeSinceJumpStarted,
+            drainTrack = timeSinceLastDrain,
+            currentOwner = ownerID,
+            
+        };
+    }
+
+    public void RestoreState(GrappleSnapshot snapshot)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void InitSimulated(SimulationManager simulationManager)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void SimulateUpdate(int currentTick)
+    {
+        base.PhysicsProcess();
+        timeSinceJumpStarted += 1;
+        if (timeSinceJumpStarted >= jumpDuration)
+        {
+            OnSkillOver();
+            return;
+        }
+        GravityLogic();
+    }
+}
+
+public struct GrappleSnapshot
+{
+    public Grapple.HookState snapshotState;
+    public Vector3 snapshotPosition;
+    public Quaternion snapshotRotation;
+    public int jumpTrack;
+
+    public int drainTrack;
+
+    public int currentOwner;
+
 }

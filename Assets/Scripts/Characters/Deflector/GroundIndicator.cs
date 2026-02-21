@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public class GroundIndicator : MonoBehaviour
 {
-
-
     const float indicatorLength = 250.0f;
 
     [SerializeField] float minHeightToActivate = 7.5f;

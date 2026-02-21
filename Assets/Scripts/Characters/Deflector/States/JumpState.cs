@@ -5,18 +5,17 @@ public class JumpState : SpeakerAirState
     public AirStateResource.JumpInfo currentJumpInfo;
     [SerializeField] int airJumps = 1;
     int remainingAirJumps = 1;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         currentJumpInfo.InitJumpInfo();
     }
-    public override void Enter(Dictionary<string, object> msg)
+    public override void EnterSimulated(Dictionary<string, object> msg)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         Vector3 currentSpeed = character.velocityManager.GetInternalSpeed();
         currentSpeed.y = currentJumpInfo.jumpVelocity;
         character.velocityManager.OverwriteInternalSpeed(currentSpeed);
-
     }
     public override void PhysicsProcess()
     {

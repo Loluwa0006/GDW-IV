@@ -21,7 +21,7 @@ public class BaseState : MonoBehaviour
     protected PlayerInput playerInput;
 
 
-    public virtual void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public virtual void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
         this.fsm = fsm;
         character = cha;
@@ -30,11 +30,15 @@ public class BaseState : MonoBehaviour
         playerInput = cha.GetComponent<PlayerInput>();
     }
 
-    public virtual void Enter(Dictionary<string, object> msg = null)
+    public virtual void EnterSimulated(Dictionary<string, object> msg = null) // Version for rollback
     {
 
     }
 
+    public virtual void EnterVisuals(Dictionary<string, object> msg = null) // Version for local
+    {
+
+    }
     public virtual void Exit()
     {
 

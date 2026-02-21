@@ -1,15 +1,13 @@
-
-using System;
-using System.Collections;
 using UnityEngine;
 
 public class TutorialProjectile : BaseEcho
 {
     [SerializeField] Transform spawnPos;
-    [SerializeField] TutorialManager tutorialManager;
     [SerializeField] bool awardPointOnDeflect = false;
     [HideInInspector]  public bool projectileActive = false;
 
+
+    
     //needs refactoring to use BaseEcho properly
 
     //public void InitProjectile( Transform speaker)

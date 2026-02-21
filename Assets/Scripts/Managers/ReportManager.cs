@@ -209,7 +209,7 @@ public class ReportManager : MonoBehaviour
             {
                 StaminaEntry newEntry = new();
                 newEntry.second = newSecond;
-                newEntry.stamina = Mathf.RoundToInt(speaker.staminaComponent.GetStamina());
+                newEntry.stamina = Mathf.RoundToInt(speaker.staminaComponent.Stamina);
                 speakerDictionary[speaker].staminaTracker.Add(newEntry);
             }
         }

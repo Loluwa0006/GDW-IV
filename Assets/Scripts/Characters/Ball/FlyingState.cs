@@ -37,17 +37,21 @@ public class FlyingState : EchoBaseState
 
     int cooldownTracker = 0;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    GameManager gameManager;
+
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         _rb = echo.GetComponent<Rigidbody>();
         _rbCollider = hitbox.hitboxCollider;
         groundMask = LayerMask.GetMask("Ground");
+
+        gameManager = manager;
     }
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterVisuals(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterVisuals(msg);
 
         if (echo.isIgnited)
         {
@@ -57,7 +61,11 @@ public class FlyingState : EchoBaseState
         {
             echoTrail.colorGradient = regularGradient;
         }
+    }
 
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
+    {
+        base.EnterSimulated(msg);
         cooldownTracker = bounceCooldown;
     }
 
@@ -110,7 +118,7 @@ public class FlyingState : EchoBaseState
         base.PhysicsProcess();
         cooldownTracker -= 1;
         if (cooldownTracker< 0) cooldownTracker = 0;
-        if (GameManager.inSpecialStop || !echo.ballActive || echo.GetTarget() == null || cooldownTracker > 0) { return; }
+        if (gameManager.hitstopManager.InSpecialStop || !echo.ballActive || echo.GetTarget() == null || cooldownTracker > 0) { return; }
         if (HitboxCollisionLogic()) return;
 
         TerrainCollisionLogic();
@@ -179,11 +187,4 @@ public class FlyingState : EchoBaseState
     {
         echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
     }
-
-
-
-
-
-
-
 }

@@ -43,9 +43,9 @@ public class Objection : SpeakerBaseSkill
 
     bool wasGrounded = false;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         currentJumpInfo.InitJumpInfo();
         runAccel = runSpeed / (float)runAccelerationFrames;
         jumpBuffer = fsm.TryGetBuffer("JumpBuffer");
@@ -68,15 +68,20 @@ public class Objection : SpeakerBaseSkill
         return slashEffectPool[slashPoolIndex];
     }
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         skillBuffer.Consume();
         drainTracker = staminaDrainRate;
         lineTracker = slashLineUpdateRate;
         slashPoints.Clear();
         entitiesStruck.Clear();
         wasGrounded = IsGrounded();
+    }
+
+    public override void EnterVisuals(Dictionary<string, object> msg = null)
+    {
+        base.EnterVisuals(msg);
         lineRenderer.positionCount = 0;
     }
     void PerformJump()
@@ -154,12 +159,12 @@ public class Objection : SpeakerBaseSkill
 
     void DrainStamina()
     {
-        if (staminaComponent.HasForesight()) return;
+        if (staminaComponent.ForesightEnabled) return;
         drainTracker -= 1;
         if (drainTracker == 0)
         {
             staminaComponent.DamageStamina(1, 0, false);
-            if (staminaComponent.GetStamina() < staminaCost) OnSkillOver();
+            if (staminaComponent.Stamina < staminaCost) OnSkillOver();
             drainTracker = staminaDrainRate;
         }
     }

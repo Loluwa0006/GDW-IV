@@ -4,6 +4,9 @@ using UnityEngine;
 public class BGMManager : MonoBehaviour
 {
 
+    [SerializeField] AudioSource winBGMPlayer;
+    [SerializeField] AudioClip winSFX;
+
     [SerializeField] AudioSource bgmSource;
 
     [SerializeField] List<AudioClip> bgmTracks = new();
@@ -30,5 +33,22 @@ public class BGMManager : MonoBehaviour
         
         lastTrack = bgmSource.clip;
         bgmSource.Play();
+    }
+
+    public void ResetComponent()
+    {
+        winBGMPlayer.Stop();
+        PlayNewTrack();
+    }
+
+
+    public void OnGameOver()
+    {
+        bgmSource.Stop();
+    }
+
+    public void OnGameWon()
+    {
+        winBGMPlayer.Play();
     }
 }

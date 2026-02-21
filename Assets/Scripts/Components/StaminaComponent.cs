@@ -1,14 +1,13 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class StaminaComponent : MonoBehaviour
+public class StaminaComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<StaminaSnapshot>
 {
     public UnityEvent<BaseCharacter> regainedGrayStamina = new();
     public UnityEvent <BaseCharacter> foresightPerformed = new();
 
-    [SerializeField] Animator staminaAnimator;
-    [SerializeField] BaseCharacter characterOwner;
+    [SerializeField] protected Animator staminaAnimator;
+    [SerializeField] protected BaseCharacter characterOwner;
 
 
     [Header("SFX")]
@@ -22,15 +21,16 @@ public class StaminaComponent : MonoBehaviour
     [SerializeField] ParticleSystem foresightUnleashedParticles;
 
     //Regen
-    const float STAMINA_REGEN_RATE = 8.5f; //stamina regen per 10 seconds
-    const float SUDDEN_DEATH_STAMINA_DRAIN_DELAY = 1.0f;
-    const float STAMINA_USAGE_REGEN_DELAY = 1.8f;
+    const int STAMINA_REGEN_RATE = 1;  // Amount that stamina increases per regen tick
+    const int STAMINA_REGEN_SPEED = 3; // Number of regen ticks
+    const int SUDDEN_DEATH_STAMINA_DRAIN_RATE = 60;
+    const int STAMINA_USAGE_REGEN_DELAY = 108;
 
     //Foresight
-    const float MAX_FORESIGHT_DURATION = 1.5f;
+    const int MAX_FORESIGHT_DURATION = 90;
 
     //Ball Damage, numbers represent percent
-    const int PARTIAL_DEFLECT_STAMINA_DAMAGE = 20;
+    protected const int PARTIAL_DEFLECT_STAMINA_DAMAGE = 20;
 
     //Danger Zone
     const int DANGER_ZONE_THRESHOLD = 25;
@@ -38,29 +38,34 @@ public class StaminaComponent : MonoBehaviour
     //Initial Values
     public const int DEFAULT_MAX_STAMINA = 100;
 
+    public int Stamina { protected set; get; } = DEFAULT_MAX_STAMINA;
+    public int MaxStamina { protected set; get; } = DEFAULT_MAX_STAMINA;
+    public int GrayStamina { protected set; get; } = 0;
 
-    float stamina = DEFAULT_MAX_STAMINA;
-    float maxStamina = DEFAULT_MAX_STAMINA;
-    float grayStamina = 0.0f;
+    public bool InDangerZone { protected set; get; } = false;
+    public bool ForesightEnabled { protected set; get; } = false;
 
-    bool inDangerZone = false;
-    bool inSuddenDeath = false;
-    bool foresightEnabled = false;
-
+    protected bool inSuddenDeath = false;
 
     //TrainingMode
-    bool hasInfiniteForesight = false;
+    protected bool hasInfiniteForesight = false;
+    //
 
-    float delayTracker = 0.0f;
-    float suddenDeathTracker = 0.0f;
-    float foresightTracker = 0.0f;
+    protected int lastTickDelayTriggered = 0;
+    protected int lastForesightUnlockTick = 0;
+    protected int lastStaminaRegenTick = 0;
+    protected int suddenDeathStartTick = 0;
 
-    private void Start()
-    {
-        InitComponent();
-    }
+    bool delayActive;
 
-    protected virtual void InitComponent()
+    protected GameManager gameManager;
+
+    protected bool init = false;
+
+    public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Stamina; set { } }
+    public bool UpdateDuringHitstop { get => false; set { } }
+
+    public virtual void InitComponent(GameManager manager)
     {
         if (staminaAnimator == null)
         {
@@ -70,115 +75,41 @@ public class StaminaComponent : MonoBehaviour
         {
             characterOwner = transform.parent.GetComponent<BaseCharacter>();
         }
-    }
 
-    private void Update()
-    {
-        if (GameManager.gamePaused) return;
-        RegenStamina();
-        SetDangerZone();
-        HandleStaminaDelay();
-        SuddenDeathLogic();
-        ForesightLogic();
-    }
-
-    void SetDangerZone()
-    {
-        bool wasInDanger = inDangerZone;
-        inDangerZone = (stamina <= DANGER_ZONE_THRESHOLD);
-        if (!wasInDanger && inDangerZone && dangerWarning != null)
-        {
-            characterOwner.unscaledAudioSource.PlayOneShot(dangerWarning);
-        }
-
-    }
-    void HandleStaminaDelay()
-    {
-        delayTracker -= Time.deltaTime;
-        if (delayTracker <= 0.0f) { delayTracker = 0.0f; }
-    }
-
-    void RegenStamina()
-    {
-        if (delayTracker > 0.001f) { return; }
-        float regenAmount = STAMINA_REGEN_RATE * Time.deltaTime;
-        stamina += regenAmount;
-        if (stamina > maxStamina) { stamina = maxStamina; }
-        grayStamina -= regenAmount; // stamina regen removes gray stamina, so for every point we add to stamina, we remove from graystmina
-        if (grayStamina < 0.0f) { grayStamina = 0.0f; }
-    }
-
-    void SuddenDeathLogic()
-    {
-        if (!inSuddenDeath) { return; }
-        suddenDeathTracker -= Time.deltaTime; // deduct time if we're in sudden death
-        if (suddenDeathTracker <= 0.001f)
-        {
-            suddenDeathTracker = SUDDEN_DEATH_STAMINA_DRAIN_DELAY; 
-            if (maxStamina > 1)
-            {
-                maxStamina -= 1; //reduce stamina to one over time
-            }
-            
-        }
-    }
-
-    void ForesightLogic()
-    {
-        if (!foresightEnabled) { return; }
-
-        foresightTracker -= Time.deltaTime;
-        if (foresightTracker <= 0.0f)
-        {
-            OnForesightTimeout();
-        }
+        gameManager = manager;
+        init = true;
+        InitSimulated(manager.simulationManager);
     }
     public virtual void HandleDamage(DamageInfo info)
     {
 
     }
 
-    public void HandleBallDeflect(BaseEcho ball, bool partialDeflect, bool usedSkill)
-    {
-        if (!partialDeflect)
-        {
-            if (grayStamina > 0.0f) { regainedGrayStamina.Invoke(characterOwner); }
-            stamina += grayStamina; // since we had gray while we deflected, we convert gray stamina to usable stamina
-            grayStamina = 0.0f; // then clear it 
-            stamina = Mathf.Clamp(stamina, 1, maxStamina);
-            if (!usedSkill) EnableForesight();
-        }
-        else
-        {
-            DamageStamina(PARTIAL_DEFLECT_STAMINA_DAMAGE, 0, true);
-        }
 
-    }
     public void DamageStamina(int usableStaminaDamage, int maxStaminaDamage, bool dealsGrayStaminaDamage)
     {
-        maxStamina -= maxStaminaDamage;
-        stamina = Mathf.Clamp(stamina, 1, maxStamina); // make sure stamina is within bounds,
+        MaxStamina -= maxStaminaDamage;
+        Stamina = Mathf.Clamp(Stamina, 1, MaxStamina); // make sure stamina is within bounds,
                                                        // if it wasn't we would be subtracting stamina that we would lose anyways from max being reduced
-        stamina -= usableStaminaDamage; 
+        Stamina -= usableStaminaDamage; 
         
         if (dealsGrayStaminaDamage) //replace the usable stamina with gray stamina
         {
-            grayStamina += usableStaminaDamage;
-            if (stamina + grayStamina > maxStamina) { grayStamina = maxStamina - stamina; } // make sure gray stamina won't take us over max stamina even if we got it back
+            GrayStamina += usableStaminaDamage;
+            if (Stamina + GrayStamina > MaxStamina) { GrayStamina = MaxStamina - Stamina; } // make sure gray stamina won't take us over max stamina even if we got it back
         }
-        stamina = Mathf.Clamp(stamina, 1, maxStamina);
+        Stamina = Mathf.Clamp(Stamina, 1, MaxStamina);
         ResetStaminaDelay(); 
     }
     public void ResetComponent(bool resetSuddenDeath)
     {
-        maxStamina = DEFAULT_MAX_STAMINA;
-        stamina = DEFAULT_MAX_STAMINA;
-        grayStamina = 0.0f;
-        delayTracker = 0.0f;
+        MaxStamina = DEFAULT_MAX_STAMINA;
+        Stamina = DEFAULT_MAX_STAMINA;
+        GrayStamina = 0;
+        lastTickDelayTriggered = gameManager.simulationManager.CurrentTick;
         if (resetSuddenDeath)
         {
             inSuddenDeath = false;
-            suddenDeathTracker = 0.0f;
         }
         foresightAuraHum.Stop();
         foresightElectricityCrackle.Stop();
@@ -186,51 +117,32 @@ public class StaminaComponent : MonoBehaviour
 
     void ResetStaminaDelay()
     {
-        delayTracker = STAMINA_USAGE_REGEN_DELAY;
+        lastTickDelayTriggered = gameManager.simulationManager.CurrentTick;
     }
 
     public void RegainStamina()
     {
-        stamina = 100;
-        maxStamina = 100;
-        grayStamina = 0;
+        Stamina = 100;
+        MaxStamina = 100;
+        GrayStamina = 0;
     }
 
     public void RegenMaxStamina(int amount)
     {
-        maxStamina += amount;
-        maxStamina = Mathf.Clamp(maxStamina, 1, 100);
-    }
-    public float GetStamina()
-    {
-        return stamina;
-    }
-
-    public float GetGrayStamina()
-    {
-        return grayStamina;
-    }
-
-    public float GetMaxStamina()
-    {
-        return maxStamina;
-    }
-      
-    public bool InDangerZone()
-    {
-        return inDangerZone;
+        MaxStamina += amount;
+        MaxStamina = Mathf.Clamp(MaxStamina, 1, 100);
     }
 
     public void EnterSuddenDeath()
     {
-        suddenDeathTracker = SUDDEN_DEATH_STAMINA_DRAIN_DELAY; 
+        suddenDeathStartTick = gameManager.simulationManager.CurrentTick; 
         inSuddenDeath = true;
     }
 
     public void EnableForesight()
     {
-        foresightTracker = MAX_FORESIGHT_DURATION;
-        foresightEnabled = true;
+        lastForesightUnlockTick = gameManager.simulationManager.CurrentTick;
+        ForesightEnabled = true;
         foresightChargedParticles.Play();
         staminaAnimator.Play("ForesightEnabled", 0, 0.0f);
         foresightAuraHum.Play();
@@ -240,33 +152,27 @@ public class StaminaComponent : MonoBehaviour
    
     public void ConsumeForesight()
     {
-        if (!foresightEnabled || hasInfiniteForesight) { return; }
+        if (!ForesightEnabled || hasInfiniteForesight) { return; }
         foresightUnleashedParticles.Play();
         foresightPerformed.Invoke(characterOwner);
         characterOwner.unscaledAudioSource.PlayOneShot(foresightConsumed);
         RemoveForesight();
-
     }
 
     public void OnForesightTimeout()
     {
-        if (!foresightEnabled || hasInfiniteForesight) { return; }
+        if (!ForesightEnabled || hasInfiniteForesight) { return; }
         RemoveForesight();
     }
 
     void RemoveForesight()
     {
-        foresightEnabled = false;
+        ForesightEnabled = false;
         foresightChargedParticles.Stop();
         staminaAnimator.Play("ForesightDisabled", 0, 0.0f);
         foresightAuraHum.Stop();
         foresightElectricityCrackle.Stop();
     }
-    public bool HasForesight()
-    {
-        return foresightEnabled;
-    }
-
     public void EnableInfiniteForesight()
     {
         hasInfiniteForesight = true;
@@ -279,5 +185,129 @@ public class StaminaComponent : MonoBehaviour
         ConsumeForesight();
     }
 
+    public void InitSimulated(SimulationManager simulationManager)
+    {
+        simulationManager.AddSimulatedObject(this);
+    }
+
+    public void SimulateUpdate(int currentTick)
+    {
+        if (!init) return;
+        if (gameManager.pauseManager.GamePaused()) return;
+        RegenStamina(currentTick);
+        SetDangerZone();
+        HandleStaminaDelay();
+        SuddenDeathLogic();
+        ForesightLogic();
+    }
+
+
+    void RegenStamina(int currentTick)
+    {
+        if (delayActive)  return;
+        if (currentTick - lastStaminaRegenTick > STAMINA_REGEN_SPEED)
+        {
+            lastStaminaRegenTick = currentTick;
+            if (Stamina < MaxStamina)
+            {
+                Stamina += STAMINA_REGEN_RATE;
+                if (Stamina > MaxStamina) Stamina = MaxStamina; 
+            }
+            if (GrayStamina > 0)
+            {
+                GrayStamina -= STAMINA_REGEN_RATE; // stamina regen removes gray stamina, so for every point we add to stamina, we remove from graystmina
+                if (GrayStamina < 0) GrayStamina = 0;
+            }
+        }
+    }
+    void SetDangerZone()
+    {
+        bool wasInDanger = InDangerZone;
+        InDangerZone = (Stamina <= DANGER_ZONE_THRESHOLD);
+        if (!wasInDanger && InDangerZone && dangerWarning != null)
+        {
+            characterOwner.unscaledAudioSource.PlayOneShot(dangerWarning);
+        }
+
+    }
+    void HandleStaminaDelay()
+    {
+        delayActive = (gameManager.simulationManager.CurrentTick - lastTickDelayTriggered < STAMINA_USAGE_REGEN_DELAY);
+    }
+
+
+
+    void SuddenDeathLogic()
+    {
+        if (!inSuddenDeath)  return;
+        var timeSinceSuddenDeath = gameManager.simulationManager.CurrentTick - suddenDeathStartTick;
+        var staminaToRemove = timeSinceSuddenDeath / SUDDEN_DEATH_STAMINA_DRAIN_RATE;
+        var functionalMaxStamina = DEFAULT_MAX_STAMINA - staminaToRemove;
+        MaxStamina = Mathf.Clamp(MaxStamina, 1, functionalMaxStamina);
+    }
     
+
+    void ForesightLogic()
+    {
+        if (!ForesightEnabled)  return;
+
+        if (gameManager.simulationManager.CurrentTick - lastForesightUnlockTick > MAX_FORESIGHT_DURATION) ForesightEnabled = false;
+    }
+
+    public StaminaSnapshot CaptureState()
+    {
+        return new StaminaSnapshot()
+        {
+            currentStamina = Stamina,
+            currentGrayStamina = GrayStamina,
+            currentMaxStamina = MaxStamina,
+
+            foresightUnlockTick = lastForesightUnlockTick,
+            staminaRegenTick = lastStaminaRegenTick,
+            delayTick = lastTickDelayTriggered,
+            suddenDeathTick = suddenDeathStartTick,
+            foresightObtainTick = lastForesightUnlockTick,
+
+            suddenDeathActive = inSuddenDeath,
+            foresightEnabled = ForesightEnabled,
+            infiniteForesight = hasInfiniteForesight
+            
+        };
+    }
+    
+    public void RestoreState(StaminaSnapshot snapshot)
+    {
+        Stamina = snapshot.currentStamina;
+        GrayStamina = snapshot.currentGrayStamina;
+        MaxStamina = snapshot.currentMaxStamina;
+
+        lastForesightUnlockTick = snapshot.foresightUnlockTick;
+        lastStaminaRegenTick = snapshot.staminaRegenTick;
+        lastTickDelayTriggered = snapshot.delayTick;
+        suddenDeathStartTick = snapshot.suddenDeathTick;
+        lastForesightUnlockTick = snapshot.foresightObtainTick;
+
+        inSuddenDeath = snapshot.suddenDeathActive;
+        ForesightEnabled = snapshot.foresightEnabled;
+        hasInfiniteForesight = snapshot.infiniteForesight;
+    }
+}
+
+public struct StaminaSnapshot
+{
+    public int currentStamina;
+    public int currentGrayStamina;
+    public int currentMaxStamina;
+
+    public int staminaRegenTick;
+    public int foresightUnlockTick;
+
+    public int delayTick;
+
+    public int suddenDeathTick;
+    public bool suddenDeathActive;
+
+    public bool foresightEnabled;
+    public int foresightObtainTick;
+    public bool infiniteForesight;
 }

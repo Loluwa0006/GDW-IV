@@ -1,14 +1,19 @@
 using System;
+using UnityEngine;
 
-public class BaseSpeaker : BaseCharacter
+public class BaseSpeaker : BaseCharacter, ISimulationSnapshot<SpeakerSnapshot>, ISnapshotable
 {
     public HealthComponent healthComponent;
     public DeflectManager deflectManager;
 
-    public override void InitPlayer(MatchData.PlayerInfo info, int index)
+    SpeakerSnapshot[] speakerSnapshots = new SpeakerSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
+    public override void InitPlayer(MatchData.PlayerInfo info, GameManager manager, int index)
     {
-        base.InitPlayer(info, index);
+        base.InitPlayer(info, manager, index);
+        deflectManager.InitManager(manager);
         playerModel.material.SetColor("_BaseColor", playerColors[index - 1].color);
+        characterID = manager.entityManager.RegisterEntity(EntityDatabaseID.Speaker, transform);
+        healthComponent.InitComponent(manager, characterID);
     }
     public override void DeactivatePlayer()
     {
@@ -29,4 +34,69 @@ public class BaseSpeaker : BaseCharacter
         deflectManager.ResetComponent();
         base.ResetComponents();
     }
+
+    public void SetLookTarget(int targetID)
+    {
+        var entity = gameManager.entityManager.GetEntity(targetID);
+        if (entity != null)
+        {
+            lookTarget = entity;
+        }
+    }
+
+    public void SetLookTarget(Transform target)
+    {
+        lookTarget = target;
+    }
+
+
+    public Transform GetLookTarget()
+    {
+        return lookTarget;
+    }
+
+    public SpeakerSnapshot CaptureState()
+    {
+        int id = EntityManager.MISSING_ID;
+        if (lookTarget != null)
+        {
+            id = gameManager.entityManager.GetId(lookTarget);
+        }
+        CharacterSnapshot charSnap = new(enabled, init);
+        return new SpeakerSnapshot()
+        {
+            lookTargetID = id,
+            characterSnapshot = charSnap
+        };
+    }
+
+    public void RestoreState(SpeakerSnapshot snapshot)
+    {
+        if (snapshot.lookTargetID != EntityManager.MISSING_ID)
+        {
+            lookTarget = gameManager.entityManager.GetEntity(snapshot.lookTargetID);
+        }
+        else
+        {
+            lookTarget = null;
+        }
+        enabled = snapshot.characterSnapshot.charEnabled;
+        init = snapshot.characterSnapshot.charInit;
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        speakerSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(speakerSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
+    }
+}
+
+public struct SpeakerSnapshot
+{
+    public int lookTargetID;
+    public CharacterSnapshot characterSnapshot;
 }

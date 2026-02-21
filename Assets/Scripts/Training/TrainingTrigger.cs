@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class TrainingTrigger : MonoBehaviour
 {
-     TrainingMode manager;
+     TrainingMode trainingManager;
     [SerializeField] SkillName skillToActivate;
 
     private void Start()
     {
-        manager = FindFirstObjectByType<TrainingMode>();
+        trainingManager = FindFirstObjectByType<TrainingMode>();
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.TryGetComponent(out BaseSpeaker speaker) || manager == null) return;
+        if (!other.TryGetComponent(out BaseSpeaker speaker) || trainingManager == null) return;
 
 
-        if (speaker == manager.playerSpeaker)
+        if (speaker == trainingManager.playerSpeaker)
         {
             AssignNewSkill(skillToActivate, speaker);
         }
@@ -24,8 +24,8 @@ public class TrainingTrigger : MonoBehaviour
     public void AssignNewSkill(SkillName name, BaseSpeaker playerSpeaker)
     {
         if (playerSpeaker == null) { return; }
-        if (!playerSpeaker.inputManager.GetAction("SkillTwo").IsPressed()) playerSpeaker.fsm.AddNewSkill(1, name);
-        else playerSpeaker.fsm.AddNewSkill(2, name);
+        if (!playerSpeaker.inputManager.GetAction("SkillTwo").IsPressed()) playerSpeaker.fsm.AddNewSkill(1, name, trainingManager.gameManager);
+        else playerSpeaker.fsm.AddNewSkill(2, name, trainingManager.gameManager);
     }
 
 }

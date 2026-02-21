@@ -88,7 +88,7 @@ public class EchoSurvivalMode : BaseGameMode
             speakerPlayer.transform
         };
         newEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
-        gameManager.AddCharacterToCameraTargetGroup(newEcho.transform, echoCameraWeight, 2.5f);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(newEcho.transform, echoCameraWeight, 2.5f);
         gameEchoes.Add(newEcho);
         newEcho.EnableProjectile();
         newEcho.transform.name = "Echo " + gameEchoes.Count;
@@ -99,7 +99,7 @@ public class EchoSurvivalMode : BaseGameMode
     {
         yield return new WaitForFixedUpdate();
 
-        if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true); // make sure cam is in right spot before starting
+        if (gameManager.cameraManager != null) gameManager.cameraManager.OnGameStarted();
         AnnouncementData countdownDataOne = new()
         {
             announcementDuration = 60,
@@ -107,9 +107,9 @@ public class EchoSurvivalMode : BaseGameMode
             customTimescale = 0.0f,
             priority = 5
         };
-        AnnouncementData countdownDataTwo = new(countdownDataOne);
-        AnnouncementData countdownDataThree = new(countdownDataTwo);
-        AnnouncementData countdownDataFour = new(countdownDataThree);
+        AnnouncementData countdownDataTwo = countdownDataOne;
+        AnnouncementData countdownDataThree = countdownDataTwo;
+        AnnouncementData countdownDataFour = countdownDataThree;
         countdownDataTwo.announcementText = "2";
         countdownDataThree.announcementText = "1";
         countdownDataFour.announcementText = "BEGIN";
@@ -166,7 +166,7 @@ public class EchoSurvivalMode : BaseGameMode
         if (queuedPlayerInfo.Count > 0)
         {
             info = queuedPlayerInfo.Dequeue();
-            character.InitPlayer(info, index);
+            character.InitPlayer(info, gameManager, index);
             trackerData.Add(new TrackerData()
             {
                 speaker = character,
@@ -179,7 +179,7 @@ public class EchoSurvivalMode : BaseGameMode
         }
         StartCoroutine(InitSpeakerSignals(character));
         AddStaminaUIForCharacter(character, info);
-        gameManager.AddCharacterToCameraTargetGroup(character.transform, 1.0f, speakerCameraRadius);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(character.transform, 1.0f, speakerCameraRadius);
         StartCoroutine(SetCharacterPosition(character));
 
         if (queuedPlayerInfo.Count == 0 && gameManager.reportManager != null)
@@ -202,7 +202,7 @@ public class EchoSurvivalMode : BaseGameMode
         {
             characterUI[character].gameObject.SetActive(false);
         }
-        gameManager.RemoveCharacterFromCameraTargetGroup(character.transform);
+        gameManager.cameraManager.RemoveCharacterFromCameraTargetGroup(character.transform);
         character.DeactivatePlayer();
     }
     protected override void OnCharacterDefeated(DamageInfo info, HealthComponent victim)
@@ -227,21 +227,13 @@ public class EchoSurvivalMode : BaseGameMode
         {
             UpdateScoreText(speakerPlayer);
         }
-        gameManager.bgmPlayer.Stop();
-        gameManager.winBGMPlayer.PlayOneShot(gameManager.winSFX);
-        AnnouncementData winAnnouncement = new()
-        {
-            announcementDuration = 150,
-            announcementText = "VERDICT",
-            customTimescale = 0.1f,
-            priority = 9999999
-        };
-        gameManager.announcementManager.QueueNewAnnouncement(winAnnouncement);
+        gameManager.bgmManager.OnGameOver();
+        gameManager.bgmManager.OnGameWon();
+        gameManager.announcementManager.QueueNewAnnouncement(AnnouncementData.winData);
         yield return null;
         gameManager.postProcessingManager.ResetManager();
         yield return new WaitUntil(() => gameManager.announcementManager.announcementPlaying);
         yield return new WaitUntil(() => !gameManager.announcementManager.announcementPlaying);
-        gameManager.winBGMPlayer.Play();
         winScreen.SetActive(true);
         Time.timeScale = 0.0f;
     }
@@ -266,7 +258,7 @@ public class EchoSurvivalMode : BaseGameMode
 
     private void Update()
     {
-        if (matchActive && !GameManager.gamePaused) TimerLogic();
+        if (matchActive && !gameManager.pauseManager.GamePaused()) TimerLogic();
     }
 
     protected virtual void TimerLogic()
@@ -319,7 +311,7 @@ public class EchoSurvivalMode : BaseGameMode
     {
         cha.enabled = true;
         cha.ActivatePlayer();
-        gameManager.AddCharacterToCameraTargetGroup(cha.transform);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(cha.transform);
 
 
         cha.ResetComponents();

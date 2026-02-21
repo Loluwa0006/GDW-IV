@@ -8,6 +8,7 @@ using static ReportManager;
 
 public class SpeakerDuelMode : BaseGameMode
 {
+
     const int SUDDEN_DEATH_SLOW_DOWN_DURATION = 150;
     const float SUDDEN_DEATH_SLOW_DOWN_AMOUNT = 0.1f;
 
@@ -45,17 +46,13 @@ public class SpeakerDuelMode : BaseGameMode
 
     public override void InitGameMode(GameManager manager)
     { 
+        gameManager = manager;
         base.InitGameMode(manager);
         spawnPositions = gameManager.spawnManager.GetSpeakerDuelSpawns();
-        Debug.Log("Initializing UI");
         InitUI();
-        Debug.Log("Initializing Timer");
         InitTimer();
-        Debug.Log("Initializing Players");
         InitSpeakers();
-        Debug.Log("Initializing Echoes");
         InitEcho();
-        Debug.Log("Starting Game");
         StartCoroutine(StartGame());
     }
 
@@ -65,7 +62,8 @@ public class SpeakerDuelMode : BaseGameMode
     {
         yield return new WaitForFixedUpdate();
 
-        if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true); // make sure cam is in right spot before starting
+        Debug.Log("Starting game");
+        if (gameManager.cameraManager != null) gameManager.cameraManager.OnGameStarted();
         AnnouncementData countdownDataOne = new()
         {
             announcementDuration = 60,
@@ -73,9 +71,9 @@ public class SpeakerDuelMode : BaseGameMode
             customTimescale = 0.0f,
             priority = 5
         };
-        AnnouncementData countdownDataTwo = new(countdownDataOne);
-        AnnouncementData countdownDataThree = new(countdownDataTwo);
-        AnnouncementData countdownDataFour = new(countdownDataThree);
+        AnnouncementData countdownDataTwo = countdownDataOne;
+        AnnouncementData countdownDataThree = countdownDataTwo;
+        AnnouncementData countdownDataFour = countdownDataThree;
         countdownDataTwo.announcementText = "2";
         countdownDataThree.announcementText = "1";
         countdownDataFour.announcementText = "BEGIN";
@@ -112,7 +110,6 @@ public class SpeakerDuelMode : BaseGameMode
     protected virtual void InitTimer()
     {
         timerDisplay.gameObject.SetActive(true);
-        Debug.Log("match length is " + MatchData.instance.gameLength);
         timerTracker = MatchData.instance.gameLength;
         timerDisplay.text = timerTracker.ToString();
     }
@@ -152,7 +149,7 @@ public class SpeakerDuelMode : BaseGameMode
         gameEcho = Instantiate(echoPrefab);
 
         gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
-        gameManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();
 
@@ -167,7 +164,7 @@ public class SpeakerDuelMode : BaseGameMode
         if (queuedPlayerInfo.Count > 0)
         {
             info = queuedPlayerInfo.Dequeue();
-            character.InitPlayer(info, index);
+            character.InitPlayer(info, gameManager, index);
             trackerData.Add(new TrackerData()
             {
                 speaker = character,
@@ -180,7 +177,7 @@ public class SpeakerDuelMode : BaseGameMode
         }
         StartCoroutine(InitSpeakerSignals(character));
         AddStaminaUIForCharacter(character, info);
-        gameManager.AddCharacterToCameraTargetGroup(character.transform);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(character.transform);
         StartCoroutine(SetCharacterPosition(character));
         speakerList.Add(character.transform);
         activeSpeakers.Add(character);
@@ -203,7 +200,7 @@ public class SpeakerDuelMode : BaseGameMode
         {
             characterUI[character].gameObject.SetActive(false);
         }
-        gameManager.RemoveCharacterFromCameraTargetGroup(character.transform);
+        gameManager.cameraManager.RemoveCharacterFromCameraTargetGroup(character.transform);
         character.DeactivatePlayer();
         activeSpeakers.Remove(character.GetComponent<BaseSpeaker>());
     }
@@ -211,11 +208,9 @@ public class SpeakerDuelMode : BaseGameMode
     {
         if (!victim.hurtboxOwner.TryGetComponent(out BaseSpeaker defeated))
         {
-            Debug.Log("Couldn't find base char component");
             return;
         }
         RemoveCharacter(defeated);
-        Debug.Log(defeated.name + " has been defeated, " + activeSpeakers.Count + " characters remain");
         if (activeSpeakers.Count == 1)
         {
             StartCoroutine(OnCharacterVictorious());
@@ -235,28 +230,18 @@ public class SpeakerDuelMode : BaseGameMode
         {
             UpdateScoreText(winner);
         }
-        gameManager.bgmPlayer.Stop();
-        gameManager.winBGMPlayer.PlayOneShot(gameManager.winSFX);
-        AnnouncementData winAnnouncement = new()
-        {
-            announcementDuration = 120,
-            announcementText = "VERDICT",
-            customTimescale = 0.1f,
-            priority = 9999999
-        };
+        gameManager.bgmManager.OnGameOver();
+        gameManager.bgmManager.OnGameWon();
+        AnnouncementData winAnnouncement = AnnouncementData.winData;
         gameManager.announcementManager.QueueNewAnnouncement(winAnnouncement);
         yield return null;
         gameManager.postProcessingManager.ResetManager();
         yield return new WaitUntil(() => gameManager.announcementManager.announcementPlaying);
         yield return new WaitUntil(() => !gameManager.announcementManager.announcementPlaying);
-        gameManager.winBGMPlayer.Play();
+        gameManager.bgmManager.OnGameWon();
         winScreen.SetActive(true);
         Time.timeScale = 0.0f;
     }
-    
-
-
-
     protected override void UpdateScoreText(BaseCharacter winner)
     {
         if (winner.teamIndex == 1)
@@ -270,12 +255,10 @@ public class SpeakerDuelMode : BaseGameMode
 
         scoreText.text = scoreTracker.teamOneWins + "/" + scoreTracker.teamTwoWins;
     }
-
     private void Update()
     {
-        if (matchActive && !GameManager.gamePaused) TimerLogic();
+        if (matchActive && !gameManager.pauseManager.GamePaused()) TimerLogic();
     }
-
     protected virtual void TimerLogic()
     {
         timerTracker -= Time.deltaTime;
@@ -295,7 +278,6 @@ public class SpeakerDuelMode : BaseGameMode
     }
     protected override void EnterSuddenDeath()
     {
-        Debug.Log("Entering sudden death");
         foreach (var cha in activeSpeakers)
         {
             cha.staminaComponent.EnterSuddenDeath();
@@ -316,7 +298,6 @@ public class SpeakerDuelMode : BaseGameMode
 
         inSuddenDeath = true;
     }
-
     public override void ResetGame()
     {
         matchActive = false;
@@ -343,14 +324,12 @@ public class SpeakerDuelMode : BaseGameMode
         winScreen.SetActive(false);
         gameManager.ResetManager();
         StartCoroutine(StartGame());
-
     }
-
     protected void ResetSpeaker(BaseSpeaker cha)
     {
         cha.enabled = true;
         cha.ActivatePlayer();
-        gameManager.AddCharacterToCameraTargetGroup(cha.transform);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(cha.transform);
 
         cha.ResetComponents();
 
@@ -358,7 +337,6 @@ public class SpeakerDuelMode : BaseGameMode
         activeSpeakers.Add(cha);
         characterUI[cha].gameObject.SetActive(true);
     }
-
     protected void ResetEcho(BaseEcho echo)
     {
         echo.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
@@ -366,6 +344,4 @@ public class SpeakerDuelMode : BaseGameMode
         echo.SuspendProjectile();
         echo.SetNewTarget(speakerList.ElementAt(0));
     }
-
-
 }

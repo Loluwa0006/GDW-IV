@@ -14,8 +14,6 @@ public class BaseEcho : BaseCharacter
     public UnityEvent<Vector3> echoWarped = new();
     public UnityEvent<Transform> echoTargetChanged = new();
 
-  
-
     [HideInInspector] public bool ballActive = false;
     [HideInInspector] public bool isIgnited = false;
     [SerializeField] TrailRenderer echoTrail;
@@ -32,21 +30,26 @@ public class BaseEcho : BaseCharacter
 
     Vector3 resetPos;
 
-    public override void InitPlayer(MatchData.PlayerInfo info, int index)
+    HitstopManager hitstopManager;
+
+    public override void InitPlayer(MatchData.PlayerInfo info, GameManager manager, int index)
     {
         teamIndex = index;
         name = "Echo " + index;
         groundIndicator.Init(playerColors[index - 1], index);
      
-        StartCoroutine(InitStateMachine(info));
+        InitStateMachine(info, manager);
+
+        gameManager = manager;
+        hitstopManager = gameManager.hitstopManager;
+        characterID = manager.entityManager.RegisterEntity(EntityDatabaseID.Echo, transform);
     }
 
-    protected override IEnumerator InitStateMachine(MatchData.PlayerInfo info)
+    protected override void InitStateMachine(MatchData.PlayerInfo info, GameManager manager)
     {
-        yield return new WaitForFixedUpdate();
         if (playerControlled) inputManager.InitInputComponent(info);        //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
         fsm.CreateSkills(info);
-        fsm.InitMachine();
+        fsm.InitMachine(manager);
         init = true;
     }
 
@@ -68,11 +71,7 @@ public class BaseEcho : BaseCharacter
 
         unscaledAudioSource.outputAudioMixerGroup.audioMixer.updateMode = UnityEngine.Audio.AudioMixerUpdateMode.UnscaledTime;
 
-
         echoData.InitData();
-      
-        if (!fsm.initMachine) fsm.InitMachine();
-
     }
     public void EnableProjectile()
     {
@@ -120,7 +119,6 @@ public class BaseEcho : BaseCharacter
     public override void DeactivatePlayer()
     {
         if (playerControlled) base.DeactivatePlayer();
-
     }
 
     public void SuspendProjectile(bool hide = true, bool hitboxActive = false)
@@ -128,19 +126,19 @@ public class BaseEcho : BaseCharacter
         playerModel.enabled = !hide;
         ballActive = hitboxActive;
         velocityManager.freeze = true;
-        Debug.Log("Suspending projectile for echo " + name);
     }
-    // Update is called once per frame
     void FixedUpdate()
     {
-        if (GameManager.inSpecialStop || !ballActive || currentTarget == null) { return; }
+        if (hitstopManager == null) return;
+        if (hitstopManager.InSpecialStop || !ballActive || currentTarget == null)  return; 
         playerModel.transform.LookAt(currentTarget.transform.position);
         fsm.FixedUpdateState();
     }
 
     private void Update()
     {
-        if (GameManager.inSpecialStop || !ballActive || currentTarget == null) { return; }
+        if (hitstopManager == null) return;
+        if (hitstopManager.InSpecialStop || !ballActive || currentTarget == null)  return; 
         fsm.UpdateState();
     }
 
@@ -209,7 +207,6 @@ public class BaseEcho : BaseCharacter
             ["usedSkill"] = true,  
         };
         fsm.TransitionTo<DeflectionBounceState>(msg);
-        Debug.Log("Forcing deflect of echo " + name + " by speaker " + speaker.name);
     }
 
 }

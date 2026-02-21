@@ -14,9 +14,9 @@ public class Provoke : SpeakerBaseSkill
     AirStateResource.JumpInfo jumpInfo;
 
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         JumpState jumpState = (JumpState) fsm.TryGetState<JumpState>();
         if (jumpState != null )
         {
@@ -24,9 +24,9 @@ public class Provoke : SpeakerBaseSkill
         }
         warningCanvas.SetActive(false);
     }
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         durationTracker = tauntDuration;
         var activeEchoes = FindObjectsByType<BaseEcho>(FindObjectsSortMode.None);
         foreach (var e in activeEchoes)
@@ -67,7 +67,7 @@ public class Provoke : SpeakerBaseSkill
         if (regenTracker == 0)
         {
             regenTracker = maxStaminaRecoveryRate;
-            int staToRegen = staminaComponent.HasForesight() ? 2 : 1;
+            int staToRegen = staminaComponent.ForesightEnabled ? 2 : 1;
             staminaComponent.RegenMaxStamina(staToRegen);
             staminaToRegen -= staToRegen;
         }

@@ -5,16 +5,16 @@ public class AISpeaker : BaseSpeaker
 {
     [SerializeField] AIBrain AIBrain;
 
-
-    public override void InitPlayer(MatchData.PlayerInfo info, int index)
+    public override void InitPlayer(MatchData.PlayerInfo info, GameManager manager, int index)
     {
-        base.InitPlayer(info, index);
+        base.InitPlayer(info, manager, index);
         AIBrain.InitBrain();
+        gameManager = manager;
     }
 
     private void FixedUpdate()
     {
-        if (GameManager.inSpecialStop || !init) { return; }
+        if (gameManager.hitstopManager.InSpecialStop || !init) { return; }
         fsm.FixedUpdateState();
         if (lookTarget != null)
         {

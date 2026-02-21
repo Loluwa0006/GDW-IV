@@ -4938,8 +4938,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  inputNames:
-  - Jump
+  inputName: Jump
   isHoldable: 1
   defaultDuration: 8
 --- !u!1 &1214142496764976023
@@ -5255,6 +5254,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   deflectEnabled: 1
+  stateAllowsDeflect: 1
   deflectHitbox: {fileID: 8973534880129242715}
   character: {fileID: 4524706908845404307}
   mesh: {fileID: 1621729451994594262}
@@ -5263,10 +5263,9 @@ MonoBehaviour:
   baseDeflect: {fileID: 2100000, guid: f9936cf6a22af4646bee388e3d57063a, type: 2}
   partialDeflect: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
   failedDeflect: {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
-  stateAllowsDeflect: 1
-  deflectCooldown: 0.6
-  deflectDuration: 1.1
-  partialDeflectDuration: 0.45
+  deflectCooldown: 0
+  deflectDuration: 1
+  partialDeflectDuration: 0
   partialDeflectInfo:
     damage: 0
     maxStaminaDamage: 0
@@ -5610,7 +5609,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &4524706908845404307
@@ -5641,6 +5640,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 10cc36e8d261cb847bae20ba070865f1, type: 2}
   - {fileID: 2100000, guid: 1a48e7ea502696143b1f7a6135bc4e8f, type: 2}
   teamIndex: 0
+  characterID: 0
   healthComponent: {fileID: 5836308694081018397}
   deflectManager: {fileID: 5574547391124761937}
 --- !u!114 &1621222227155274029
@@ -6032,8 +6032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  inputNames:
-  - SkillTwo
+  inputName: SkillTwo
   isHoldable: 0
   defaultDuration: 8
 --- !u!1 &6402332697519398245
@@ -6353,8 +6352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  inputNames:
-  - Deflect
+  inputName: Deflect
   isHoldable: 0
   defaultDuration: 8
 --- !u!1 &7338067669917643194
@@ -6401,8 +6399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  inputNames:
-  - SkillOne
+  inputName: SkillOne
   isHoldable: 0
   defaultDuration: 8
 --- !u!1 &7600401549001433679
@@ -6857,7 +6854,6 @@ MonoBehaviour:
   entityDefeated:
     m_PersistentCalls:
       m_Calls: []
-  ownedByEntity: 1
 --- !u!1001 &1098706802491202803
 PrefabInstance:
   m_ObjectHideFlags: 0

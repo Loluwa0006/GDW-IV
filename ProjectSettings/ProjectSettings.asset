@@ -856,7 +856,7 @@ PlayerSettings:
     ReservedCFE: DOTWEEN;UNITY_POST_PROCESSING_STACK_V2
     Standalone: UNITY_POST_PROCESSING_STACK_V2
     VisionOS: UNITY_POST_PROCESSING_STACK_V2
-    WebGL: UNITY_POST_PROCESSING_STACK_V2
+    WebGL: UNITY_POST_PROCESSING_STACK_V2;FISHNET;FISHNET_V4
     Windows Store Apps: 
     XboxOne: UNITY_POST_PROCESSING_STACK_V2
     iPhone: 
@@ -957,7 +957,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 1
+  activeInputHandler: 2
   windowsGamepadBackendHint: 0
   cloudProjectId: 17ef5955-e7a0-4878-ae42-3c2ec70ca85c
   framebufferDepthMemorylessMode: 0

@@ -11,17 +11,24 @@ public class BounceState : EchoBaseState
 
     int bounceTracker = 0;
     const int BOUNCE_DURATION = 7;
-    public override void Enter(Dictionary<string, object> msg = null)
+
+    protected GameManager gameManager;
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
+    {
+        base.InitState(cha, fsm, manager);
+        gameManager = manager;
+    }
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
         oldSpeed = character.velocityManager.GetInternalSpeed();
         character.velocityManager.OverwriteInternalSpeed(Vector3.zero);
         bounceTracker = BOUNCE_DURATION;
-        base.Enter(msg);
+        base.EnterSimulated(msg);
     }
     public override void PhysicsProcess()
     {
         base.PhysicsProcess();
-        if (GameManager.inSpecialStop || !echo.ballActive || echo.GetTarget() == null) { return; }
+        if (gameManager.hitstopManager.InSpecialStop|| !echo.ballActive || echo.GetTarget() == null) { return; }
         bounceTracker -= 1;
         if (bounceTracker <= 0)
         {
@@ -42,7 +49,6 @@ public class BounceState : EchoBaseState
         if (echo.viableTargets.Count == 1)
         {
             character.velocityManager.OverwriteInternalSpeed(oldSpeed * -1.0f);
-            Debug.Log("Flipping velocity due to no viable targets.");
         }
         else
         {

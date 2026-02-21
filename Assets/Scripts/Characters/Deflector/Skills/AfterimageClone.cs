@@ -27,9 +27,19 @@ public class AfterimageClone : MonoBehaviour
 
     LayerMask detectionMask;
 
+    GameManager gameManager;
+
     private void Awake()
     {
         detectionMask = LayerMask.GetMask("Echo", "Speaker");
+    }
+
+    public void InitClone(GameManager manager)
+    {
+        transform.parent = null; // it shouldn't follow the player around
+        Disable();
+        gameManager = manager;
+        manager.entityManager.RegisterEntity(EntityDatabaseID.PrecedentClone, transform, afterimageManager.speaker.characterID);
     }
 
     private void FixedUpdate()
@@ -40,18 +50,14 @@ public class AfterimageClone : MonoBehaviour
         var overlap = Physics.OverlapBox(afterimageCollider.bounds.center, afterimageCollider.bounds.size / 2, afterimageCollider.transform.rotation, detectionMask, QueryTriggerInteraction.Collide);
 
         if (overlap.Length == 0) { return; }
-       var entity = overlap[0];
-        if (entity.transform.parent != null) Debug.Log("Looking at entity: " + entity.name + ", parent is "  + entity.transform.parent.name);
-            else Debug.Log("Looking at entity: " + entity.name + ", no parent");
+        foreach (var entity in overlap) {
             if (entity.CompareTag("EchoHitbox"))
             {
-                Debug.Log("entity " + entity.name + " has echo hitbox tag");
                 var echo = entity.transform.parent.GetComponent<BaseEcho>();
                 if (echo.GetTarget() != afterimageManager.speaker.transform)
                 {
-                    Debug.Log("Echo target is not speaker, continuing");
+                    continue;
                 }
-                Debug.Log("Destroying clone, ball hit it");
                 echo.ForceDeflect(afterimageManager.speaker);
                 Disable();
                 specialDeflectParticles.transform.position = transform.position;
@@ -65,16 +71,15 @@ public class AfterimageClone : MonoBehaviour
             }
             else if (entity.CompareTag("SpeakerHurtbox"))
             {
-                Debug.Log("entity " + entity.name + " has speaker hurtbox tag");
                 var speaker = entity.transform.parent.GetComponent<BaseSpeaker>();
                 if (speaker == afterimageManager.speaker)
                 {
-                    Debug.Log("Speaker is same as afterimage owner, continuing");
-                return;
+                    continue;
                 }
                 PlayDestructionSFX();
                 afterimageManager.DestroyClone();
             }
+        }
         
 
     }
@@ -108,10 +113,10 @@ public class AfterimageClone : MonoBehaviour
     IEnumerator OnCloneChargedDeflect(BaseEcho echo)
     {
         afterimageManager.speaker.deflectManager.superDeflectPerformed.Invoke(afterimageManager.speaker);
-        GameManager.ApplySpecialStop(afterimageManager.chargedDeflectParrystop);
+        gameManager.hitstopManager.ApplySpecialStop(afterimageManager.chargedDeflectParrystop);
         echo.FindNewTarget(afterimageManager.speaker.transform);
-        yield return new WaitUntil(() => GameManager.inSpecialStop);
-        yield return new WaitUntil(() => !GameManager.inSpecialStop);
+        yield return new WaitUntil(() => gameManager.hitstopManager.InSpecialStop);
+        yield return new WaitUntil(() => !gameManager.hitstopManager.InSpecialStop);
         echo.WarpToLocation(echo.GetTarget().transform.position);
         transform.LookAt(echo.transform.position);
         PlayParticles();

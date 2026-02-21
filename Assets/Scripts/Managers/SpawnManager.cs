@@ -13,7 +13,6 @@ public class SpawnManager : MonoBehaviour
         List<Vector3> spawns = new();
         foreach (Transform spawn in spawnHolder)
         {
-            Debug.Log("Looking at spawn: " + spawn.name + " at position " + spawn.position);
             spawns.Add(spawn.position);
         }
         return spawns;

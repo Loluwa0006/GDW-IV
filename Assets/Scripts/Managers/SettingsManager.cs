@@ -27,13 +27,10 @@ public class SettingsManager : MonoBehaviour
         if (PlayerPrefs.HasKey("BGMVolume"))
         {
             gameAudio.GetFloat("BGMVolume", out float bgmLOG);
-            Debug.Log("BGM Value before: " + bgmLOG );
 
             float bgmVol = PlayerPrefs.GetFloat("BGMVolume");
-            Debug.Log("BGM = " + bgmVol);
             gameAudio.SetFloat("BGMVolume", bgmVol);
             gameAudio.GetFloat("BGMVolume", out float bgmNEWLOG);
-            Debug.Log("BGM Value after: " + bgmNEWLOG );
         }
         if (PlayerPrefs.HasKey("SFXVolume"))
         {
@@ -77,8 +74,6 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetFloat("BGMVolume", newVolume);
         gameAudio.SetFloat("BGMVolume", newVolume);
         OnChangeMade();
-        Debug.Log("BGM = " + newVolume);
-
     }
 
     public void OnSFXSliderChanged(float Value)

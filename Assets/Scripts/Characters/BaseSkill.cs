@@ -18,21 +18,20 @@ public class BaseSkill : BaseState
 
     int skillIndex;
 
-    private void Awake()
-    {
-        character = GetComponentInParent<BaseSpeaker>();
-    }
+   protected SimulationManager simulationManager;
+    
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         staminaComponent = character.staminaComponent;
+        simulationManager = manager.simulationManager;
         InitSkill();
     }
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         skillUsed.Invoke(character, skillIndex);
     }
     public void SetSkillIndex(int index)
@@ -66,7 +65,7 @@ public class BaseSkill : BaseState
 
     protected virtual void OnSkillUsed()
     {
-        if (!staminaComponent.HasForesight())
+        if (!staminaComponent.ForesightEnabled)
         {
             staminaComponent.DamageStamina(staminaCost, 0, false);
         }
@@ -75,34 +74,18 @@ public class BaseSkill : BaseState
             staminaComponent.ConsumeForesight();
         }
     }
-
-    protected virtual void OnSkillOver()
-    {
-        if (IsGrounded())
-        {
-            if (GetMovementDir().magnitude < MOVE_DEADZONE)
-            {
-                fsm.TransitionTo<IdleState>();
-            }
-            else
-            {
-                fsm.TransitionTo<RunState>();
-            }
-        }
-        else fsm.TransitionTo<FallState>();
-    }
-
-
     public virtual bool SkillAvailable()
     {
-        return staminaComponent.GetStamina() > staminaCost || staminaComponent.HasForesight();
+        return staminaComponent.Stamina > staminaCost || staminaComponent.ForesightEnabled;
     }
-
     public virtual void ResetSkill()
     {
 
     }
-    
+    protected virtual void OnSkillOver()
+    {
+
+    }
     protected bool CancelSkillIfOppositeSkillBuffered()
     {
         if (oppositeSkillBuffer != null)

@@ -3,18 +3,17 @@ using UnityEngine;
 
 public class RunState : SpeakerMoveState
 {
-
     [SerializeField] ParticleSystem runTrails;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         if (runTrails != null) runTrails.Stop();
     }
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterVisuals(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterVisuals(msg);
         if (runTrails != null) runTrails.Play();
     }
 
@@ -28,5 +27,4 @@ public class RunState : SpeakerMoveState
         base.Exit();
         if (runTrails != null) runTrails.Stop();
     }
-
 }

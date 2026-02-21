@@ -33,7 +33,6 @@ public class TrainingMode : BaseGameMode
 
     public override void InitGameMode(GameManager manager)
     {
-        Debug.Log("Initializing Training Mode");
         base.InitGameMode(manager);
         spawnPositions = gameManager.spawnManager.GetSpeakerDuelSpawns();
         InitUI();
@@ -49,7 +48,7 @@ public class TrainingMode : BaseGameMode
     {
         yield return new WaitForFixedUpdate();
 
-        if (gameManager.camManager != null) gameManager.camManager.cinemachineCam.CancelDamping(true); // make sure cam is in right spot before starting
+        if (gameManager.cameraManager != null) gameManager.cameraManager.OnGameStarted();
         
         matchActive = true;
 
@@ -97,7 +96,7 @@ public class TrainingMode : BaseGameMode
         gameEcho = Instantiate(echoPrefab);
 
         gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
-        gameManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();
     }
@@ -119,7 +118,7 @@ public class TrainingMode : BaseGameMode
         if (queuedPlayerInfo.Count > 0)
         {
             info = queuedPlayerInfo.Dequeue();
-            character.InitPlayer(info, index);
+            character.InitPlayer(info, gameManager, index);
         }
         else
         {
@@ -129,7 +128,7 @@ public class TrainingMode : BaseGameMode
         Debug.Log("Added new player: " + character.name);
         StartCoroutine(InitSpeakerSignals(character));
         AddStaminaUIForCharacter(character, info);
-        gameManager.AddCharacterToCameraTargetGroup(character.transform);
+        gameManager.cameraManager.AddCharacterToCameraTargetGroup(character.transform);
         if (speakerList.Count == 0)
         {
             character.ActivatePlayer();
@@ -152,7 +151,7 @@ public class TrainingMode : BaseGameMode
         {
             characterUI[character].gameObject.SetActive(false);
         }
-        gameManager.RemoveCharacterFromCameraTargetGroup(character.transform);
+        gameManager.cameraManager.RemoveCharacterFromCameraTargetGroup(character.transform);
         character.DeactivatePlayer();
         activeSpeakers.Remove(character.GetComponent<BaseSpeaker>());
     }
@@ -208,7 +207,7 @@ public class TrainingMode : BaseGameMode
     {
         cha.enabled = true;
         cha.ActivatePlayer();
-        gameManager.AddCharacterToCameraTargetGroup(cha.transform);
+        gameManager.cameraManager.RemoveCharacterFromCameraTargetGroup(cha.transform);
 
         cha.ResetComponents();
 

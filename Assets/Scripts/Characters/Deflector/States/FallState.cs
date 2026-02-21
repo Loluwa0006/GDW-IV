@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FallState : SpeakerAirState
@@ -8,14 +7,13 @@ public class FallState : SpeakerAirState
     [Header("Particles")]
     [SerializeField] ParticleSystem landParticles;
     AirStateResource.JumpInfo currentJumpInfo;
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         JumpState jumpState =  (JumpState) fsm.TryGetState<JumpState>();
         if (jumpState != null )
         {
             currentJumpInfo = jumpState.currentJumpInfo;
-            Debug.Log("Found jump state, using that jump info ");
         }
     }
 

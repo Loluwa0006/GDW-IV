@@ -174,13 +174,13 @@ public class AIBrain : MonoBehaviour
     private void CalculateFunctionalAggression()
     {
 
-        float currentStamina = character.staminaComponent.GetStamina() / 100;
-        float enemyStamina = enemySpeaker.staminaComponent.GetStamina() / 100;
+        float currentStamina = character.staminaComponent.Stamina / 100;
+        float enemyStamina = enemySpeaker.staminaComponent.Stamina / 100;
 
         float staminaWeight = ConvertRange(-1.0f, 1.0f, 0, STAMINA_WEIGHT_RANGE, currentStamina - enemyStamina);
 
-        if (character.staminaComponent.InDangerZone()) staminaWeight *= DANGER_ZONE_AGGRESSION_INFLUENCE; //be less aggressive while in danger
-        if (enemySpeaker.staminaComponent.InDangerZone()) staminaWeight *= OPPONENT_DANGER_ZONE_AGGRESSION_INFLUENCE; //be more aggressive while opponent in danger
+        if (character.staminaComponent.InDangerZone) staminaWeight *= DANGER_ZONE_AGGRESSION_INFLUENCE; //be less aggressive while in danger
+        if (enemySpeaker.staminaComponent.InDangerZone) staminaWeight *= OPPONENT_DANGER_ZONE_AGGRESSION_INFLUENCE; //be more aggressive while opponent in danger
 
         currentPersonality.functionalAggression = currentPersonality.aggressionLevel * staminaWeight;
 
@@ -264,16 +264,16 @@ public class AIBrain : MonoBehaviour
         float distanceToSpeaker = Vector3.Distance(enemySpeaker.transform.position, pos);
         float distanceRiskLevel = MIN_SPEAKER_RISK_LEVEL;
         if (distanceToSpeaker <= MAX_DISTANCE_TO_CONSIDER_DANGER) distanceRiskLevel = MAX_DISTANCE_TO_CONSIDER_DANGER / distanceToSpeaker;
-        float staminaRiskLevel = enemySpeaker.staminaComponent.GetStamina();
-        if (enemySpeaker.staminaComponent.HasForesight()) staminaRiskLevel += MIN_SPEAKER_RISK_LEVEL; //they are able to use at least 1 more skill than usual
+        float staminaRiskLevel = enemySpeaker.staminaComponent.Stamina;
+        if (enemySpeaker.staminaComponent.ForesightEnabled) staminaRiskLevel += MIN_SPEAKER_RISK_LEVEL; //they are able to use at least 1 more skill than usual
 
         return distanceRiskLevel * staminaRiskLevel;
     }
 
     float CalculateResourceRisk()
     {
-        float staminaRisk = 100 - character.staminaComponent.GetStamina();
-        if (character.staminaComponent.InDangerZone()) staminaRisk *= 2;
+        float staminaRisk = 100 - character.staminaComponent.Stamina;
+        if (character.staminaComponent.InDangerZone) staminaRisk *= 2;
 
         return staminaRisk;
     }

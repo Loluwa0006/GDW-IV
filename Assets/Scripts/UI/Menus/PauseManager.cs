@@ -1,21 +1,17 @@
-using NUnit.Framework;
 using UnityEngine;
-
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-public class PauseMenu : MonoBehaviour
+public class PauseManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
     [SerializeField] GameManager gameManager;
     [SerializeField] GameObject pauseScreen;
 
     [SerializeField] SettingsManager settingsManager;
 
+    bool gamePaused;
+
     private void Awake()
     {
         OnResumePressed();
-        if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
     }
 
     private void Start()
@@ -31,14 +27,14 @@ public class PauseMenu : MonoBehaviour
 
     public void OnPauseRequested(BaseCharacter cha)
     {
-        GameManager.gamePaused = !GameManager.gamePaused;
-        pauseScreen.SetActive(GameManager.gamePaused);
+        gamePaused = !gamePaused;
+        pauseScreen.SetActive(gamePaused);
     }
 
 
     public void OnResumePressed()
     {
-        GameManager.gamePaused = false;
+        gamePaused = false;
         pauseScreen.SetActive(false);
     }
 
@@ -49,8 +45,13 @@ public class PauseMenu : MonoBehaviour
 
     public void OnRestartPressed()
     {
-        GameManager.gamePaused = false;
+        gamePaused = false;
         pauseScreen.SetActive(false);
         gameManager.ResetManager();
+    }
+
+    public bool GamePaused()
+    {
+        return gamePaused;
     }
 }

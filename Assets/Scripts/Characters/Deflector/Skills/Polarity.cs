@@ -7,16 +7,15 @@ public class Polarity : SpeakerBaseSkill
     [SerializeField] float throwDistance = 20.0f;
     [SerializeField] PolarityGrenade grenade;
     [SerializeField] VelocityManager grenadeVelocityManager;
-
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         grenade.InitProjectile();
     }
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         Vector3 throwDir = GetMovementDir();
         if (throwDir.magnitude <= MOVE_DEADZONE) throwDir = GetDirectionToNearestSpeaker();
         Vector3 speakerSpeed = character.velocityManager.GetTotalSpeed();
@@ -51,8 +50,8 @@ public class Polarity : SpeakerBaseSkill
 
     public override void InactiveProcess()
     {
-        var hasForesight = staminaComponent.HasForesight();
-        if (staminaComponent.GetStamina() <= grenadeModeSwapStaminaCost && !hasForesight) return;
+        var hasForesight = staminaComponent.ForesightEnabled;
+        if (staminaComponent.Stamina <= grenadeModeSwapStaminaCost && !hasForesight) return;
         if (skillBuffer.Buffered)
         {
             if (ModeSwappable())
@@ -81,7 +80,7 @@ public class Polarity : SpeakerBaseSkill
     } 
     public override bool SkillAvailable()
     {
-        return (staminaComponent.GetStamina() > staminaCost || staminaComponent.HasForesight()) && grenade.state == PolarityGrenade.GrenadeState.Holstered;
+        return (staminaComponent.Stamina > staminaCost || staminaComponent.ForesightEnabled) && grenade.state == PolarityGrenade.GrenadeState.Holstered;
     }
 
     public override void ResetSkill()

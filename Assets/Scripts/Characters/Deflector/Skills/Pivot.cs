@@ -57,27 +57,35 @@ public class Pivot : SpeakerBaseSkill
         public Vector3 point;
     }
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+
+    GameManager gameManager;
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        base.InitState(cha, fsm, manager);
         maxFallSpeed = Mathf.Abs(maxFallSpeed) * -1; //make sure its negative;
         gravity = Mathf.Abs(gravity);
         pivotingParticles.Clear();
         pivotingParticles.Stop();
+        gameManager = manager;
     }
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         struckTargets.Clear();
         inGrace = true;
         frameTracker = 0;
-        if (!staminaComponent.HasForesight())
+        if (!staminaComponent.ForesightEnabled)
         {
             staminaComponent.DamageStamina(staminaCost, 0, false);
         }     
-        pivotingParticles.Play();
         fastfall = false;
+    }
+
+    public override void EnterVisuals(Dictionary<string, object> msg = null)
+    {
+        base.EnterVisuals(msg);
+        pivotingParticles.Play();
     }
 
     public override void Process()
@@ -105,9 +113,9 @@ public class Pivot : SpeakerBaseSkill
         {
             if (frameTracker % staminaDrain ==0)
             {
-                if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(1, 0, false);
+                if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(1, 0, false);
                 frameTracker = 0;
-                if (staminaComponent.GetStamina() <= staminaCost && !staminaComponent.HasForesight()) 
+                if (staminaComponent.Stamina <= staminaCost && !staminaComponent.ForesightEnabled) 
                 {
                     OnSkillOver();
                     return;
@@ -160,18 +168,16 @@ public class Pivot : SpeakerBaseSkill
             if (!obj.transform.TryGetComponent(out HealthComponent hp)) continue;
             else if (hp == speaker.healthComponent) continue;
             else if (struckTargets.Contains(hp)) continue;
-            Debug.Log("Found tackle victim: " + hp.hurtboxOwner.name);
             struckTargets.Add(hp);
             newVictims.Add(hp);
         }
         bool hitEntity = false;
         foreach (var victim in newVictims)
         {
-            Debug.Log("Tackling " + victim.name + " with dash");
             victim.Damage(hitbox.damageInfo);
-            if (victim.ownedByEntity) hitEntity = true;
+            if (victim.entityID != EntityManager.MISSING_OWNER_ID) hitEntity = true;
         }
-        if (hitEntity) GameManager.ApplySpecialStop(hitbox.damageInfo.hitstop);
+        if (hitEntity) gameManager.hitstopManager.ApplySpecialStop(hitbox.damageInfo.hitstop);
     }
 
     void AddGravity()

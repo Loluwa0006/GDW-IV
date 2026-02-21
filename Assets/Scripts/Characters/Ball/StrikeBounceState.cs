@@ -4,17 +4,17 @@ using UnityEngine;
 public class StrikeBounceState : BounceState
 {
     [SerializeField] HitboxComponent hitbox;
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         if (msg != null)
         {
             if (msg.ContainsKey("victim")) OnHitboxCollision((HealthComponent)msg["victim"]);
-            Debug.Log("entered bounce state with victim");
         }
         else
         {
             Debug.LogWarning("Entered strike bounce state with no victims");
+            fsm.TransitionTo<FlyingState>();
         }
     }
     public override void ApplyBounceVelocity()
@@ -25,15 +25,9 @@ public class StrikeBounceState : BounceState
 
     public virtual void OnHitboxCollision(HealthComponent hp)
     {
-        Debug.Log("Doing hitbox collision stuff");
         if (hp.hurtboxOwner.TryGetComponent(out BaseSpeaker victim))
         {
-            Debug.Log("Hit player " + victim.name);
-            if (echo.GetTarget() != victim.transform) 
-            {
-
-                Debug.Log("Wrong target");
-                return; }
+            if (echo.GetTarget() != victim.transform) return;
             hitbox.damageInfo.knockbackDir = echo.velocityManager.GetTotalSpeed().normalized;
             echo.echoCollision.Invoke(echo);
         }

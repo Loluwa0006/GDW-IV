@@ -153,7 +153,7 @@ public class TutorialTrigger : MonoBehaviour
                     manager.StartSection(instantSectionSwap);
                     break;
                 case TriggerType.GrantSkill:
-                    player.fsm.AddNewSkill(skillIndex, skill);
+                    player.fsm.AddNewSkill(skillIndex, skill, manager);
                     if (mesh != null) mesh.enabled = false;
                     break;
                 case TriggerType.AdjustCamera:

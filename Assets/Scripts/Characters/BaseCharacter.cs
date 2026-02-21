@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class BaseCharacter : MonoBehaviour
+public class BaseCharacter : MonoBehaviour, ISimulated
 {
     public UnityEvent<BaseCharacter> requestedPause =  new();
 
@@ -21,14 +20,22 @@ public class BaseCharacter : MonoBehaviour
     protected Transform lookTarget = null;
     protected bool init = false;
 
-    public virtual void InitPlayer(MatchData.PlayerInfo info, int index)
+    protected GameManager gameManager;
+
+    [HideInInspector] public int characterID;
+
+    public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Speaker; set { } }
+    public bool UpdateDuringHitstop { get => false; set { } }
+
+    public virtual void InitPlayer(MatchData.PlayerInfo info, GameManager manager, int index)
     {
 
+        gameManager = manager;
         teamIndex = index;
         playerModel.material = playerColors[index - 1];
         name = "Player " + index;
         groundIndicator.Init(playerModel.material, index);
-
+        staminaComponent.InitComponent(manager);
 
         if (inputManager == null)
         {
@@ -38,47 +45,32 @@ public class BaseCharacter : MonoBehaviour
         {
             unscaledAudioSource = GetComponent<AudioSource>();
         }
+        if (velocityManager == null)
+        {
+            velocityManager = GetComponentInChildren<VelocityManager>();
+        }
         unscaledAudioSource.outputAudioMixerGroup.audioMixer.updateMode = UnityEngine.Audio.AudioMixerUpdateMode.UnscaledTime;
 
-        StartCoroutine(InitStateMachine(info));
-        StartCoroutine(AssignLookTarget());
+        InitStateMachine(info, manager);
+        velocityManager.InitManager(manager);
     }
-    protected virtual IEnumerator InitStateMachine(MatchData.PlayerInfo info)
+    protected virtual void InitStateMachine(MatchData.PlayerInfo info, GameManager manager)
     {
-        yield return new WaitForFixedUpdate();
         inputManager.InitInputComponent(info); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
         fsm.CreateSkills(info);
-        fsm.InitMachine();
+        fsm.InitMachine(manager);
         init = true;
     }
   
-    IEnumerator AssignLookTarget()
-    {
-        yield return new WaitForFixedUpdate();
-        lookTarget = FindFirstObjectByType<BaseEcho>().transform;
-    }
-
     private void Update()
     {
         if (inputManager.ActionPerformedThisFrame("Pause"))
         {
-            Debug.Log("pressed pause button");
             requestedPause.Invoke(this);
         }
-        if (GameManager.inSpecialStop || !init) { return; }
+        if (gameManager.hitstopManager.InSpecialStop || !init) { return; }
         fsm.UpdateState();
     }
-
-    private void FixedUpdate()
-    {
-        if (GameManager.inSpecialStop || !init) { return; }
-        fsm.FixedUpdateState();
-        if (lookTarget != null)
-        {
-            playerModel.transform.LookAt(lookTarget);
-        }
-    }
-
     public virtual void DeactivatePlayer()
     {
         HidePlayer();
@@ -103,16 +95,6 @@ public class BaseCharacter : MonoBehaviour
     {
         playerModel.gameObject.SetActive(false);
     }
-    public void SetLookTarget(Transform target)
-    {
-        lookTarget = target;
-        Debug.Log(name + " is looking at target " + target.name);
-    }
-
-    public Transform GetLookTarget()
-    {
-        return lookTarget;
-    }
 
     public virtual void ResetComponents()
     {
@@ -125,4 +107,29 @@ public class BaseCharacter : MonoBehaviour
         fsm.ResetComponent();
     }
 
+    public virtual void InitSimulated(SimulationManager simulationManager)
+    {
+        simulationManager.AddSimulatedObject(this);
+    }
+
+    public virtual void SimulateUpdate(int currentTick)
+    {
+        if (gameManager.hitstopManager.InSpecialStop || !init) { return; }
+        fsm.FixedUpdateState();
+        if (lookTarget != null)
+        {
+            playerModel.transform.LookAt(lookTarget);
+        }
+    }
+}
+public struct CharacterSnapshot
+{
+    public bool charEnabled;
+    public bool charInit;
+
+    public CharacterSnapshot(bool enable, bool init)
+    {
+        charEnabled = enable;
+        charInit = init;
+    }
 }

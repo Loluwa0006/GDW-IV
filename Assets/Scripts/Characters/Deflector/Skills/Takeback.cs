@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-using Unity.Cinemachine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem.XR.Haptics;
 
-public class Takeback : SpeakerBaseSkill
+public class Takeback : SpeakerBaseSkill, ISimulated
 {
     enum TakebackState
     {
@@ -21,12 +19,12 @@ public class Takeback : SpeakerBaseSkill
     UnityAction<BaseEcho> onEchoDeflectedDrop;
     UnityAction<Vector3> onEchoWarped;
 
-    [SerializeField] float whiffDuration = 0.9f;
+    [SerializeField] int whiffDuration = 54;
     [SerializeField] int holdStaminaDrainRate = 8;
     [SerializeField] float decelRate = 0.9f;
     [SerializeField] float tacklePushback = 8.0f;
     [SerializeField] int staminaFreeHoldFrames = 12;
-    [SerializeField] int postSuccessfulTackleIFames = 10;
+    [SerializeField] int postSuccessfulTackleIFrames = 10;
 
 
     [SerializeField] Transform ballHolder;
@@ -56,10 +54,14 @@ public class Takeback : SpeakerBaseSkill
 
     BaseEcho heldBall;
     BaseSpeaker enemySpeaker;
+    GameManager gameManager;
 
-    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm)
+    public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Skill; set {} }
+    public bool UpdateDuringHitstop { get => false; set {}}
+    public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
-        base.InitState(cha, fsm);
+        gameManager = manager;
+        base.InitState(cha, fsm, manager);
         catchDuration = speaker.deflectManager.GetGoodDeflectDuration();
         StartCoroutine(FindOppositeSpeaker());
         throwParticle.transform.SetParent(null);
@@ -73,61 +75,23 @@ public class Takeback : SpeakerBaseSkill
         foreach (var speaker in speakers)
         {
             if (speaker == character) { continue; }
-            Debug.Log(character.name + " is looking at char " + speaker.name);
             enemySpeaker = speaker;
             break;
         }
     }
 
 
-    public override void Enter(Dictionary<string, object> msg = null)
+    public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
-        base.Enter(msg);
+        base.EnterSimulated(msg);
         EnterCatchState();
-        if (!staminaComponent.HasForesight())
+        if (!staminaComponent.ForesightEnabled)
         {
             staminaComponent.DamageStamina(staminaCost, 0, false);
         }
         skillBuffer.Consume();
         ballHolder.transform.position = speaker.deflectManager.transform.position;
     }
-
-
-    public override void Process()
-    {
-
-        switch (currentState)
-        {
-            case TakebackState.Catching:
-                durationTracker -= Time.deltaTime;
-                if (durationTracker <= 0.0f)
-                {
-                    EnterWhiffState();
-                }
-                break;
-            case TakebackState.Whiff:
-                whiffTracker -= Time.deltaTime;
-                if (whiffTracker <= 0.0f) OnSkillOver();
-                break;
-        }
-
-        if (oppositeSkillBuffer != null)
-        {
-            if (oppositeSkillBuffer.Buffered)
-            {
-                fsm.TransitionToSkill(oppositeSkillIndex);
-                return;
-            }
-        }
-    }
-
-    public override void PhysicsProcess()
-    {
-        var speed = character.velocityManager.GetInternalSpeed();
-        speed *= decelRate;
-        character.velocityManager.OverwriteInternalSpeed(speed);
-    }
-
 
     public override void InactivePhysicsProcess() 
     {
@@ -136,12 +100,10 @@ public class Takeback : SpeakerBaseSkill
             holdTracker += 1;
             freeHoldTracker -= 1;
             if (freeHoldTracker < 0) freeHoldTracker = 0;
-            Debug.Log("Free hold tracker == " + freeHoldTracker);
-            Debug.Log("Hold tracker == " + holdTracker);
             if (holdTracker % holdStaminaDrainRate == 0 && freeHoldTracker <= 0)
             {
-                if (!staminaComponent.HasForesight()) staminaComponent.DamageStamina(1, 0, false);
-                if (staminaComponent.GetStamina() < staminaCost) DropBall();
+                if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(1, 0, false);
+                if (staminaComponent.Stamina < staminaCost) DropBall();
             }
         }
     }
@@ -152,7 +114,6 @@ public class Takeback : SpeakerBaseSkill
         {
             EnterThrowState();
         }
-        Debug.Log("Current state == " + currentState.ToString());
     }
 
     public override bool OnCharacterHit(DamageInfo info)
@@ -167,7 +128,7 @@ public class Takeback : SpeakerBaseSkill
 
     void EnterCatchState()
     {
-        speaker.healthComponent.AddStatusEffect(new InvulnerabilityEffect(DamageSource.Ball, int.MaxValue, true), "TakebackCatch");   //it is infinite because we need full control over when it leaves
+        speaker.healthComponent.AddStatusEffect(new InvulnerabilityEffect(DamageSource.Ball, int.MaxValue, simulationManager.CurrentTick, -1, true), StatusEffectIDs.TakebackCatchEchoInvulnerability);   //it is infinite because we need full control over when it leaves
         durationTracker = catchDuration;
         currentState = TakebackState.Catching;
         SetCatchAttemptParticleColorAndStopEmitting(catchAvailableColor);
@@ -197,7 +158,7 @@ public class Takeback : SpeakerBaseSkill
             catchParticle.transform.position = character.transform.position;
             catchParticle.Play();
         }
-        character.SetLookTarget(enemySpeaker.transform);
+        speaker.SetLookTarget(enemySpeaker.transform);
         ConnectSignals(echo);
         OnSkillOver();
         RemoveCatchAttemptParticles();
@@ -228,7 +189,6 @@ public class Takeback : SpeakerBaseSkill
             }
             throwParticle.Play();
         }
-        Debug.Log("entered throw state");
     }
 
     void EnterWhiffState()
@@ -237,7 +197,7 @@ public class Takeback : SpeakerBaseSkill
         currentState = TakebackState.Whiff;
         SetCatchAttemptParticleColorAndStopEmitting(whiffedCatchColor);
         catchAttemptParticle.Play();
-        speaker.healthComponent.RemoveStatusEffect("TakebackCatch");
+        speaker.healthComponent.RemoveStatusEffect(StatusEffectIDs.TakebackCatchEchoInvulnerability);
     }
 
     void OnHeldBallCollision(BaseEcho echo)
@@ -245,16 +205,14 @@ public class Takeback : SpeakerBaseSkill
         if (heldBall == null) return;
         DropBall();
         RemoveSignals();
-        speaker.healthComponent.AddStatusEffect(new InvulnerabilityEffect(DamageSource.Ball, postSuccessfulTackleIFames, false), "TakebackPostSuccessfulTackle");// remove infinite, replace with temp
+        speaker.healthComponent.AddStatusEffect(new InvulnerabilityEffect(DamageSource.Ball, postSuccessfulTackleIFrames, simulationManager.CurrentTick, -1, false), StatusEffectIDs.TakebackPostSuccessfulTackleInvulnerability);// remove infinite, replace with temp
     }
-
-
     public void EnableHeldEcho()
     {
         heldBall.transform.parent = null;
         heldBall.ResumeProjectile();
-        character.SetLookTarget(heldBall.transform);
-        speaker.healthComponent.RemoveStatusEffect("TakebackCatch");
+        speaker.SetLookTarget(heldBall.transform);
+        speaker.healthComponent.RemoveStatusEffect(StatusEffectIDs.TakebackCatchEchoInvulnerability);
     }
 
     void DropBall()
@@ -268,13 +226,11 @@ public class Takeback : SpeakerBaseSkill
 
     void OnHeldBallWarped(Vector3 movement)
     {
-        Debug.Log("Warpin");
-        StartCoroutine(PostWarpLogic(movement));
+        PostWarpLogic(movement);
     }
 
-    IEnumerator PostWarpLogic(Vector3 movement)
+    void PostWarpLogic(Vector3 movement)
     {
-        yield return null;
         character.transform.position += movement;
         if (heldBall != null)
         {
@@ -303,7 +259,7 @@ public class Takeback : SpeakerBaseSkill
 
     public override void Exit()
     {
-        speaker.healthComponent.RemoveStatusEffect("TakebackCatch"); 
+        speaker.healthComponent.RemoveStatusEffect(StatusEffectIDs.TakebackCatchEchoInvulnerability); 
         SetCatchAttemptParticleColorAndStopEmitting(catchAvailableColor);
     }
 
@@ -333,12 +289,48 @@ public class Takeback : SpeakerBaseSkill
 
     public override bool SkillAvailable()
     {
-        if (!wasCatchingBeforeFreeze && (GameManager.inSpecialStop || GameManager.frameAfterSpecialStop))
+        if (!wasCatchingBeforeFreeze && (gameManager.hitstopManager.InSpecialStop || gameManager.hitstopManager.FrameAfterSpecialStop))
         {
             return false; //can't deflect during freeze
         }
         return base.SkillAvailable();
     }
 
+    public void InitSimulated(SimulationManager simulationManager)
+    {
+        this.simulationManager = simulationManager;
+        simulationManager.AddSimulatedObject(this);
+    }
 
+    public void SimulateUpdate(int currentTick)
+    {
+        var speed = character.velocityManager.GetInternalSpeed();
+        speed *= decelRate;
+        character.velocityManager.OverwriteInternalSpeed(speed);
+
+
+        switch (currentState)
+        {
+            case TakebackState.Catching:
+                durationTracker -= Time.deltaTime;
+                if (durationTracker <= 0.0f)
+                {
+                    EnterWhiffState();
+                }
+                break;
+            case TakebackState.Whiff:
+                whiffTracker -= Time.deltaTime;
+                if (whiffTracker <= 0.0f) OnSkillOver();
+                break;
+        }
+
+        if (oppositeSkillBuffer != null)
+        {
+            if (oppositeSkillBuffer.Buffered)
+            {
+                fsm.TransitionToSkill(oppositeSkillIndex);
+                return;
+            }
+        }
+    }
 }
