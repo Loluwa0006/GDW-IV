@@ -30,7 +30,6 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
 
     BufferHelper deflectBuffer;
 
-    int drainStartTick;
     int chargeStartTick;
 
     List<ParticleSystem> particlesList = new();
@@ -42,6 +41,7 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
     public bool UpdateDuringHitstop { get => false; set { } }
 
     CounterslashSnapshot[] counterslashSnapshots = new CounterslashSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
+
     private void Start()
     {
         var main = releaseParticles.main;
@@ -66,6 +66,7 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
         windSwirler.Stop();
 
         gameManager = manager;
+        InitSimulated(manager.simulationManager);
     }
 
     IEnumerator InitDeflectionParticle(ParticleSystem ps)
@@ -79,7 +80,6 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
     public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
         base.EnterSimulated(msg);
-        drainStartTick = simulationManager.CurrentTick;
         chargeStartTick = simulationManager.CurrentTick;
 
         chargeMeter.SetDisplayStatus(true);
@@ -106,11 +106,19 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
         main.startColor = fullyCharged ? chargedColor : underchargedColor;
         previouslyCharged = (currentTick - chargeStartTick >= chargeDuration);
     }
-
     void OnCounterslashReleased()
     {
         var echoList = gameManager.entityManager.GetEntitiesOfType(EntityDatabaseID.Echo);
-        if (echoList.Count <= 0) return;
+        if (echoList == null)
+        {
+            OnSkillOver();
+            return;
+        }
+        if (echoList.Count <= 0)
+        {
+            OnSkillOver();
+            return;
+        }
         int index = 0;
         int particleIndex = 0;
         foreach (var trans in echoList)
@@ -129,8 +137,11 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
         if (!staminaComponent.ForesightEnabled) staminaComponent.DamageStamina(staminaCost, 0, false);
         else staminaComponent.ConsumeForesight();
         OnSkillOver();
-        releaseParticles.Play();
-        sfxHandler.PlayOneShot(electricBurst, burstVolume);
+        if (!gameManager.simulationManager.IsSimulating)
+        {
+            releaseParticles.Play();
+            sfxHandler.PlayOneShot(electricBurst, burstVolume);
+        }
     }
 
     public override void Exit()
@@ -162,7 +173,7 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
     void DrainLogic(int currentTick)
     {
         if (staminaComponent.ForesightEnabled) return;
-        int elasped = currentTick - drainStartTick;
+        int elasped = currentTick - chargeStartTick;
         var currentDrains = elasped / framesUntilStaminaDrain;
         int previousDrains = (elasped - 1) / framesUntilStaminaDrain;
         if (currentDrains > previousDrains)
@@ -175,10 +186,9 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
     {
         if (!skillAction.IsPressed())
         {
-            if (currentTick - chargeStartTick >= chargeDuration) OnCounterslashReleased();
-            else if (currentTick - chargeStartTick >= timeUntilCancel) OnSkillOver();
-
-            Debug.Log("Time elasped in counterslash state == " + (currentTick - chargeStartTick));
+            int elapsed = currentTick - chargeStartTick;
+            if (elapsed >= chargeDuration) OnCounterslashReleased();
+            else if (elapsed >= timeUntilCancel) OnSkillOver();
         }
     }
     public CounterslashSnapshot CaptureState()
@@ -187,6 +197,7 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
         {
             chargeStart = chargeStartTick,
             charged = previouslyCharged,
+            skillSnapshot = GetSkillSnapshot()
         };
     }
 
@@ -194,6 +205,7 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
     {
         chargeStartTick = snapshot.chargeStart;
         previouslyCharged = snapshot.charged;
+        chargeMeter.SetDisplayStatus(fsm.currentState == this);
     }
 
     public void CaptureCurrentState(int tick)
@@ -206,10 +218,9 @@ public class Counterslash : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Co
         RestoreState(counterslashSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
 }
-
-
 public struct CounterslashSnapshot
 {
     public int chargeStart;
     public bool charged;
+    public SkillSnapshot skillSnapshot;
 }

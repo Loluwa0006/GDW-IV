@@ -17,7 +17,5 @@ public class IdleState : SpeakerMoveState
         }
         Vector3 newSpeed = character.velocityManager.GetInternalSpeed() * decelRate;
         character.velocityManager.OverwriteInternalSpeed(newSpeed);
-
-        Debug.Log("doin physics stuff");
     }
 }

@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyingState : EchoBaseState
+public class FlyingState : EchoBaseState, ISimulationSnapshot<FlyingSnapshot>, ISnapshotable
 {
-
-
     [SerializeField] protected HitboxComponent hitbox;
     [SerializeField] LayerMask speakerMask;
     [SerializeField] LayerMask terrainMask;
@@ -38,6 +36,8 @@ public class FlyingState : EchoBaseState
     int cooldownTracker = 0;
 
     GameManager gameManager;
+
+    FlyingSnapshot[] flyingSnapshots = new FlyingSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
 
     public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
@@ -88,7 +88,7 @@ public class FlyingState : EchoBaseState
             bool hitTarget = true;
             if (victim.hurtboxOwner.transform.TryGetComponent(out BaseSpeaker victimSpeaker))
             {
-                if (victimSpeaker.deflectManager.IsDeflecting())
+                if (victimSpeaker.deflectManager.IsDeflecting)
                 {
                     if (victimSpeaker.deflectManager.IsPartialDeflect() && echo.isIgnited)
                     {
@@ -117,13 +117,14 @@ public class FlyingState : EchoBaseState
     {
         base.PhysicsProcess();
         cooldownTracker -= 1;
-        if (cooldownTracker< 0) cooldownTracker = 0;
+        if (cooldownTracker < 0) cooldownTracker = 0;
         if (gameManager.hitstopManager.InSpecialStop || !echo.ballActive || echo.GetTarget() == null || cooldownTracker > 0) { return; }
         if (HitboxCollisionLogic()) return;
 
         TerrainCollisionLogic();
 
         CurveLogic();
+
     }
 
     void CurveLogic()
@@ -161,9 +162,6 @@ public class FlyingState : EchoBaseState
 
        // Debug.Log("Distance to target is " + distanceToTarget + " with proximity factor of " + proximityFactor);
     }
-
-
-
     void TerrainCollisionLogic()
     {
         Vector3 terrainVector = echo.transform.position - previousPos;
@@ -187,4 +185,32 @@ public class FlyingState : EchoBaseState
     {
         echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
     }
+
+    public FlyingSnapshot CaptureState()
+    {
+        return new FlyingSnapshot()
+        {
+            remainingBounceCooldown = cooldownTracker
+        };
+    }
+
+    public void RestoreState(FlyingSnapshot snapshot)
+    {
+        cooldownTracker = snapshot.remainingBounceCooldown;
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        flyingSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(flyingSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
+    }
+}
+
+public struct FlyingSnapshot
+{
+    public int remainingBounceCooldown;
 }

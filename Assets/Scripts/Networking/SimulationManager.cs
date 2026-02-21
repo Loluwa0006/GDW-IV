@@ -14,13 +14,15 @@ public class SimulationManager : MonoBehaviour
 
     List<ISnapshotable> snapshotableObjects = new();
 
-    public int CurrentTick {  get; private set; }
+    public int CurrentTick { get; private set; }
     public int UnscaledTick { get; private set; }
+
+    public bool IsSimulating { get; private set; } = false;
 
     int savedTickDebugging = 0;
 
-   [SerializeField] TMP_Text tickDisplay;
-   [SerializeField] TMP_Text savedTickDisplay;
+    [SerializeField] TMP_Text tickDisplay;
+    [SerializeField] TMP_Text savedTickDisplay;
     public void ResetTick()
     {
         CurrentTick = 0;
@@ -32,8 +34,13 @@ public class SimulationManager : MonoBehaviour
         else simulatedObjects.Add(simulatedObject);
         if (simulatedObject is ISnapshotable snapshottable)
         {
-            snapshotableObjects.Add(snapshottable);
+            AddSnapshotableObject(snapshottable);
         }
+    }
+
+    public void AddSnapshotableObject (ISnapshotable snapshotable) 
+    {
+        snapshotableObjects.Add(snapshotable);
     }
 
     private void FixedUpdate()
@@ -48,25 +55,35 @@ public class SimulationManager : MonoBehaviour
             if (!gameManager.pauseManager.GamePaused())
             {
                 UnscaledTick++;
-                if (!gameManager.hitstopManager.InSpecialStop)
-                {
-                    CurrentTick++;
-                    foreach (var simulatedObject in simulatedObjects)
-                    {
-                        simulatedObject.SimulateUpdate(CurrentTick);
-                    }
-                }
+                SimulateRegularObjects();
             }
-            foreach (var simulatedObject in simulateWhilePausedObjects)
-            {
-                simulatedObject.SimulateUpdate(CurrentTick);
-            }
+            SimulateUnscaledObjects();
         }
         tickDisplay.text = "Current Tick: " + CurrentTick;
         savedTickDisplay.text = "Saved Tick: " + savedTickDebugging;
 
     }
 
+    void SimulateRegularObjects()
+    {
+        if (!gameManager.hitstopManager.InSpecialStop)
+        {
+            CurrentTick++;
+            foreach (var simulatedObject in simulatedObjects)
+            {
+                simulatedObject.SimulateUpdate(CurrentTick);
+            }
+        }
+    }
+
+    void SimulateUnscaledObjects()
+    {
+        foreach (var simulatedObject in simulateWhilePausedObjects)
+        {
+            simulatedObject.SimulateUpdate(UnscaledTick);
+        }
+    }
+ 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Y))

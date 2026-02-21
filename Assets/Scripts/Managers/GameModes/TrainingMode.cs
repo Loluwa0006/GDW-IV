@@ -95,7 +95,7 @@ public class TrainingMode : BaseGameMode
     {
         gameEcho = Instantiate(echoPrefab);
 
-        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
+        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn(), gameManager);
         gameManager.cameraManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();

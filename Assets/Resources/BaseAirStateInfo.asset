@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b08d1a9222c81b41b87ac26465e6541, type: 3}
   m_Name: BaseAirStateInfo
   m_EditorClassIdentifier: Assembly-CSharp::AirStateResource
-  airAcceleration: 2
-  airStrafeSpeed: 20
+  accelerationFrames: 9
+  airMoveSpeed: 20

@@ -75,7 +75,7 @@ public class BasePlayerUI : MonoBehaviour
         if (speakerOwner == null) { return; }
         var staminaComponent = speakerOwner.staminaComponent;
         float usableStamina = staminaComponent.Stamina;
-        maxStaminaImage.fillAmount = staminaComponent.MaxStamina / StaminaComponent.DEFAULT_MAX_STAMINA;
+        maxStaminaImage.fillAmount = staminaComponent.MaxStamina / (float) StaminaComponent.DEFAULT_MAX_STAMINA;
         usableStaminaImage.fillAmount = usableStamina / StaminaComponent.DEFAULT_MAX_STAMINA;
         grayStaminaImage.fillAmount = (usableStamina + staminaComponent.GrayStamina) / StaminaComponent.DEFAULT_MAX_STAMINA;
         if (grayStaminaImage.fillAmount > maxStaminaImage.fillAmount) { grayStaminaImage.fillAmount = maxStaminaImage.fillAmount; }

@@ -133,7 +133,7 @@ public class AIBrain : MonoBehaviour
 
     private void DeflectionLogic()
     {
-        if (character.deflectManager.IsDeflecting() || enemyEcho.GetTarget() != character.transform) return;
+        if (character.deflectManager.IsDeflecting || enemyEcho.GetTarget() != character.transform) return;
         var distanceFromEcho = Vector3.Distance(character.transform.position, enemyEcho.transform.position);
         if (distanceFromEcho > MAX_DISTANCE_TO_CONSIDER_DEFLECT) return;
 
@@ -254,7 +254,7 @@ public class AIBrain : MonoBehaviour
         if (strikableByEcho) echoRiskFactor *= 2;
         if (echoIgnited) echoRiskFactor *= ECHO_IGNITION_RISK_INFLUENCE;
 
-        bool deflecting = character.deflectManager.IsDeflecting();
+        bool deflecting = character.deflectManager.IsDeflecting;
         if (deflecting && !character.deflectManager.IsPartialDeflect()) echoRiskFactor = 0; //echo is no threat while im deflecting, more likely to be walking forward while deflecting.
         return echoRiskFactor;
     }

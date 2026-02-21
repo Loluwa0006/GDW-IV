@@ -5157,6 +5157,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   teamIndex: 0
+  characterID: 0
   echoCollision:
     m_PersistentCalls:
       m_Calls: []
@@ -11054,8 +11055,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  inputNames:
-  - Crash
+  inputName: 
   isHoldable: 1
   defaultDuration: 8
 --- !u!1 &8091557106358926034
@@ -11102,8 +11102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  inputNames:
-  - Lighten
+  inputName: 
   isHoldable: 0
   defaultDuration: 8
 --- !u!1001 &5500610328753527350

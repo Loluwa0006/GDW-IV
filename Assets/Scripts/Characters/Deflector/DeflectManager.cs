@@ -44,21 +44,19 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
 
     int cooldownStartTick = 0;
 
-    bool isDeflecting = false;
+    public bool IsDeflecting { private set; get; } = false;
 
     bool lockMaterial;
 
     bool wasDeflectingBeforeFreeze = false;
 
-
     Dictionary<string, object> getHitData = new();
-
-    GameManager gameManager;
 
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Input; set {} }
     public bool UpdateDuringHitstop { get => false; set { } }
 
     SimulationManager simulationManager;
+    HitstopManager hitstopManager;
 
     DeflectSnapshot[] deflectSnapshots = new DeflectSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
     private void Awake()
@@ -76,8 +74,9 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
 
     public void InitManager(GameManager manager)
     {
-        gameManager = manager;
-        InitSimulated(gameManager.simulationManager);
+        simulationManager = manager.simulationManager;
+        hitstopManager = manager.hitstopManager;
+        InitSimulated(simulationManager);
     }
 
     public void OnStateTransitioned(CharacterStateMachine.StateTransitionInfo transitionInfo)
@@ -85,20 +84,14 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
         stateAllowsDeflect = !transitionInfo.usingSkill; //if using a skill, can't deflect
         if (transitionInfo.usingSkill)
         {
-            if (isDeflecting)
+            if (IsDeflecting)
             {
                 SetDeflectEnabled(false);
                 StartCooldown();
             }
         }
     }
-    private void Update()
-    {
-        if (!lockMaterial && simulationManager != null)
-        {
-            mesh.material = IsPartialDeflect() ? partialDeflect : baseDeflect;
-        }
-    }
+    
     public bool DeflectAvailable(int currentTick)
     {
         return
@@ -116,9 +109,9 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
     }
     void DeflectLogic(int currentTick)
     {
-        if (gameManager.hitstopManager.InSpecialStop) { return; }
+        if (hitstopManager.InSpecialStop) return; 
 
-        if (currentTick - deflectStartTick > deflectDuration && isDeflecting)
+        if (currentTick - deflectStartTick > deflectDuration && IsDeflecting)
         {
             SetDeflectEnabled(false);
             StartCooldown();
@@ -126,15 +119,13 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
     }
     public bool IsPartialDeflect()
     {
-        return simulationManager.CurrentTick - deflectStartTick >= (simulationManager.CurrentTick - partialDeflectDuration) && IsDeflecting();
-    }
-    public bool IsDeflecting()
-    {
-        return isDeflecting;
+        int elasped = simulationManager.CurrentTick - deflectStartTick;
+
+        return elasped > (deflectDuration - partialDeflectDuration) && IsDeflecting;
     }
     public bool DeflectOnCooldown(int currentTick)
     {
-        return currentTick - cooldownStartTick > deflectCooldown && cooldownStartTick > 0;
+        return currentTick - cooldownStartTick <= deflectCooldown && cooldownStartTick > 0;
     }
     public int GetGoodDeflectDuration()
     {
@@ -144,16 +135,16 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
     {
         deflectHitbox.enabled = enabled;
         mesh.enabled = enabled;
-        isDeflecting = enabled;
+        IsDeflecting = enabled;
     }
     public void OnSuccessfulDeflect(BaseEcho ball, bool usedSkill) 
     {
         int currentTick = simulationManager.CurrentTick;
-        bool wasPartial = IsPartialDeflect();
+        bool wasPartial = IsPartialDeflect() || character.fsm.currentState is GetHitState;
         deflectPerformed.Invoke(character, wasPartial, (currentTick - deflectStartTick) / deflectDuration);
         deflectedBall.Invoke(ball, IsPartialDeflect(), usedSkill);
         SetDeflectEnabled(false);
-        if (wasPartial || character.fsm.currentState is GetHitState)
+        if (wasPartial)
         {
             partialDeflectSparks.Play();
             partialDeflectInfo.knockbackDir = (ball.transform.position - character.transform.position).normalized;
@@ -174,7 +165,7 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
     }
     public void OnSpecialStopStarted()
     {
-       wasDeflectingBeforeFreeze = IsDeflecting();
+       wasDeflectingBeforeFreeze = IsDeflecting;
        var skillOne = character.fsm.TryGetSkill(1);
        if (skillOne != null) skillOne.OnSpecialStopStarted();
        var skillTwo = character.fsm.TryGetSkill(2);
@@ -193,24 +184,35 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
     {
         if (deflectBuffer.Buffered)
         {
-            if (!wasDeflectingBeforeFreeze && (gameManager.hitstopManager.InSpecialStop || gameManager.hitstopManager.FrameAfterSpecialStop))
+            if (!wasDeflectingBeforeFreeze && (hitstopManager.InSpecialStop || hitstopManager.FrameAfterSpecialStop))
             {
                 return; //can't deflect during freeze
             }
             deflectBuffer.Consume();
             bool isNowDeflecting = false; //if you weren't deflecting before, but you now are
-            if (DeflectAvailable(currentTick) && !isDeflecting)
+            if (DeflectAvailable(currentTick) && !IsDeflecting)
             {
                 StartDeflect();
                 isNowDeflecting = true;
             }
-            if (isDeflecting && !isNowDeflecting) //!isNowDeflecting means you didn't trigger a deflect with this input, so you must be trying to cancel
+            if (IsDeflecting && !isNowDeflecting) //!isNowDeflecting means you didn't trigger a deflect with this input, so you must be trying to cancel
             {
                 StartCooldown();
                 SetDeflectEnabled(false);
             }
         }
         DeflectLogic(currentTick);
+
+        int elasped = currentTick - deflectStartTick;
+
+        if (IsDeflecting)
+        {
+            Debug.Log("In deflect state for " + elasped + " frames");
+            Debug.Log("Partial deflecting == " + IsPartialDeflect());
+        }
+
+        if (!lockMaterial) mesh.material = IsPartialDeflect() ? partialDeflect : baseDeflect;
+
     }
     public DeflectSnapshot CaptureState()
     {
@@ -218,14 +220,14 @@ public class DeflectManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Def
         {
             startTick = deflectStartTick,
             cooldownTick = cooldownStartTick,
-            deflectActive = isDeflecting,
+            deflectActive = IsDeflecting,
             deflectingBeforeFreeze = wasDeflectingBeforeFreeze,
         };
     }
     public void RestoreState(DeflectSnapshot snapshot)
     {
         deflectStartTick = snapshot.startTick;
-        isDeflecting = snapshot.deflectActive;
+        IsDeflecting = snapshot.deflectActive;
         wasDeflectingBeforeFreeze = snapshot.deflectingBeforeFreeze;
         cooldownStartTick = snapshot.cooldownTick;
     }

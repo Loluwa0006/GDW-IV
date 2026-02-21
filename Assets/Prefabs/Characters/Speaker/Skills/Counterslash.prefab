@@ -5082,7 +5082,7 @@ MonoBehaviour:
   skillName: 1
   staminaCost: 15
   speaker: {fileID: 0}
-  chargeDuration: 0.85
+  chargeDuration: 51
   timeUntilCancel: 0
   framesUntilStaminaDrain: 6
   decelValue: 0.96

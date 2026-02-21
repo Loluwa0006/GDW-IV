@@ -34,6 +34,8 @@ public class Dash : SpeakerBaseSkill, ITackleSkill, ISimulated, ISimulationSnaps
     HitstopManager hitstopManager;
 
     DashSnapshot[] dashSnapshots = new DashSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
+
+    BufferHelper jumpBuffer;
     public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
         base.InitState(cha, fsm, manager);
@@ -42,6 +44,7 @@ public class Dash : SpeakerBaseSkill, ITackleSkill, ISimulated, ISimulationSnaps
         tackleManager = this as ITackleSkill;
         InitSimulated(manager.simulationManager);
         hitstopManager = manager.hitstopManager;
+        jumpBuffer = fsm.TryGetBuffer("JumpBuffer");
     }
 
     public override void EnterSimulated(Dictionary<string, object> msg = null)
@@ -92,6 +95,27 @@ public class Dash : SpeakerBaseSkill, ITackleSkill, ISimulated, ISimulationSnaps
         return hasStamina && GetMovementDir().magnitude > DASH_DEADZONE_REQUIREMENT;
     }
 
+    protected override void OnSkillOver()
+    {
+        if (IsGrounded())
+        {
+            if (jumpBuffer.Buffered)
+            {
+                fsm.TransitionTo<JumpState>();
+                return;
+            }
+            if (GetMovementDir().magnitude < MOVE_DEADZONE)
+            {
+                fsm.TransitionTo<IdleState>();
+            }
+            else
+            {
+                fsm.TransitionTo<RunState>();
+            }
+        }
+        else fsm.TransitionTo<FallState>();
+    }
+
     public void InitSimulated(SimulationManager simulationManager)
     {
         simulationManager.AddSimulatedObject(this);
@@ -108,6 +132,8 @@ public class Dash : SpeakerBaseSkill, ITackleSkill, ISimulated, ISimulationSnaps
         }
         tackleManager.HitboxCollisionLogic(hitbox, hitstopManager, tackleMask, speaker);
     }
+
+   
     public DashSnapshot CaptureState()
     {
         DashSnapshot snapshot = new()

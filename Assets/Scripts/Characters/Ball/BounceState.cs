@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BounceState : EchoBaseState
+public class BounceState : EchoBaseState, ISimulationSnapshot<BounceSnapshot>, ISnapshotable
 {
+    public const int BOUNCE_DURATION = 7;
 
     [SerializeField] protected EchoDataResource echoData;
     [SerializeField] protected EchoParticleManager particleManager;
@@ -10,9 +11,10 @@ public class BounceState : EchoBaseState
     Vector3 oldSpeed;
 
     int bounceTracker = 0;
-    const int BOUNCE_DURATION = 7;
 
     protected GameManager gameManager;
+
+    BounceSnapshot[] bounceSnapshots = new BounceSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
     public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
         base.InitState(cha, fsm, manager);
@@ -56,7 +58,32 @@ public class BounceState : EchoBaseState
         }
     }
 
+    public BounceSnapshot CaptureState()
+    {
+        return new BounceSnapshot()
+        {
+            bounceDuration = bounceTracker,
+        };
+    }
 
+    public void RestoreState(BounceSnapshot snapshot)
+    {
+        bounceTracker = snapshot.bounceDuration;
+    }
 
+    public void CaptureCurrentState(int tick)
+    {
+        bounceSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(bounceSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
+    }
 }
 
+
+public struct BounceSnapshot
+{
+    public int bounceDuration;
+}

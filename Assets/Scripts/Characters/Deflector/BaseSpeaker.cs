@@ -57,15 +57,10 @@ public class BaseSpeaker : BaseCharacter, ISimulationSnapshot<SpeakerSnapshot>, 
 
     public SpeakerSnapshot CaptureState()
     {
-        int id = EntityManager.MISSING_ID;
-        if (lookTarget != null)
-        {
-            id = gameManager.entityManager.GetId(lookTarget);
-        }
         CharacterSnapshot charSnap = new(enabled, init);
         return new SpeakerSnapshot()
         {
-            lookTargetID = id,
+            lookTargetID = gameManager.entityManager.GetId(lookTarget),
             characterSnapshot = charSnap
         };
     }

@@ -11,6 +11,7 @@ public class BaseSkill : BaseState
 
     protected StaminaComponent staminaComponent;
     protected InputAction skillAction;
+    public InputAction oppositeSkillAction {  get; private set; }
     protected int oppositeSkillIndex;
 
     protected BufferHelper oppositeSkillBuffer;
@@ -19,7 +20,8 @@ public class BaseSkill : BaseState
     int skillIndex;
 
    protected SimulationManager simulationManager;
-    
+
+    protected SkillSnapshot[] skillSnapshots = new SkillSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
 
     public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
@@ -44,12 +46,14 @@ public class BaseSkill : BaseState
         {
             case 1:
                 skillAction = character.inputManager.GetAction("SkillOne");
+                oppositeSkillAction = character.inputManager.GetAction("SkillTwo");
                 oppositeSkillIndex = 2;
                 oppositeSkillBuffer = fsm.TryGetBuffer("SkillTwoBuffer");
                 skillBuffer = fsm.TryGetBuffer("SkillOneBuffer");
                 break;
             case 2:
                 skillAction = character.inputManager.GetAction("SkillTwo");
+                oppositeSkillAction = character.inputManager.GetAction("SkillOne");
                 oppositeSkillIndex = 1;
                 oppositeSkillBuffer = fsm.TryGetBuffer("SkillOneBuffer");
                 skillBuffer = fsm.TryGetBuffer("SkillTwoBuffer");
@@ -99,4 +103,16 @@ public class BaseSkill : BaseState
         }
         return false;
     }
+
+    protected SkillSnapshot GetSkillSnapshot()
+    {
+        return new SkillSnapshot()
+        {
+
+        };
+    }
+}
+public struct SkillSnapshot
+{
+
 }

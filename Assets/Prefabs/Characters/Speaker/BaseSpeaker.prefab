@@ -5263,9 +5263,9 @@ MonoBehaviour:
   baseDeflect: {fileID: 2100000, guid: f9936cf6a22af4646bee388e3d57063a, type: 2}
   partialDeflect: {fileID: 2100000, guid: c8f03d81ef5a92540905b20d4c41a29a, type: 2}
   failedDeflect: {fileID: 2100000, guid: 138354af1f1bf584cbe726736e6a041a, type: 2}
-  deflectCooldown: 0
-  deflectDuration: 1
-  partialDeflectDuration: 0
+  deflectCooldown: 30
+  deflectDuration: 66
+  partialDeflectDuration: 25
   partialDeflectInfo:
     damage: 0
     maxStaminaDamage: 0

@@ -47,7 +47,7 @@ public class PauseManager : MonoBehaviour
     {
         gamePaused = false;
         pauseScreen.SetActive(false);
-        gameManager.ResetManager();
+        gameManager.currentGameMode.ResetGame();
     }
 
     public bool GamePaused()

@@ -5,7 +5,6 @@ using System;
 
 public class BufferHelper : MonoBehaviour
 {
-
     List<InputAction> actions = new();
     [SerializeField] string inputName;
     [SerializeField] bool isHoldable = false;

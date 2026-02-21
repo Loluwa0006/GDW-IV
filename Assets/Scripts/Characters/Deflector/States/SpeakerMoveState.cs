@@ -15,15 +15,12 @@ public class SpeakerMoveState : SpeakerBaseState
     protected Rigidbody _rb;
 
     protected Vector3 moveDir = new();
-
-    SimulationManager simulationManager;
     
     public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
         base.InitState(cha, fsm, manager);
         _rb = cha.GetComponent<Rigidbody>();
         playerInput = cha.GetComponent<PlayerInput>();
-        simulationManager = manager.simulationManager;
     }
 
     public override void Process()

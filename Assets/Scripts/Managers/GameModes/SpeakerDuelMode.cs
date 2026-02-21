@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static ReportManager;
 
-public class SpeakerDuelMode : BaseGameMode
+public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode>, ISnapshotable
 {
 
     const int SUDDEN_DEATH_SLOW_DOWN_DURATION = 150;
@@ -38,7 +38,7 @@ public class SpeakerDuelMode : BaseGameMode
     }
 
     ScoreTracker scoreTracker;
-    float timerTracker;
+    int timerTracker;
 
     List<TrackerData> trackerData = new();
 
@@ -47,6 +47,7 @@ public class SpeakerDuelMode : BaseGameMode
     public override void InitGameMode(GameManager manager)
     { 
         gameManager = manager;
+        gameManager.simulationManager.AddSnapshotableObject(this);
         base.InitGameMode(manager);
         spawnPositions = gameManager.spawnManager.GetSpeakerDuelSpawns();
         InitUI();
@@ -55,14 +56,10 @@ public class SpeakerDuelMode : BaseGameMode
         InitEcho();
         StartCoroutine(StartGame());
     }
-
- 
-
     protected override IEnumerator StartGame()
     {
         yield return new WaitForFixedUpdate();
 
-        Debug.Log("Starting game");
         if (gameManager.cameraManager != null) gameManager.cameraManager.OnGameStarted();
         AnnouncementData countdownDataOne = new()
         {
@@ -148,7 +145,7 @@ public class SpeakerDuelMode : BaseGameMode
     {
         gameEcho = Instantiate(echoPrefab);
 
-        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
+        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn(), gameManager);
         gameManager.cameraManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();
@@ -255,25 +252,29 @@ public class SpeakerDuelMode : BaseGameMode
 
         scoreText.text = scoreTracker.teamOneWins + "/" + scoreTracker.teamTwoWins;
     }
-    private void Update()
+
+    public override void UpdateMode()
     {
         if (matchActive && !gameManager.pauseManager.GamePaused()) TimerLogic();
     }
     protected virtual void TimerLogic()
     {
-        timerTracker -= Time.deltaTime;
-        if (timerTracker <= 0.0f)
+
+        if (timerTracker > 0)
         {
-            if (!inSuddenDeath)
+            timerTracker--;
+            if (timerTracker <= 0)
             {
-                inSuddenDeath = true;
-                EnterSuddenDeath();
+                if (!inSuddenDeath)
+                {
+                    inSuddenDeath = true;
+                    EnterSuddenDeath();
+                }
             }
-        }
-        else
-        {
-            timerTracker = Mathf.Clamp(timerTracker, 0.0f, MatchData.instance.gameLength);
-            timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
+            else
+            {
+                timerDisplay.text = Mathf.RoundToInt(timerTracker * 60).ToString();
+            }
         }
     }
     protected override void EnterSuddenDeath()
@@ -300,6 +301,7 @@ public class SpeakerDuelMode : BaseGameMode
     }
     public override void ResetGame()
     {
+        Debug.Log("Resetting speaker duel");
         matchActive = false;
         inSuddenDeath = false;
 
@@ -344,4 +346,10 @@ public class SpeakerDuelMode : BaseGameMode
         echo.SuspendProjectile();
         echo.SetNewTarget(speakerList.ElementAt(0));
     }
+}
+
+public struct SpeakerDuelSnapshot
+{
+    int timeRemaining =;
+    bool inSuddenDeath;
 }

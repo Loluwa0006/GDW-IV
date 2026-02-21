@@ -87,7 +87,7 @@ public class EchoSurvivalMode : BaseGameMode
         {
             speakerPlayer.transform
         };
-        newEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn());
+        newEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn(), gameManager);
         gameManager.cameraManager.AddCharacterToCameraTargetGroup(newEcho.transform, echoCameraWeight, 2.5f);
         gameEchoes.Add(newEcho);
         newEcho.EnableProjectile();
@@ -237,10 +237,6 @@ public class EchoSurvivalMode : BaseGameMode
         winScreen.SetActive(true);
         Time.timeScale = 0.0f;
     }
-
-
-
-
     protected override void UpdateScoreText(BaseCharacter winner)
     {
         if (timerTracker > scoreTracker.timeToBeat)
@@ -305,6 +301,7 @@ public class EchoSurvivalMode : BaseGameMode
 
         timerTracker = 0.0f;
         timeUntilNextEcho = TIME_UNTIL_NEW_ECHO_CREATED;
+
     }
 
     protected void ResetSpeaker(BaseSpeaker cha)

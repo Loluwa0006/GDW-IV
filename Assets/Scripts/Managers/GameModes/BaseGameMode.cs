@@ -92,6 +92,14 @@ public class BaseGameMode : MonoBehaviour
 
     }
 
+    public virtual void UpdateMode()
+    {
+
+    }
+    private void FixedUpdate()
+    {
+        UpdateMode();
+    }
     protected virtual IEnumerator SetCharacterPosition(BaseCharacter character)
     {
         int spawnIndex = (character.teamIndex - 1) % spawnPositions.Count;

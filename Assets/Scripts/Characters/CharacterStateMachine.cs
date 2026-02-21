@@ -141,7 +141,7 @@ public class CharacterStateMachine : MonoBehaviour, ISimulated, ISimulationSnaps
             }
         foreach (Transform t in bufferHolder.transform)
         {
-            if (!t.TryGetComponent<BufferHelper>(out var bufferHelper)) { continue; }
+            if (!t.TryGetComponent<BufferHelper>(out var bufferHelper)) continue; 
             bufferHelper.InitBuffer(character.inputManager, manager);
             bufferList.Add(bufferHelper);
         }
@@ -153,7 +153,7 @@ public class CharacterStateMachine : MonoBehaviour, ISimulated, ISimulationSnaps
     }
     public void UpdateState()
     {
-        if (!initMachine || gameManager.pauseManager.GamePaused()) { return; }
+        if (!initMachine || gameManager.pauseManager.GamePaused())  return; 
         currentState.Process();
 
         foreach (var state in statesWithInactiveProcess)
