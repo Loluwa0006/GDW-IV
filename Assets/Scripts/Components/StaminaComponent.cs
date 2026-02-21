@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class StaminaComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<StaminaSnapshot>
+public class StaminaComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<StaminaSnapshot>, ISnapshotable
 {
     public UnityEvent<BaseCharacter> regainedGrayStamina = new();
     public UnityEvent <BaseCharacter> foresightPerformed = new();
@@ -64,6 +64,8 @@ public class StaminaComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<S
 
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Stamina; set { } }
     public bool UpdateDuringHitstop { get => false; set { } }
+
+    public StaminaSnapshot[] staminaSnapshots = new StaminaSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
 
     public virtual void InitComponent(GameManager manager)
     {
@@ -290,6 +292,16 @@ public class StaminaComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<S
         inSuddenDeath = snapshot.suddenDeathActive;
         ForesightEnabled = snapshot.foresightEnabled;
         hasInfiniteForesight = snapshot.infiniteForesight;
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        staminaSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(staminaSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
 }
 
