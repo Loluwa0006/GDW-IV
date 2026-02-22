@@ -81,7 +81,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
         unscaledAudioSource.outputAudioMixerGroup.audioMixer.updateMode = UnityEngine.Audio.AudioMixerUpdateMode.UnscaledTime;
 
-        echoData.InitData();
+        echoData.ResetData();
 
         InitStateMachine(null, manager);
         velocityManager.InitManager(manager);
@@ -108,13 +108,13 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
     public void ResetProjectile()
     {
+        echoData.ResetData();
+        UpdateSpeed(echoData.minSpeed);
         transform.position = resetPos;
         playerModel.enabled = false;
         ballActive = false;
         fsm.TransitionTo<FlyingState>();
         velocityManager.ResetComponent();
-        echoData.InitData();
-        UpdateSpeed(echoData.minSpeed);
     }
 
     public override void ActivatePlayer()
@@ -124,7 +124,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
             playerModel.enabled = true;
             ballActive = true;
 
-            echoData.InitData();
+            echoData.ResetData();
         }
         else
         {

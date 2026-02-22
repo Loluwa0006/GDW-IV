@@ -15,7 +15,7 @@ public class EntityManager : MonoBehaviour, ISimulationSnapshot<EntityManagerSna
     /// <summary>
     /// Registers an entity in the manager's database. 
     /// </summary>
-    /// <returns> The ownerID of the registered entity. </returns>
+    /// <returns> The ID of the registered entity. </returns>
     public int RegisterEntity(EntityDatabaseID t, Transform entity, int ownerID = -1)
     {
         if (!entityLookup.ContainsKey(ownerID))

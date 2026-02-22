@@ -5535,6 +5535,7 @@ GameObject:
   - component: {fileID: 4524706908845404307}
   - component: {fileID: 1621222227155274029}
   - component: {fileID: 634869520480553850}
+  - component: {fileID: 7073566567434353824}
   m_Layer: 3
   m_Name: BaseSpeaker
   m_TagString: Untagged
@@ -5687,6 +5688,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
   _rb: {fileID: 6301148340495318582}
   freeze: 0
+--- !u!114 &7073566567434353824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4560575751693155189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d623f8de8980e4dba9b3b5fad3dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IDComponent
 --- !u!1 &4931365720535405192
 GameObject:
   m_ObjectHideFlags: 0

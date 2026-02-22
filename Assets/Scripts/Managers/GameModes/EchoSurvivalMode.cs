@@ -9,8 +9,6 @@ using System;
 
 public class EchoSurvivalMode : BaseGameMode
 {
-    const float SUDDEN_DEATH_SLOW_DOWN_DURATION = 2.5f;
-    const float SUDDEN_DEATH_SLOW_DOWN_AMOUNT = 0.1f;
     const float TIME_UNTIL_NEW_ECHO_CREATED = 15.0f;
     const int MAX_ECHO_COUNT = 6;
     [Header("UI Objects")]
@@ -50,7 +48,6 @@ public class EchoSurvivalMode : BaseGameMode
 
     List<BaseEcho> gameEchoes = new();
     TimeSpan matchDuration = new();
-
     public override void InitGameMode(GameManager manager)
     {
         base.InitGameMode(manager);
@@ -316,5 +313,4 @@ public class EchoSurvivalMode : BaseGameMode
         StartCoroutine(SetCharacterPosition(cha));
         characterUI[cha].gameObject.SetActive(true);
     }
-
 }

@@ -27,7 +27,7 @@ public class EchoDataResource : ScriptableObject
 
 
 
-    public void InitData()
+    public void ResetData()
     {
         deflectStreak = 1;
         activeMinSpeed = minSpeed;

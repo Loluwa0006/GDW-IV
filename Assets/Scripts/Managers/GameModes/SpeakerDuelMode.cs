@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static ReportManager;
 
-public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode>, ISnapshotable
+public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnapshot>, ISnapshotable
 {
 
     const int SUDDEN_DEATH_SLOW_DOWN_DURATION = 150;
@@ -38,11 +38,13 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
     }
 
     ScoreTracker scoreTracker;
-    int timerTracker;
+    int modeTimer;
 
     List<TrackerData> trackerData = new();
 
     BaseEcho gameEcho;
+
+    SpeakerDuelSnapshot[] modeSnapshots = new SpeakerDuelSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
 
     public override void InitGameMode(GameManager manager)
     { 
@@ -107,8 +109,8 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
     protected virtual void InitTimer()
     {
         timerDisplay.gameObject.SetActive(true);
-        timerTracker = MatchData.instance.gameLength;
-        timerDisplay.text = timerTracker.ToString();
+        modeTimer = MatchData.instance.gameLength * 60;//convert to seconds;
+        timerDisplay.text = Mathf.RoundToInt(modeTimer / 60).ToString();
     }
 
     protected virtual void InitSpeakers()
@@ -149,6 +151,11 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
         gameManager.cameraManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();
+
+        foreach (var speaker in activeSpeakers)
+        {
+            speaker.SetLookTarget(gameEcho.characterID);
+        }
 
     }
     public override void OnPlayerJoined(PlayerInput playerInput)
@@ -260,10 +267,10 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
     protected virtual void TimerLogic()
     {
 
-        if (timerTracker > 0)
+        if (modeTimer > 0)
         {
-            timerTracker--;
-            if (timerTracker <= 0)
+            modeTimer--;
+            if (modeTimer <= 0)
             {
                 if (!inSuddenDeath)
                 {
@@ -273,7 +280,7 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
             }
             else
             {
-                timerDisplay.text = Mathf.RoundToInt(timerTracker * 60).ToString();
+                timerDisplay.text = Mathf.RoundToInt(modeTimer / 60).ToString();
             }
         }
     }
@@ -307,13 +314,13 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
 
         if (MatchData.instance != null)
         {
-            timerTracker = MatchData.instance.gameLength;
+            modeTimer = MatchData.instance.gameLength;
         }
         else
         {
-            timerTracker = DEFAULT_MATCH_LENGTH;
+            modeTimer = DEFAULT_MATCH_LENGTH;
         }
-        timerDisplay.text = Mathf.RoundToInt(timerTracker).ToString();
+        timerDisplay.text = Mathf.RoundToInt(modeTimer).ToString();
 
         foreach (Transform cha in speakerList)
         {
@@ -346,10 +353,35 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelMode
         echo.SuspendProjectile();
         echo.SetNewTarget(speakerList.ElementAt(0));
     }
+
+    public SpeakerDuelSnapshot CaptureState()
+    {
+        return new SpeakerDuelSnapshot()
+        {
+            suddenDeathActive = inSuddenDeath,
+            timeRemaining = modeTimer
+        };
+    }
+
+    public void RestoreState(SpeakerDuelSnapshot snapshot)
+    {
+        modeTimer = snapshot.timeRemaining;
+        inSuddenDeath = snapshot.suddenDeathActive;
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        modeSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(modeSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
+    }
 }
 
 public struct SpeakerDuelSnapshot
 {
-    int timeRemaining =;
-    bool inSuddenDeath;
+    public int timeRemaining;
+    public bool suddenDeathActive;
 }

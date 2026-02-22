@@ -181,14 +181,12 @@ public class ReportManager : MonoBehaviour
 
         if (chart.series.Count == 0)
         {
-            Debug.Log("There's no series");
             var series = chart.AddSerie<Line>("StaminaOverTime");
         }
 
 
         foreach (var point in data.staminaTracker)
         {
-            Debug.Log("At second " + point.second.ToString() + ", " + cha.name + " was at " + point.stamina + " stamina.");
             chart.AddXAxisData(point.second.ToString());
             chart.AddData(0, point.stamina);
         }
