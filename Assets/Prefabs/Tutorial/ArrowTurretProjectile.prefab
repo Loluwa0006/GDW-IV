@@ -68,7 +68,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HitboxComponent
   hitboxCollider: {fileID: 7713652555603101719}
   damageInfo:
-    attacker: {fileID: 0}
     damage: 0
     maxStaminaDamage: 0
     damageSource: 0
@@ -79,6 +78,9 @@ MonoBehaviour:
     hitstunGravity: -1
     knockbackLaunch: 2
     leaveTargetInvincible: 1
+    hitstop: 25
+    attacker: {fileID: 0}
+    hitSFX: {fileID: 0}
   hitboxCollided:
     m_PersistentCalls:
       m_Calls: []
@@ -172,6 +174,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2015753099685264528
 BoxCollider:
@@ -274,7 +277,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &3221756374003244837
 TrailRenderer:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -320,6 +323,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Time: 0.2
   m_PreviewTimeScale: 1
   m_Parameters:
@@ -387,7 +391,6 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
@@ -512,98 +515,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0867998097fc2f84689cb2b2c4afa904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialProjectile
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
+  requestedPause:
+    m_PersistentCalls:
+      m_Calls: []
+  fsm: {fileID: 0}
+  staminaComponent: {fileID: 0}
+  inputManager: {fileID: 0}
+  playerModel: {fileID: 0}
+  velocityManager: {fileID: 0}
+  groundIndicator: {fileID: 0}
+  unscaledAudioSource: {fileID: 0}
+  playerColors: []
+  idComponent: {fileID: 0}
+  teamIndex: 1
+  echoCollision:
+    m_PersistentCalls:
+      m_Calls: []
+  echoDeflected:
+    m_PersistentCalls:
+      m_Calls: []
+  echoWarped:
+    m_PersistentCalls:
+      m_Calls: []
+  echoTargetChanged:
+    m_PersistentCalls:
+      m_Calls: []
   ballActive: 0
   isIgnited: 0
-  hitbox: {fileID: 5348410764796658429}
-  _rb: {fileID: 869890364172221047}
-  mesh: {fileID: 9171109734314065589}
-  pInput: {fileID: 0}
-  minSpeed: 10
-  maxSpeed: 15
-  startingSpeed: 10
-  igniteSpeed: 21
-  minSteerForce: 5
-  maxSteerForce: 10
-  deflectsUntilMaxSpeed: 8
-  hitboxCooldown: 0.1
-  normalColor: {fileID: 0}
-  igniteColor: {fileID: 0}
-  hitsparksLighting: {fileID: 2780021292239614782, guid: 0dd4c84eca7456f4b8667b04c9218aca, type: 3}
   echoTrail: {fileID: 3221756374003244837}
-  regularGradient:
-    serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 49151
-    atime2: 65535
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_ColorSpace: -1
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 3
-  ignitionGradient:
-    serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 65535
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_ColorSpace: -1
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 2
-  hitstopAmount: 15
-  deflectstopAmount: 6
+  particleManager: {fileID: 0}
+  playerControlled: 0
+  _rb: {fileID: 869890364172221047}
+  echoData: {fileID: 0}
   spawnPos: {fileID: 3847187004124588718}
-  tutorialManager: {fileID: 0}
   awardPointOnDeflect: 1
   projectileActive: 0
 --- !u!4 &8002192209807230426 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c6e576097daf4fb49bc5b8423df80713, type: 3}
-  m_PrefabInstance: {fileID: 7532206706693513777}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &9171109734314065589 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: c6e576097daf4fb49bc5b8423df80713, type: 3}
   m_PrefabInstance: {fileID: 7532206706693513777}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8034885255706874253
@@ -716,7 +668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b22a4511bdb82f046a972161351ae5b1, type: 3}
       propertyPath: m_Name
-      value: ArrowTurret
+      value: ArrowTurretProjectile
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b22a4511bdb82f046a972161351ae5b1, type: 3}
       propertyPath: m_Layer
@@ -759,6 +711,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b22a4511bdb82f046a972161351ae5b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6637772228650223418}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b22a4511bdb82f046a972161351ae5b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b22a4511bdb82f046a972161351ae5b1, type: 3}
 --- !u!1 &7151940784074501340 stripped
 GameObject:
@@ -783,12 +738,14 @@ MonoBehaviour:
   triggerType: 4
   deactivateType: 0
   unactiveType: 2
-  hideIfDisabled: 0
   mesh: {fileID: 0}
+  alwaysHideTrigger: 0
   dialogueData: {fileID: 0}
   skill: 0
   skillIndex: 0
   instantSectionSwap: 0
+  groupFraming: {fileID: 0}
+  newFrameSize: 12
   reloadDuration: 7
   targetGroup: {fileID: 0}
   projectile: {fileID: 7243396193296556256}

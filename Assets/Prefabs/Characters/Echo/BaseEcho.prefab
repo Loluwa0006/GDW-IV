@@ -4938,6 +4938,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71224e1724866974e898569b758fc705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StrikeBounceState
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -4991,6 +4994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9410e94ec14dc449a2244ce5e0d46d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TerrainBounceState
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -5071,6 +5077,7 @@ GameObject:
   - component: {fileID: 7617399674361087325}
   - component: {fileID: 4939787861647960877}
   - component: {fileID: 6317400759964956407}
+  - component: {fileID: 1971649596402560054}
   m_Layer: 8
   m_Name: BaseEcho
   m_TagString: Untagged
@@ -5143,6 +5150,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba9ebb279a75fc94b97b51013103bcd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RicochetBall
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   requestedPause:
     m_PersistentCalls:
       m_Calls: []
@@ -5156,8 +5166,8 @@ MonoBehaviour:
   playerColors:
   - {fileID: 0}
   - {fileID: 0}
+  idComponent: {fileID: 1971649596402560054}
   teamIndex: 0
-  characterID: 0
   echoCollision:
     m_PersistentCalls:
       m_Calls: []
@@ -5318,6 +5328,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
   _rb: {fileID: 9064068066324509259}
   freeze: 0
+--- !u!114 &1971649596402560054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2768490926264993879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d623f8de8980e4dba9b3b5fad3dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IDComponent
+  idType: 1
 --- !u!1 &3784520652306260513
 GameObject:
   m_ObjectHideFlags: 0
@@ -5569,6 +5592,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9e8ba76c308f704291c93a3ee439915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeflectionBounceState
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -10559,6 +10585,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a02d64ef467cbe4ba24153a524b0ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyingState
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -11055,6 +11084,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   inputName: 
   isHoldable: 1
   defaultDuration: 8
@@ -11102,6 +11134,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   inputName: 
   isHoldable: 0
   defaultDuration: 8

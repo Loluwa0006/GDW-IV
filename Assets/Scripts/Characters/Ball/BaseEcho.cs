@@ -46,7 +46,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
         gameManager = manager;
         hitstopManager = gameManager.hitstopManager;
-        characterID = manager.entityManager.RegisterEntity(EntityDatabaseID.Echo, transform);
+        idComponent.InitComponent(manager);
         InitSimulated(manager.simulationManager);
     }
 
@@ -88,7 +88,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
         gameManager = manager;
         hitstopManager = gameManager.hitstopManager;
-        characterID = manager.entityManager.RegisterEntity(EntityDatabaseID.Echo, transform);
+        idComponent.InitComponent(manager);
         InitSimulated(manager.simulationManager);
     }
     public void EnableProjectile()

@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System;
+using FishNet.Object;
 
-public class BufferHelper : MonoBehaviour
+public class BufferHelper : NetworkBehaviour
 {
     List<InputAction> actions = new();
     [SerializeField] string inputName;
@@ -20,6 +21,8 @@ public class BufferHelper : MonoBehaviour
     string actionBuffered = "";
 
     HitstopManager hitstopManager;
+
+    
     public void InitBuffer(InputManager pInput, GameManager manager)
     {
         if (initialized)
@@ -99,4 +102,9 @@ public class BufferHelper : MonoBehaviour
     {
         currentDuration = defaultDuration;
     }
+}
+public struct InputHistory
+{
+    public int tick;
+    public bool pressed;
 }

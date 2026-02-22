@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65cb6440778153340821a058afbfa2a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Objection
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 1

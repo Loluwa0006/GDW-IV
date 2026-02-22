@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-public class Grapple : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<GrappleSnapshot>, IRegisterableEntity
+public class Grapple : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<GrappleSnapshot>
 {
     AirStateResource.JumpInfo currentJumpInfo;
-
+    [SerializeField] IDComponent iDComponent;
     [Header("Jump Attributes")]
     [SerializeField] float doubleJumpPower = 0.7f;
     [SerializeField] float doubleJumpFloatiness = 0.2f;
@@ -37,7 +37,6 @@ public class Grapple : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Grapple
 
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Position; set {} }
     public EntityDatabaseID EntityType { get =>  EntityDatabaseID.PrecedentClone; set { } }
-    int IRegisterableEntity.OwnerID { get => ownerID; set => ownerID = value; }
     public int ID { get => grappleID; set => grappleID = value; }
     public bool UpdateDuringHitstop { get => false; set { } }
 
@@ -51,7 +50,8 @@ public class Grapple : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Grapple
         }
         grappleRB.transform.parent = null; //shouldn't follow player  
         lineRenderer.enabled = false;
-        grappleID = manager.entityManager.RegisterEntity(EntityDatabaseID.AnchorGrapple, transform, cha.characterID);
+        iDComponent.InitComponent(manager);
+        manager.entityManager.SetOwnerForEntity(iDComponent.ID, speaker.idComponent.ID);
     }
     public override void EnterSimulated(Dictionary<string, object> msg = null)
     {
@@ -193,9 +193,9 @@ public class Grapple : SpeakerBaseSkill, ISimulated, ISimulationSnapshot<Grapple
         grappleRB.transform.parent = hitInfo.transform;
         grappleRB.transform.position = hitInfo.point;
         hookState = HookState.Hooked;
-        if (hitInfo.collider is IRegisterableEntity entity)
+        if (hitInfo.collider.TryGetComponent(out IDComponent idComponent))
         {
-            ownerID = entity.ID;
+            ownerID = idComponent.ID;
         }
     }
 

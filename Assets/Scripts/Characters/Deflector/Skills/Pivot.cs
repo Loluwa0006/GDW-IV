@@ -175,7 +175,7 @@ public class Pivot : SpeakerBaseSkill
         foreach (var victim in newVictims)
         {
             victim.Damage(hitbox.damageInfo);
-            if (victim.entityID != EntityManager.MISSING_OWNER_ID) hitEntity = true;
+            if (victim.idComponent.ID != EntityManager.MISSING_OWNER_ID) hitEntity = true;
         }
         if (hitEntity) gameManager.hitstopManager.ApplySpecialStop(hitbox.damageInfo.hitstop);
     }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7721305263935189054}
   - component: {fileID: 4279315298590686639}
   - component: {fileID: 659115573984953093}
+  - component: {fileID: 5630052752610828321}
   m_Layer: 15
   m_Name: Hitbox
   m_TagString: Untagged
@@ -113,6 +114,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5630052752610828321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266992478711085457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e994a6eba2e6d3240a63b478fc59adb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitboxComponent
+  hitboxCollider: {fileID: 0}
+  damageInfo:
+    damage: 0
+    maxStaminaDamage: 0
+    damageSource: 0
+    dealsGrayStaminaDamage: 0
+    hitstun: 0
+    knockbackDir: {x: 0.57735026, y: 0.57735026, z: 0.57735026}
+    knockbackDistance: 5
+    hitstunGravity: -1
+    knockbackLaunch: 2
+    leaveTargetInvincible: 1
+    hitstop: 25
+    attacker: {fileID: 0}
+    hitSFX: {fileID: 0}
+  hitboxCollided:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2895404264469442925
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,6 +202,7 @@ GameObject:
   - component: {fileID: 7086174723831668816}
   - component: {fileID: 5978892682488325400}
   - component: {fileID: 8537164675665061019}
+  - component: {fileID: 248371004336903793}
   m_Layer: 15
   m_Name: Blade
   m_TagString: Untagged
@@ -257,10 +289,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RecallBlade
   status: 0
-  recalState: {fileID: 790086623164798323}
+  recallState: {fileID: 790086623164798323}
   velocityManager: {fileID: 6019979722799081422}
   rbCollider: {fileID: 7086174723831668816}
   model: {fileID: 488035492131951327}
+  idComponent: {fileID: 248371004336903793}
   flySpeed: 55
   safeMargin: 0.1
   steerForce: 1.75
@@ -270,6 +303,19 @@ MonoBehaviour:
   holsterMask:
     serializedVersion: 2
     m_Bits: 524296
+--- !u!114 &248371004336903793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4478866618629231909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d623f8de8980e4dba9b3b5fad3dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IDComponent
+  idType: 4
 --- !u!1 &5570402802453832535
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,6 +451,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b574d7d253cf7494fa1bde56a47431d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Recall
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 1
   hasInactivePhysicsProcess: 1
@@ -419,21 +468,7 @@ MonoBehaviour:
   warpEffect: {fileID: 539033627221243066}
   activeBladeDrainRate: 9
   warpCost: 10
-  hitbox: {fileID: 659115573984953093}
-  hitboxInfo:
-    damage: 0
-    maxStaminaDamage: 0
-    damageSource: 1
-    dealsGrayStaminaDamage: 0
-    hitstun: 25
-    knockbackDir: {x: 0.57735026, y: 0.57735026, z: 0.57735026}
-    knockbackDistance: 5
-    hitstunGravity: -1
-    knockbackLaunch: 2
-    leaveTargetInvincible: 1
-    hitstop: 25
-    attacker: {fileID: 0}
-    hitSFX: {fileID: 0}
+  hitbox: {fileID: 5630052752610828321}
   warpPulseActiveFrames: 7
   pulseMask:
     serializedVersion: 2

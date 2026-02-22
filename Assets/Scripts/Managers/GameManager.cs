@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
         if (reportManager != null) reportManager.transform.SetAsLastSibling();
         pauseManager.transform.SetAsLastSibling();//make sure pause menu is on top
         simulationManager.ResetTick();
+        entityManager.InitManager(this);
     }
     public virtual void ResetManager()
     {

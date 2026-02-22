@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 321502235927910380}
   - component: {fileID: 4764352279621080222}
   - component: {fileID: 8724549130185749402}
+  - component: {fileID: 8131241669054416661}
   m_Layer: 15
   m_Name: Grapple
   m_TagString: Untagged
@@ -176,6 +177,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317dc02908bd257449de0004ca1221b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Grapple
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 1
   hasInactivePhysicsProcess: 1
@@ -185,6 +189,7 @@ MonoBehaviour:
   skillName: 3
   staminaCost: 5
   speaker: {fileID: 0}
+  iDComponent: {fileID: 8131241669054416661}
   doubleJumpPower: 0.7
   doubleJumpFloatiness: 0.2
   jumpDuration: 20
@@ -309,6 +314,19 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &8131241669054416661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3578525391520124236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d623f8de8980e4dba9b3b5fad3dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IDComponent
+  idType: 3
 --- !u!1 &3986315268439082981
 GameObject:
   m_ObjectHideFlags: 0

@@ -5089,6 +5089,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4895db9a2dbb3b41bc4716913d45e28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Takeback
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 1
   hasInactivePhysicsProcess: 1
@@ -5098,12 +5101,12 @@ MonoBehaviour:
   skillName: 5
   staminaCost: 30
   speaker: {fileID: 0}
-  whiffDuration: 0.9
+  whiffDuration: 0
   holdStaminaDrainRate: 8
   decelRate: 0.9
   tacklePushback: 8
   staminaFreeHoldFrames: 12
-  postSuccessfulTackleIFames: 10
+  postSuccessfulTackleIFrames: 10
   ballHolder: {fileID: 585141929474522712}
   catchParticle: {fileID: 671634154379870470}
   throwParticle: {fileID: 6488898101463656346}

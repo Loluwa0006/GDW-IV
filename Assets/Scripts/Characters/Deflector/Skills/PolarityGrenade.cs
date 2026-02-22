@@ -9,7 +9,7 @@ public class PolarityGrenade : MonoBehaviour
     [SerializeField] Polarity polarityManager;
     [SerializeField] VelocityManager velocityManager;
     [SerializeField] Rigidbody rb;
-
+    [SerializeField] IDComponent idComponent;
     [Header("Grenade Attributes")]
     [SerializeField] float grenadePower = 20.0f; //strength of grenade's pull
     [SerializeField] float collisionSafeMargin = 0.1f;
@@ -32,17 +32,16 @@ public class PolarityGrenade : MonoBehaviour
 
    [HideInInspector] public GrenadeState state = GrenadeState.Holstered;
 
-
     Vector3 previousGrenadePosition;
 
     LayerMask speakerMask;
 
     int grenadeReturnTracker = 0;
-
-
-    public void InitProjectile()
+    public void InitProjectile(GameManager manager)
     {
         speakerMask = LayerMask.GetMask("Speaker");
+        idComponent.InitComponent(manager);
+        manager.entityManager.SetOwnerForEntity(idComponent.ID, polarityManager.speaker.idComponent.ID);
     }
 
     public void OnGrenadeThrown()

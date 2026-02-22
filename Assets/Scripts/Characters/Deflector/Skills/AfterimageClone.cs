@@ -6,6 +6,7 @@ public class AfterimageClone : MonoBehaviour
 
     [SerializeField] Afterimage afterimageManager;
     [SerializeField] ProgressBar chargeMeter;
+    [SerializeField] IDComponent idComponent;
     public Collider afterimageCollider;
     [Header("Particles")]
     [SerializeField] ParticleSystem specialDeflectParticles;
@@ -39,7 +40,8 @@ public class AfterimageClone : MonoBehaviour
         transform.parent = null; // it shouldn't follow the player around
         Disable();
         gameManager = manager;
-        manager.entityManager.RegisterEntity(EntityDatabaseID.PrecedentClone, transform, afterimageManager.speaker.characterID);
+        idComponent.InitComponent(manager);
+        manager.entityManager.SetOwnerForEntity(idComponent.ID, afterimageManager.speaker.idComponent.ID);
     }
 
     private void FixedUpdate()

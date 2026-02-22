@@ -2,7 +2,7 @@ using NaughtyAttributes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<HealthSnapshot>
+public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<HealthSnapshot>, ISnapshotable
 {
 
     
@@ -25,13 +25,10 @@ public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<He
         Other
     }
 
-
     public Transform hurtboxOwner;
     public UnityEvent<DamageInfo> entityDamaged = new();
     public UnityEvent<DamageInfo, HealthComponent> entityDefeated = new();
-    public int entityID { get; private set; }
-
-
+    public IDComponent idComponent; 
 
     SortedDictionary<StatusEffectIDs, StatusEffect> statusEffects = new();
 
@@ -44,13 +41,14 @@ public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<He
 
     public bool UpdateDuringHitstop { get => false; set { } }
 
-    SimulationManager simulationManager;
 
-    public void InitComponent(GameManager manager, int ID)
+    HealthSnapshot[] healthSnapshots = new HealthSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
+
+    public void InitComponent(GameManager manager)
     {
         gameManager = manager;
-        entityID = ID;
         InitSimulated(manager.simulationManager);
+        if (idComponent == null) idComponent = GetComponentInParent<IDComponent>();
     }
 
     public void AddStatusEffect(StatusEffect effect, StatusEffectIDs ID)
@@ -195,6 +193,7 @@ public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<He
         playerDead = snapshot.dead;
 
         statusEffects.Clear();
+        Debug.Log("Restoring " + snapshot.numberOfStatusEffects);
         for (int i = 0; i < snapshot.numberOfStatusEffects; i++)
         {
             switch (i)
@@ -212,10 +211,8 @@ public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<He
             }
         }
     }
-
     public void InitSimulated(SimulationManager simulationManager)
     {
-        this.simulationManager = simulationManager;
         simulationManager.AddSimulatedObject(this);
     }
 
@@ -237,6 +234,16 @@ public class HealthComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<He
             statusEffects.Remove(id);
         }
         expiredEffects.Clear();
+    }
+
+    public void CaptureCurrentState(int tick)
+    {
+        healthSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = CaptureState();
+    }
+
+    public void RestorePreviousState(int tick)
+    {
+        RestoreState(healthSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
 }
 

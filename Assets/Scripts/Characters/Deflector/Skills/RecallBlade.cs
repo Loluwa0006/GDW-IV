@@ -16,10 +16,11 @@ public class RecallBlade : MonoBehaviour
     }
 
     public BladeState status;
-    [SerializeField] Recall recalState;
+    [SerializeField] Recall recallState;
     [SerializeField] VelocityManager velocityManager;
     [SerializeField] Collider rbCollider;
     [SerializeField] MeshRenderer model;
+    [SerializeField] IDComponent idComponent;
     [Header("Throw Attributes")]
     [SerializeField] float flySpeed = 20.0f;
     [SerializeField] float safeMargin = 0.6f;
@@ -31,6 +32,12 @@ public class RecallBlade : MonoBehaviour
 
     Vector3 previousBladePos;
 
+    public void InitBlade(GameManager manager)
+    {
+        idComponent.InitComponent(manager);
+        manager.entityManager.SetOwnerForEntity(idComponent.ID, recallState.speaker.idComponent.ID);
+        Holster();
+    }
     public void PhysicsUpdate()
     {
         switch (status)
@@ -47,7 +54,7 @@ public class RecallBlade : MonoBehaviour
     }
     public void ThrowBlade(Vector3 dir)
     {
-        transform.position = recalState.speaker.transform.position;
+        transform.position = recallState.speaker.transform.position;
         transform.parent = null;
         status = BladeState.Flying;
         model.enabled = true;
@@ -90,7 +97,7 @@ public class RecallBlade : MonoBehaviour
     {
         status = BladeState.Holstered;
         model.enabled = false;
-        transform.parent = recalState.transform;
+        transform.parent = recallState.transform;
         velocityManager.ClearExternalSpeed();
         velocityManager.ClearInternalSpeed();
         transform.localPosition = Vector3.zero;

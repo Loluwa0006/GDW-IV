@@ -13,7 +13,6 @@ public class Recall : SpeakerBaseSkill, ITackleSkill
     [SerializeField] int warpCost = 10;
     [Header("Pulse Attributes")]
     [SerializeField] HitboxComponent hitbox;
-    [SerializeField] DamageInfo hitboxInfo;
     [SerializeField] int warpPulseActiveFrames = 7;
     [SerializeField] LayerMask pulseMask;
     [Header("Holster Attributes")]
@@ -46,9 +45,9 @@ public class Recall : SpeakerBaseSkill, ITackleSkill
         gameManager = manager;
         base.InitState(cha, fsm, manager);
         StartCoroutine(FindOppositeSpeaker());
-        blade.Holster();
         _rb = speaker.GetComponent<Rigidbody>();
         tackleManager = this;
+        blade.InitBlade(manager);
     }
     public override void EnterSimulated(Dictionary<string, object> msg = null)
     {

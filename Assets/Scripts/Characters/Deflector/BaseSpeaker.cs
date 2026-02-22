@@ -12,8 +12,7 @@ public class BaseSpeaker : BaseCharacter, ISimulationSnapshot<SpeakerSnapshot>, 
         base.InitPlayer(info, manager, index);
         deflectManager.InitManager(manager);
         playerModel.material.SetColor("_BaseColor", playerColors[index - 1].color);
-        characterID = manager.entityManager.RegisterEntity(EntityDatabaseID.Speaker, transform);
-        healthComponent.InitComponent(manager, characterID);
+        healthComponent.InitComponent(manager);
     }
     public override void DeactivatePlayer()
     {

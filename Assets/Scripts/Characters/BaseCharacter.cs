@@ -1,8 +1,9 @@
+using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class BaseCharacter : MonoBehaviour, ISimulated
+public class BaseCharacter : NetworkBehaviour, ISimulated
 {
     public UnityEvent<BaseCharacter> requestedPause =  new();
 
@@ -15,6 +16,7 @@ public class BaseCharacter : MonoBehaviour, ISimulated
     public GroundIndicator groundIndicator;
     public AudioSource unscaledAudioSource; //unscaled so it plays during hit-stop
     public List<Material> playerColors = new();
+    public IDComponent idComponent;
 
     [HideInInspector] public int teamIndex = 1;
     protected Transform lookTarget = null;
@@ -22,7 +24,6 @@ public class BaseCharacter : MonoBehaviour, ISimulated
 
     protected GameManager gameManager;
 
-    [HideInInspector] public int characterID;
 
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Speaker; set { } }
     public bool UpdateDuringHitstop { get => false; set { } }
@@ -51,6 +52,7 @@ public class BaseCharacter : MonoBehaviour, ISimulated
         }
         unscaledAudioSource.outputAudioMixerGroup.audioMixer.updateMode = UnityEngine.Audio.AudioMixerUpdateMode.UnscaledTime;
 
+        idComponent.InitComponent(manager);
         InitStateMachine(info, manager);
         velocityManager.InitManager(manager);
     }

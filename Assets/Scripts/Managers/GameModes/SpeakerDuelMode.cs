@@ -152,11 +152,6 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();
 
-        foreach (var speaker in activeSpeakers)
-        {
-            speaker.SetLookTarget(gameEcho.characterID);
-        }
-
     }
     public override void OnPlayerJoined(PlayerInput playerInput)
     {

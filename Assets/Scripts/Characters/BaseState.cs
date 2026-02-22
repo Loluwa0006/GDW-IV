@@ -1,8 +1,9 @@
+using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class BaseState : MonoBehaviour
+public class BaseState : NetworkBehaviour
 {
 
     public const float MOVE_DEADZONE = 0.1f;

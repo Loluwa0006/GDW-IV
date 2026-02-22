@@ -10,7 +10,7 @@ public class Polarity : SpeakerBaseSkill
     public override void InitState(BaseCharacter cha, CharacterStateMachine fsm, GameManager manager)
     {
         base.InitState(cha, fsm, manager);
-        grenade.InitProjectile();
+        grenade.InitProjectile(manager);
     }
 
     public override void EnterSimulated(Dictionary<string, object> msg = null)

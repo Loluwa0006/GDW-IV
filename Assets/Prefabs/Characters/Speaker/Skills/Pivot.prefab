@@ -46,6 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e43cbe5fe8a550d419de0c28fb334fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Kickflip
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0

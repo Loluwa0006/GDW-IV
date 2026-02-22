@@ -5,6 +5,8 @@ using UnityEngine.InputSystem.Users;
 public class InputManager : MonoBehaviour
 {
   [SerializeField]  PlayerInput playerInput;
+
+    InputHistory[] inputHistory = new InputHistory[SimulationManager.MAX_ROLLBACK_FRAMES];
     private void Awake()
     {
         if (playerInput ==  null) playerInput = GetComponent<PlayerInput>();
@@ -72,4 +74,35 @@ public class InputManager : MonoBehaviour
     {
         playerInput.DeactivateInput();
     }
+
+    public void CaptureInput(int tick)
+    {
+        float x = playerInput.actions["Right"].ReadValue<float>() - playerInput.actions["Left"].ReadValue<float>();
+        float y = playerInput.actions["Up"].ReadValue<float>() - playerInput.actions["Down"].ReadValue<float>();
+        inputHistory[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = new InputHistory()
+        {
+            tick = tick,
+            moveDirection = new Vector2(x,y),
+            jumpPressed = IsActionPressed("Jump"),
+            deflectPressed = IsActionPressed("Deflect"),
+            skillOnePressed = IsActionPressed("SkillOne"),
+            skillTwoPressed = IsActionPressed("SkillTwo")
+        };
+    }
+
+    public InputHistory GetInputFromTick(int tick)
+    {
+        return inputHistory[tick % SimulationManager.MAX_ROLLBACK_FRAMES];
+    }
 }
+
+public struct InputHistory
+{
+    public int tick;
+    public Vector2 moveDirection;
+    public bool jumpPressed;
+    public bool deflectPressed;
+    public bool skillOnePressed;
+    public bool skillTwoPressed;
+}
+

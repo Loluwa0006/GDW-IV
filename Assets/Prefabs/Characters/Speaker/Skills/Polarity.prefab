@@ -157,6 +157,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d385c244ff3554aa35b7ff9010eaca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Polarity
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 1
   hasInactivePhysicsProcess: 1
@@ -183,6 +186,7 @@ GameObject:
   - component: {fileID: 630453453500058521}
   - component: {fileID: 3446111369981814240}
   - component: {fileID: 4996842155191490861}
+  - component: {fileID: 68631014898852418}
   m_Layer: 20
   m_Name: Grenade
   m_TagString: Untagged
@@ -228,6 +232,7 @@ MonoBehaviour:
   polarityManager: {fileID: 2707250658487227898}
   velocityManager: {fileID: 4996842155191490861}
   rb: {fileID: 630453453500058521}
+  idComponent: {fileID: 68631014898852418}
   grenadePower: 7
   collisionSafeMargin: 0.1
   framesUntilGrenadeReturns: 300
@@ -300,6 +305,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VelocityManager
   _rb: {fileID: 630453453500058521}
   freeze: 0
+--- !u!114 &68631014898852418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5608225032339193070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d623f8de8980e4dba9b3b5fad3dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IDComponent
+  idType: 5
 --- !u!1001 &6153963686720165052
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -56,16 +56,16 @@ public interface ITackleSkill
         {
             if (!obj.transform.TryGetComponent(out HealthComponent hp)) continue;
             else if (hp == speaker.healthComponent) continue;
-            else if (StruckTargets.Contains(hp.entityID)) continue;
-            StruckTargets.Add(hp.entityID);
-            newVictims.Add(hp.entityID);
+            else if (StruckTargets.Contains(hp.idComponent.ID)) continue;
+            StruckTargets.Add(hp.idComponent.ID);
+            newVictims.Add(hp.idComponent.ID);
             healthComponents.Add(hp);
         }
         bool hitEntity = false;
         foreach (var victim in healthComponents)
         {
             victim.Damage(hitbox.damageInfo);
-            if (victim.entityID != EntityManager.MISSING_OWNER_ID) hitEntity = true;
+            if (victim.idComponent.ID != EntityManager.MISSING_OWNER_ID) hitEntity = true;
         }
         if (hitEntity) hitstopManager.ApplySpecialStop(hitbox.damageInfo.hitstop);
     }

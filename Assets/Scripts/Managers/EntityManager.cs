@@ -11,7 +11,20 @@ public class EntityManager : MonoBehaviour, ISimulationSnapshot<EntityManagerSna
     Dictionary<EntityDatabaseID, List<Transform>> typeRegistry = new();
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.EntityManager; set { } }
 
-    int nextID;
+    int nextID = 0;
+
+    public void InitManager(GameManager manager)
+    {
+        var ids = FindObjectsByType<IDComponent>(FindObjectsSortMode.InstanceID);
+        foreach (var id in ids)
+        {
+            if (!id.Initalized)
+            {
+                id.InitComponent(manager);
+            }
+        }
+    }
+
     /// <summary>
     /// Registers an entity in the manager's database. 
     /// </summary>
@@ -23,15 +36,14 @@ public class EntityManager : MonoBehaviour, ISimulationSnapshot<EntityManagerSna
             ownerID = MISSING_OWNER_ID;
         }
         nextID++;
-        var newID = nextID;
         
-        entityLookup.Add(newID, new EntityInfo()
+        entityLookup.Add(nextID, new EntityInfo()
         {
             ownerID = ownerID,
-            ID = newID,
+            ID = nextID,
             type = t
         });
-        entityRegistry.Add(newID, entity);
+        entityRegistry.Add(nextID, entity);
         if (!typeRegistry.ContainsKey(t))
         {
             typeRegistry.Add (t, new List<Transform> { entity });
@@ -40,8 +52,17 @@ public class EntityManager : MonoBehaviour, ISimulationSnapshot<EntityManagerSna
         {
             typeRegistry[t].Add(entity);
         }
-        idRegistry.Add(entity, newID);
-        return newID;
+        idRegistry.Add(entity, nextID);
+        return nextID;
+    }
+
+    public void SetOwnerForEntity(int childID, int ownerID)
+    {
+        if (!entityLookup.ContainsKey(childID) || !entityLookup.ContainsKey(ownerID)) return;
+
+        var entityInfo = entityLookup[childID];
+        entityInfo.ownerID = ownerID;
+        entityLookup[childID] = entityInfo;
     }
     public void RemoveEntity(int id)
     {
@@ -187,11 +208,7 @@ public enum EntityDatabaseID
     AnchorGrapple,
     RecallKnife,
     PolarityGrenade,
-}
-
-public interface IRegisterableEntity
-{
-    public EntityDatabaseID EntityType { set; get; }
-    public int OwnerID { set; get; }
-    public int ID { set; get; }
+    TerrainWall,
+    TerrainFloor,
+    TerrainCeiling,
 }

@@ -5062,6 +5062,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AfterimageClone
   afterimageManager: {fileID: 6893237331444342802}
   chargeMeter: {fileID: 5754521519277567027}
+  idComponent: {fileID: 0}
   afterimageCollider: {fileID: 2946996063231970964}
   specialDeflectParticles: {fileID: 3046223847808321998}
   leftDustParticles: {fileID: 3516219759913038022}
@@ -9923,6 +9924,7 @@ GameObject:
   - component: {fileID: 6893237331444342802}
   - component: {fileID: 4495986792998387919}
   - component: {fileID: 9039291925997323779}
+  - component: {fileID: 8198435159937670925}
   m_Layer: 16
   m_Name: Afterimage
   m_TagString: Untagged
@@ -9959,6 +9961,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 969d25df7f99b134b9924f414385ea6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Afterimage
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 1
   hasInactivePhysicsProcess: 1
@@ -9970,18 +9975,19 @@ MonoBehaviour:
   speaker: {fileID: 0}
   cloneObject: {fileID: 8442697919292249955}
   cloneMesh: {fileID: 8188575691882612619}
-  maxChargeDuration: 1.5
+  maxChargeDuration: 1
   maxClonePlacement: 125
   minDistanceFromWall: 3
   activeCloneStaminaDrain: 9
-  chargeDuration: 4.5
+  chargeDuration: 4
   chargedDeflectParrystop: 35
-  moveSpeed: 30
-  moveAcceleration: 4.285714
+  maxSpeed: 12
+  accelerationFrames: 7
   warplines: {fileID: 7076721763138656070}
   warplineMoveDuration: 0.4
   chargeMeter: {fileID: 5754521519277567027}
   numberOfFramesToIdleBeforePositionReset: 15
+  cloneID: 0
 --- !u!114 &4495986792998387919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10023,6 +10029,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8198435159937670925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8471493027068347063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d623f8de8980e4dba9b3b5fad3dc8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IDComponent
+  idType: 2
 --- !u!1001 &150784592756965532
 PrefabInstance:
   m_ObjectHideFlags: 0
