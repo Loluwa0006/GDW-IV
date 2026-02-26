@@ -13,6 +13,7 @@ public class BaseSpeaker : BaseCharacter, ISimulationSnapshot<SpeakerSnapshot>, 
         deflectManager.InitManager(manager);
         playerModel.material.SetColor("_BaseColor", playerColors[index - 1].color);
         healthComponent.InitComponent(manager);
+        manager.simulationManager.AddNewInputToSync(inputManager, idComponent.ID);
     }
     public override void DeactivatePlayer()
     {
@@ -60,7 +61,7 @@ public class BaseSpeaker : BaseCharacter, ISimulationSnapshot<SpeakerSnapshot>, 
         return new SpeakerSnapshot()
         {
             lookTargetID = gameManager.entityManager.GetId(lookTarget),
-            characterSnapshot = charSnap
+            characterSnapshot = charSnap,
         };
     }
 
@@ -87,10 +88,31 @@ public class BaseSpeaker : BaseCharacter, ISimulationSnapshot<SpeakerSnapshot>, 
     {
         RestoreState(speakerSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
+
+    public SpeakerWorldSnapshot GetWorldSnapshot()
+    {
+        return new SpeakerWorldSnapshot()
+        {
+            snapshot = CaptureState(),
+            fsmSnapshot = fsm.GetWorldSnapshot(),
+            velocitySnapshot = velocityManager.CaptureState(),
+            healthSnapshot = healthComponent.CaptureState(),
+            staminaSnapshot = staminaComponent.CaptureState(),
+        };
+    }
 }
 
 public struct SpeakerSnapshot
 {
     public int lookTargetID;
     public CharacterSnapshot characterSnapshot;
+}
+
+public struct SpeakerWorldSnapshot
+{
+    public SpeakerSnapshot snapshot;
+    public FSMWorldSnapshot fsmSnapshot;
+    public VelocitySnapshot velocitySnapshot;
+    public HealthSnapshot healthSnapshot;
+    public StaminaSnapshot staminaSnapshot;
 }

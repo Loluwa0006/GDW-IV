@@ -26,8 +26,11 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
     [SerializeField] protected BaseSpeaker aiSpeakerPrefab;
     [SerializeField] protected BaseEcho echoPrefab;
 
-    public HashSet<Transform> speakerList = new();
-    static HashSet<BaseSpeaker> activeSpeakers = new();
+
+    protected SpeakerDuelNetworkManager networkManager;
+
+    public List<BaseSpeaker> speakerList = new();
+    List<BaseSpeaker> activeSpeakers = new();
 
     Dictionary<BaseCharacter, BasePlayerUI> characterUI = new();
 
@@ -50,12 +53,14 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
     { 
         gameManager = manager;
         gameManager.simulationManager.AddSnapshotableObject(this);
+        networkManager = gameManager.speakerDuelNetworkManager;
         base.InitGameMode(manager);
         spawnPositions = gameManager.spawnManager.GetSpeakerDuelSpawns();
         InitUI();
         InitTimer();
         InitSpeakers();
         InitEcho();
+        if (networkManager != null) networkManager.InitComponent(this);
         StartCoroutine(StartGame());
     }
     protected override IEnumerator StartGame()
@@ -147,7 +152,12 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
     {
         gameEcho = Instantiate(echoPrefab);
 
-        gameEcho.InitProjectile(speakerList, gameManager.spawnManager.GetAIEchoSpawn(), gameManager);
+        List<Transform> speakerTransforms = new();
+        foreach (var speaker in speakerList)
+        {
+            speakerTransforms.Add(speaker.transform);
+        }
+        gameEcho.InitProjectile(speakerTransforms, gameManager.spawnManager.GetAIEchoSpawn(), gameManager);
         gameManager.cameraManager.AddCharacterToCameraTargetGroup(gameEcho.transform, 1.0f, 2.5f);
         gameEcho.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         gameEcho.SuspendProjectile();
@@ -157,7 +167,7 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
     {
 
         if (!playerInput.gameObject.TryGetComponent(out BaseSpeaker character)) { return; }
-        if (speakerList.Contains(character.transform)) { return; }
+        if (speakerList.Contains(character)) { return; }
         int index = playerInput.playerIndex + 1;
         MatchData.PlayerInfo info = null;
         if (queuedPlayerInfo.Count > 0)
@@ -178,7 +188,7 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
         AddStaminaUIForCharacter(character, info);
         gameManager.cameraManager.AddCharacterToCameraTargetGroup(character.transform);
         StartCoroutine(SetCharacterPosition(character));
-        speakerList.Add(character.transform);
+        speakerList.Add(character);
         activeSpeakers.Add(character);
 
         if (queuedPlayerInfo.Count == 0 && gameManager.reportManager != null)
@@ -260,27 +270,22 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
         if (matchActive && !gameManager.pauseManager.GamePaused()) TimerLogic();
     }
     protected virtual void TimerLogic()
-    {
-
+    { 
         if (modeTimer > 0)
         {
             modeTimer--;
             if (modeTimer <= 0)
             {
-                if (!inSuddenDeath)
-                {
-                    inSuddenDeath = true;
-                    EnterSuddenDeath();
-                }
+                if (!inSuddenDeath) EnterSuddenDeath();
             }
-            else
-            {
-                timerDisplay.text = Mathf.RoundToInt(modeTimer / 60).ToString();
-            }
+            else timerDisplay.text = Mathf.RoundToInt(modeTimer / 60).ToString();
         }
+        else timerDisplay.text = "X";
+        
     }
     protected override void EnterSuddenDeath()
     {
+        inSuddenDeath = true;
         foreach (var cha in activeSpeakers)
         {
             cha.staminaComponent.EnterSuddenDeath();
@@ -303,7 +308,6 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
     }
     public override void ResetGame()
     {
-        Debug.Log("Resetting speaker duel");
         matchActive = false;
         inSuddenDeath = false;
 
@@ -317,9 +321,8 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
         }
         timerDisplay.text = Mathf.RoundToInt(modeTimer).ToString();
 
-        foreach (Transform cha in speakerList)
+        foreach (BaseSpeaker speaker in speakerList)
         {
-            BaseSpeaker speaker = cha.GetComponent<BaseSpeaker>();
             ResetSpeaker(speaker);
             speaker.DeactivatePlayer();
         }
@@ -346,7 +349,7 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
         echo.WarpToLocation(gameManager.spawnManager.GetAIEchoSpawn());
         echo.ResetProjectile();
         echo.SuspendProjectile();
-        echo.SetNewTarget(speakerList.ElementAt(0));
+        echo.SetNewTarget(speakerList[0].transform);
     }
 
     public SpeakerDuelSnapshot CaptureState()
@@ -373,10 +376,33 @@ public class SpeakerDuelMode : BaseGameMode, ISimulationSnapshot<SpeakerDuelSnap
     {
         RestoreState(modeSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
-}
 
+    public SpeakerDuelWorldSnapshot CreateWorldSnapshot ()
+    {
+        SpeakerDuelWorldSnapshot snapshot = new ();
+
+        snapshot.echoSnapshot = gameEcho.GetWorldSnapshot();
+        snapshot.entityManagerSnapshot = gameManager.entityManager.CaptureState();
+        snapshot.speakerDuelSnapshot = CaptureState();
+
+        snapshot.speakerOneSnapshot = speakerList[0].GetWorldSnapshot();
+        snapshot.speakerTwoSnapshot = speakerList[1].GetWorldSnapshot();
+        return snapshot;
+    }
+}
 public struct SpeakerDuelSnapshot
 {
     public int timeRemaining;
     public bool suddenDeathActive;
+}
+/// <summary>
+/// Snapshot used for network consolidation
+/// </summary>
+public struct SpeakerDuelWorldSnapshot 
+{
+    public SpeakerWorldSnapshot speakerOneSnapshot;
+    public SpeakerWorldSnapshot speakerTwoSnapshot;
+    public EchoWorldSnapshot echoSnapshot;
+    public EntityManagerSnapshot entityManagerSnapshot;
+    public SpeakerDuelSnapshot speakerDuelSnapshot;
 }

@@ -132,6 +132,7 @@ public class PreGameSelectionManager : MonoBehaviour
     }
     public void StartGame()
     {
+        MatchData.instance.onlineMatch = false;
       string formattedString = selectedMap.ToString().Replace("_", "");
       SceneManager.LoadScene(formattedString);
     }

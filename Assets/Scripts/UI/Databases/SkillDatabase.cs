@@ -8,7 +8,7 @@ public class SkillDatabase : ScriptableObject
 
     public Dictionary<SkillName, SkillPrefabs> prefabDictionary = new();
 }
-public enum SkillName
+public enum SkillName : byte
 {
     Advance,
     Rebuttal,

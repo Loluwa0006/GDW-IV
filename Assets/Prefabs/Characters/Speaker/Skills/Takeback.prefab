@@ -5089,7 +5089,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4895db9a2dbb3b41bc4716913d45e28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Takeback
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 0}
   _networkObjectCache: {fileID: 0}
   character: {fileID: 0}

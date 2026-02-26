@@ -28,12 +28,13 @@ public class MatchData : ScriptableObject
         public string controlScheme = "Combat";
         public int teamIndex = 0;
         public bool isAI = false;
+        public bool isNetworkPlayer = false;
 
     }
 
     public class TeamInfo
     {
-        public HashSet<PlayerInfo> teamMembers = new();
+        public List<PlayerInfo> teamMembers = new();
         public string teamName;
         public int handicapLevel = 0;
     }
@@ -45,6 +46,8 @@ public class MatchData : ScriptableObject
 
     public int gameLength = 60;
 
+    public bool onlineMatch = false;
+
 
     public Dictionary<SkillName, SpeakerBaseSkill> skillPrefabDictionary = new();
     public Dictionary<SkillName, Texture> skillIconDictionary = new();
@@ -53,7 +56,6 @@ public class MatchData : ScriptableObject
     public static MatchData instance;
 
    [HideInInspector] public GamemodeDatabase.GameModeInfo selectedGameMode;
-
     public void InitData()
     {
         if (skillDatabase.skillPrefabs.Count <= 0)
@@ -82,5 +84,3 @@ public class MatchData : ScriptableObject
     }
 
 }
-
-

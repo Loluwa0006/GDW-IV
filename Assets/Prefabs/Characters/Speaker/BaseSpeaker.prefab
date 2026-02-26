@@ -4938,9 +4938,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   inputName: Jump
   isHoldable: 1
   defaultDuration: 8
@@ -5103,9 +5100,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecf0997dcbf806940a00955ebc18f8dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunState
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -5160,9 +5154,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff55bcd40477b048beddf22855675eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IdleState
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -5462,9 +5453,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc7dfbbd51831074c9650222cc026bcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GetHitState
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -5517,9 +5505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43c3f3659a4b85c4bb40806570ae70fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpState
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -5640,9 +5625,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ec03d7bddc0ce4699d6a246b779caa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseCharacter
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   requestedPause:
     m_PersistentCalls:
       m_Calls: []
@@ -6064,9 +6046,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   inputName: SkillTwo
   isHoldable: 0
   defaultDuration: 8
@@ -6205,9 +6184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47d3b9fcdbce0bf43a14ce87bd679d5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FallState
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
   hasInactiveProcess: 0
   hasInactivePhysicsProcess: 0
@@ -6390,9 +6366,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   inputName: Deflect
   isHoldable: 0
   defaultDuration: 8
@@ -6440,9 +6413,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ede527a3098df429faeb72a3782b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BufferHelper
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   inputName: SkillOne
   isHoldable: 0
   defaultDuration: 8

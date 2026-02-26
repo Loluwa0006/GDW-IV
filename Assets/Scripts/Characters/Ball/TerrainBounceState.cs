@@ -23,6 +23,6 @@ public class TerrainBounceState : BounceState
 
     public override void ApplyBounceVelocity()
     {
-        echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
+        echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.CurrentSpeed);
     }
 }

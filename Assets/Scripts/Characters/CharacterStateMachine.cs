@@ -282,7 +282,6 @@ public class CharacterStateMachine : MonoBehaviour, ISimulated, ISimulationSnaps
             activeStateIndex = index
         };
     }
-
     public void RestoreState(FSMSnapshot state)
     {
         currentState = stateLookup.ElementAt(state.activeStateIndex).Value;
@@ -314,9 +313,22 @@ public class CharacterStateMachine : MonoBehaviour, ISimulated, ISimulationSnaps
     {
         RestoreState(FSMSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
+
+    public FSMWorldSnapshot GetWorldSnapshot()
+    {
+        return new FSMWorldSnapshot()
+        {
+            snapshot = CaptureState()
+        };
+    }
 }
 
 public struct FSMSnapshot
 {
     public int activeStateIndex;
+}
+
+public struct FSMWorldSnapshot
+{
+    public FSMSnapshot snapshot;
 }

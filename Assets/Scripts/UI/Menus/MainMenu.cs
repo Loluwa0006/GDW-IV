@@ -18,7 +18,6 @@ public class MainMenu : MonoBehaviour
             }
         }
     }
-
     private void Start()
     {
         settingsManager.gameObject.SetActive(true);
@@ -58,5 +57,3 @@ public class MainMenu : MonoBehaviour
 
     }
 }
-
-

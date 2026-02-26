@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 684dc984b03ca04439e81cef3540ec72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 0}
   _networkObjectCache: {fileID: 0}
   character: {fileID: 0}

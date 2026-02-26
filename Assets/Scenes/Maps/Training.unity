@@ -6365,6 +6365,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5299144556253321925, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: SceneId
+      value: 1490979080
+      objectReference: {fileID: 0}
+    - target: {fileID: -5299144556253321925, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3270178778118205959, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: SceneId
+      value: 4223651610
+      objectReference: {fileID: 0}
     - target: {fileID: 3377598212650019644, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: FramingSize
       value: 0.324
@@ -6416,6 +6428,14 @@ PrefabInstance:
     - target: {fileID: 6106925889936860415, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143272061163435783, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: SceneId
+      value: 366905624
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143272061163435783, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8391816268220784264, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_Name

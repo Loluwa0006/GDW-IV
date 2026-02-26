@@ -21,7 +21,7 @@ public class TrainingMode : BaseGameMode
     [SerializeField] protected BaseSpeaker aiSpeakerPrefab;
     [SerializeField] protected BaseEcho echoPrefab;
 
-    public HashSet<Transform> speakerList = new();
+    public List<Transform> speakerList = new();
     static HashSet<BaseSpeaker> activeSpeakers = new();
     [HideInInspector] public BaseSpeaker playerSpeaker;
 

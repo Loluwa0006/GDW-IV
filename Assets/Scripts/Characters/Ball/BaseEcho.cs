@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnapshotable, ISimulated
 {
-    public HashSet<Transform> viableTargets = new();
+    public List<Transform> viableTargets = new();
     public UnityEvent<BaseEcho> echoCollision = new();
     public UnityEvent<BaseEcho> echoDeflected = new();
     public UnityEvent<Vector3> echoWarped = new();
@@ -29,6 +29,15 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
     HitstopManager hitstopManager;
 
     public EchoSnapshot[] echoSnapshots = new EchoSnapshot[SimulationManager.MAX_ROLLBACK_FRAMES];
+
+
+
+    [HideInInspector] public int deflectStreak = 1;
+    public float CurrentSpeed { private set; get; }
+    [HideInInspector] public float activeMinSpeed;
+    [HideInInspector] public float activeMaxSpeed;
+
+
 
     /// <summary>
     /// For creating a player controlled echo.
@@ -54,7 +63,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
     {
         if (playerControlled && info != null)
         {
-            inputManager.InitInputComponent(info);        //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
+            inputManager.InitInputComponent(info, manager);        //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
             fsm.CreateSkills(info);
         }
         fsm.InitMachine(manager);
@@ -66,7 +75,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
     /// <param name="charList"></param>
     /// <param name="startingPos"></param>
     /// <param name="manager"></param>
-   public virtual void InitProjectile(HashSet<Transform> charList, Vector3 startingPos, GameManager manager)
+   public virtual void InitProjectile(List<Transform> charList, Vector3 startingPos, GameManager manager)
     {
         playerControlled = false;
         if (inputManager == null) inputManager = GetComponentInChildren<InputManager>();
@@ -75,13 +84,11 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
         
 
         viableTargets = charList;
-        currentTarget = viableTargets.ElementAt(0);
+        currentTarget = viableTargets[0];
         transform.position = startingPos;
         resetPos = startingPos;
 
         unscaledAudioSource.outputAudioMixerGroup.audioMixer.updateMode = UnityEngine.Audio.AudioMixerUpdateMode.UnscaledTime;
-
-        echoData.ResetData();
 
         InitStateMachine(null, manager);
         velocityManager.InitManager(manager);
@@ -90,11 +97,13 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
         hitstopManager = gameManager.hitstopManager;
         idComponent.InitComponent(manager);
         InitSimulated(manager.simulationManager);
+
+        ResetSpeed();
     }
     public void EnableProjectile()
     {
         transform.position = resetPos;
-        UpdateSpeed(echoData.activeMinSpeed);
+        UpdateSpeed(activeMinSpeed);
         ResumeProjectile();
     }
 
@@ -108,8 +117,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
     public void ResetProjectile()
     {
-        echoData.ResetData();
-        UpdateSpeed(echoData.minSpeed);
+        ResetSpeed();
         transform.position = resetPos;
         playerModel.enabled = false;
         ballActive = false;
@@ -124,7 +132,7 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
             playerModel.enabled = true;
             ballActive = true;
 
-            echoData.ResetData();
+            ResetSpeed();
         }
         else
         {
@@ -184,20 +192,20 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
     {
         return currentTarget;
     }
-
-    public float GetSpeed()
+    public void ResetSpeed()
     {
-        return echoData.currentSpeed;
+        activeMinSpeed = echoData.minSpeed;
+        activeMaxSpeed = echoData.maxSpeed;
+        UpdateSpeed(activeMinSpeed);
     }
-
 
     public void EnterSuddenDeath()
     {
-        echoData.activeMinSpeed = echoData.igniteSpeed;
+       activeMinSpeed = echoData.igniteSpeed;
        if ( fsm.currentState.TryGetComponent(out EchoBaseState state) )
-        {
-            state.OnBallIgnited();
-        }
+       {
+           state.OnBallIgnited();
+       }
     }
 
     public void WarpToLocation(Vector3 pos)
@@ -210,10 +218,10 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
     public virtual void UpdateSpeed(float newSpeed)
     {
-        if (echoData.currentSpeed == newSpeed) return;
-        echoData.currentSpeed = Mathf.Clamp(newSpeed, echoData.activeMinSpeed, echoData.activeMaxSpeed);
-        isIgnited = (echoData.currentSpeed >= echoData.igniteSpeed);
-        particleManager.OnSpeedUpdated(echoData.currentSpeed, isIgnited);
+        if (CurrentSpeed == newSpeed) return;
+        CurrentSpeed = Mathf.Clamp(newSpeed, activeMinSpeed, activeMaxSpeed);
+        isIgnited = (CurrentSpeed >= echoData.igniteSpeed);
+        particleManager.OnSpeedUpdated(CurrentSpeed, isIgnited);
     }
 
     public void ForceDeflect(BaseSpeaker speaker)
@@ -232,12 +240,12 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
 
         return new EchoSnapshot()
         {
-            ignited = isIgnited,
             active = ballActive,
-            speed = GetSpeed(),
+            speed = CurrentSpeed,
             maxSpeed = echoData.maxSpeed,
             minSpeed = echoData.minSpeed,
             targetID = gameManager.entityManager.GetId(currentTarget),
+            deflectStreak = deflectStreak,
             characterSnapshot = charSnap
         };
     }
@@ -245,12 +253,11 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
     public void RestoreState(EchoSnapshot snapshot)
     {
         currentTarget = gameManager.entityManager.GetEntity(snapshot.targetID);
-        isIgnited = snapshot.ignited;
         ballActive = snapshot.active;
         UpdateSpeed(snapshot.speed);
         echoData.maxSpeed = snapshot.maxSpeed;
         echoData.minSpeed = snapshot.minSpeed;
-
+        deflectStreak = snapshot.deflectStreak;
     }
 
     public void CaptureCurrentState(int tick)
@@ -262,17 +269,34 @@ public class BaseEcho : BaseCharacter, ISimulationSnapshot<EchoSnapshot>, ISnaps
     {
         RestoreState(echoSnapshots[tick % SimulationManager.MAX_ROLLBACK_FRAMES]);
     }
+
+    public EchoWorldSnapshot GetWorldSnapshot()
+    {
+        return new EchoWorldSnapshot()
+        {
+            snapshot = CaptureState(),
+            fsmSnapshot = fsm.GetWorldSnapshot(),
+            velocitySnapshot = velocityManager.CaptureState(),
+            staminaSnapshot = staminaComponent.CaptureState(),
+            
+        };
+    }
 }
 
 public struct EchoSnapshot
 {
-    public bool ignited;
     public bool active;
     public float speed;
     public float minSpeed;
     public float maxSpeed;
     public int targetID;
+    public int deflectStreak;
     public CharacterSnapshot characterSnapshot;
 }
-
-
+public struct EchoWorldSnapshot
+{
+    public EchoSnapshot snapshot;
+    public FSMWorldSnapshot fsmSnapshot;
+    public VelocitySnapshot velocitySnapshot;
+    public StaminaSnapshot staminaSnapshot;
+}

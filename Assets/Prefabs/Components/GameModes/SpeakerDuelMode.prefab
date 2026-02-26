@@ -53,6 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeakerDuelMode
   gameManager: {fileID: 0}
+  matchActive: 0
   inputManager: {fileID: 6051670824183657180}
   healthUIPrefab: {fileID: 7603735769058187820, guid: f39f83fb50d04af4ab531f817557b8bb, type: 3}
   UIHolder: {fileID: 2743069094471222917}
@@ -60,9 +61,11 @@ MonoBehaviour:
   winScreen: {fileID: 5132238080161202535}
   scoreText: {fileID: 6218493175201775577}
   winText: {fileID: 997283554713660601}
+  networkManager: {fileID: 0}
   speakerPrefab: {fileID: 4524706908845404307, guid: 2e5faa123585e3441b221f9a4c4cb8a9, type: 3}
   aiSpeakerPrefab: {fileID: 3089438711533713663, guid: f10873d66028584489e659c059262864, type: 3}
   echoPrefab: {fileID: 7769364213794897104, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
+  speakerList: []
 --- !u!114 &6051670824183657180
 MonoBehaviour:
   m_ObjectHideFlags: 0

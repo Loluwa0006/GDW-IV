@@ -16,8 +16,7 @@ public class OnlineMenu : MonoBehaviour
                 transition.button.onClick.AddListener(() => TransitionToScene(sceneName));
             }
         }
-
-        PlayerLoadout.currentLoadout ??= new PlayerLoadout(); 
+       
     }
 
     public void TransitionToScene(string newScene)

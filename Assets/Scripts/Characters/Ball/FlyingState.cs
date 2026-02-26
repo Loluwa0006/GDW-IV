@@ -132,7 +132,7 @@ public class FlyingState : EchoBaseState, ISimulationSnapshot<FlyingSnapshot>, I
         var currentDir = echo.velocityManager.GetTotalSpeed().normalized;
         var desiredDir = (echo.GetTarget().transform.position - echo.transform.position).normalized;
 
-        float speedAsPercent = Mathf.Clamp01( (echo.GetSpeed() - echoData.minSpeed) / (echoData.maxSpeed - echoData.minSpeed));
+        float speedAsPercent = Mathf.Clamp01( (echo.CurrentSpeed - echoData.minSpeed) / (echoData.maxSpeed - echoData.minSpeed));
 
         float steerForce = Mathf.Lerp(minSteerForce, maxSteerForce, speedAsPercent) * Time.fixedDeltaTime;
 
@@ -146,7 +146,7 @@ public class FlyingState : EchoBaseState, ISimulationSnapshot<FlyingSnapshot>, I
 
         if (IsGrounded()) newDir.y = Mathf.Max(0, newDir.y); //don't go down if grounded
 
-        float currentSpeed = echo.GetSpeed();
+        float currentSpeed = echo.CurrentSpeed;
 
         float speedFactor = 1 - proximityFactor;
         if (speedFactor < minSpeedFactor) speedFactor = minSpeedFactor;
@@ -183,7 +183,7 @@ public class FlyingState : EchoBaseState, ISimulationSnapshot<FlyingSnapshot>, I
 
     public override void OnBallIgnited()
     {
-        echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
+        echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.CurrentSpeed);
     }
 
     public FlyingSnapshot CaptureState()

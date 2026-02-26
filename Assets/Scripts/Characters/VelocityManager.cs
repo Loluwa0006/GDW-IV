@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+
 public class VelocityManager : MonoBehaviour, ISimulated, ISimulationSnapshot<VelocitySnapshot>, ISnapshotable
 {
     public static Vector3 MISSING_VELOCITY_VALUE = new (-1.0f, -1.0f, -1.0f);
@@ -14,7 +15,6 @@ public class VelocityManager : MonoBehaviour, ISimulated, ISimulationSnapshot<Ve
    [HideInInspector] public bool freeze = false;
 
     GameManager gameManager;
-
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Collision; set { } }
     public bool UpdateDuringHitstop { get => true; set { } }
 

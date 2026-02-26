@@ -50,7 +50,7 @@ public class StrikeBounceState : BounceState
         {
             hp.Damage(hitbox.damageInfo);
             ChangeDirectionAndSpeedPostCollision(hp.hurtboxOwner.transform);
-            echoData.deflectStreak = 1;
+            echo.deflectStreak = 1;
         }
     }
 

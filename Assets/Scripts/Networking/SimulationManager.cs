@@ -1,3 +1,5 @@
+using FishNet;
+using FishNet.Object;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -23,6 +25,31 @@ public class SimulationManager : MonoBehaviour
 
     [SerializeField] TMP_Text tickDisplay;
     [SerializeField] TMP_Text savedTickDisplay;
+
+    Dictionary<int, InputManager> syncedInputs = new();
+
+    private void OnEnable()
+    {
+        if (MatchData.instance.onlineMatch)
+        {
+            InstanceFinder.TimeManager.OnTick += SimulateObjects;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (MatchData.instance.onlineMatch)
+        {
+            InstanceFinder.TimeManager.OnTick-= SimulateObjects;
+        }
+    }
+    public void AddNewInputToSync(InputManager inputManager, int id)
+    {
+        if (!syncedInputs.ContainsKey(id))
+        {
+            syncedInputs.Add(id, inputManager);
+        }
+    }
     public void ResetTick()
     {
         CurrentTick = 0;
@@ -37,13 +64,11 @@ public class SimulationManager : MonoBehaviour
             AddSnapshotableObject(snapshottable);
         }
     }
-
     public void AddSnapshotableObject (ISnapshotable snapshotable) 
     {
         snapshotableObjects.Add(snapshotable);
     }
-
-    private void FixedUpdate()
+    private void SimulateObjects()
     {
         bool matchActive = false;
         if (gameManager.currentGameMode != null)
@@ -61,8 +86,20 @@ public class SimulationManager : MonoBehaviour
         }
         tickDisplay.text = "Current Tick: " + CurrentTick;
         savedTickDisplay.text = "Saved Tick: " + savedTickDebugging;
-
+        foreach (var input in syncedInputs)
+        {
+            input.Value.CaptureInput(CurrentTick);
+        }
     }
+
+    private void FixedUpdate()
+    {
+        if (!MatchData.instance.onlineMatch)
+        {
+            SimulateObjects();
+        }
+    }
+
 
     void SimulateRegularObjects()
     {
@@ -83,7 +120,23 @@ public class SimulationManager : MonoBehaviour
             simulatedObject.SimulateUpdate(UnscaledTick);
         }
     }
- 
+    
+    public void Restimulate(int begin, int end, InputHistory newInput, int playerIDToCorrect)
+    {
+        IsSimulating = true;
+        foreach (var snapshotable in snapshotableObjects)
+        {
+            snapshotable.RestorePreviousState(begin);
+        }
+        CurrentTick = begin;
+        syncedInputs[playerIDToCorrect].ReplaceInputAtTick(begin, newInput);
+        while (CurrentTick < end)
+        {
+            CurrentTick++;
+            foreach (var simulate in simulatedObjects) simulate.SimulateUpdate(CurrentTick);
+        }
+        IsSimulating = false;
+    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Y))
@@ -103,6 +156,4 @@ public class SimulationManager : MonoBehaviour
             }
         }
     }
-
-
 }

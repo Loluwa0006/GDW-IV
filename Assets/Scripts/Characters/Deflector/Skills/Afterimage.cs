@@ -17,14 +17,10 @@ public class Afterimage : SpeakerBaseSkill
     [SerializeField] int chargeDuration = 270;
     public int chargedDeflectParrystop = 12;
 
-
-
     [Header("Run Variables")]
 
     [SerializeField] float maxSpeed = 12.0f;
     [SerializeField] int accelerationFrames = 7;
-
-
 
     [Header("Particle Effects")]
     [SerializeField] ParticleSystem warplines;
@@ -168,7 +164,7 @@ public class Afterimage : SpeakerBaseSkill
         DestroyClone();
         //Vector3 oldPos = deflectTarget.transform.position;
         deflectTarget.WarpToLocation(cloneObject.transform.position);
-        deflectTarget.velocityManager.OverwriteInternalSpeed((deflectTarget.GetTarget().transform.position - deflectTarget.transform.position).normalized * deflectTarget.GetSpeed());
+        deflectTarget.velocityManager.OverwriteInternalSpeed((deflectTarget.GetTarget().transform.position - deflectTarget.transform.position).normalized * deflectTarget.CurrentSpeed);
 
        // warplines.transform.position = oldPos;
         staminaComponent.ConsumeForesight();
@@ -239,7 +235,6 @@ public class Afterimage : SpeakerBaseSkill
     {
         DestroyClone();
     }
-
     public bool DeflectFullyCharged()
     {
         return (chargeTracker / chargeDuration) > 0.999f;

@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     public HitstopManager hitstopManager;
     public SimulationManager simulationManager;
     public EntityManager entityManager;
+    [Header("Network Managers")]
+    public SpeakerDuelNetworkManager speakerDuelNetworkManager;
 
     [Header("UI Objects")]
 
@@ -29,7 +31,6 @@ public class GameManager : MonoBehaviour
     {
         InitManager();
     }
-
     protected virtual void InitManager()
     {
         currentGameMode = Instantiate(MatchData.instance.selectedGameMode.gameModePrefab, canvas.transform);
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
         simulationManager.ResetTick();
         entityManager.InitManager(this);
     }
+
     public virtual void ResetManager()
     {
         Time.timeScale = 1.0f;

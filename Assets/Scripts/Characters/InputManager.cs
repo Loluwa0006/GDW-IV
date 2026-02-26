@@ -7,16 +7,23 @@ public class InputManager : MonoBehaviour
   [SerializeField]  PlayerInput playerInput;
 
     InputHistory[] inputHistory = new InputHistory[SimulationManager.MAX_ROLLBACK_FRAMES];
+
+    SimulationManager simulationManager;
+
+    bool ignoreLocal = false;
     private void Awake()
     {
         if (playerInput ==  null) playerInput = GetComponent<PlayerInput>();
     }
 
-    public  virtual void InitInputComponent(MatchData.PlayerInfo info)
+    public  virtual void InitInputComponent(MatchData.PlayerInfo info, GameManager manager)
     {
+        ignoreLocal = info.isNetworkPlayer;
+        simulationManager = manager.simulationManager;
+        if (ignoreLocal) return;
         if (!playerInput.user.valid)
         {
-            Debug.Log("Invalid user for char " + name);
+            Debug.LogWarning("Invalid user for char " + name);
             return;
         }
         if (info.device is Gamepad)
@@ -25,6 +32,7 @@ public class InputManager : MonoBehaviour
             InputUser.PerformPairingWithDevice(info.device, playerInput.user); // add this gamepad to the current player
         }
         playerInput.SwitchCurrentActionMap(info.controlScheme);
+
     }
     public virtual Vector3 GetMovementDirection()
     {
@@ -46,7 +54,8 @@ public class InputManager : MonoBehaviour
             Debug.LogWarning("Could not find action " + actionName);
             return false;
         }
-        return action.IsPressed();
+        if (simulationManager.IsSimulating) return GetActionFromHistory(simulationManager.CurrentTick, actionName);
+        else return action.IsPressed();
     }
 
     public virtual bool ActionPerformedThisFrame(string actionName)
@@ -65,6 +74,19 @@ public class InputManager : MonoBehaviour
         return playerInput.actions.FindAction(actionName);
     }
 
+     bool GetActionFromHistory(int tick, string actionName)
+    {
+        var input = inputHistory[tick];
+        return actionName switch
+        {
+            "Jump" => input.jumpPressed,
+            "Deflect" => input.deflectPressed,
+            "SkillOne" => input.skillOnePressed,
+            "SkillTwo" => input.skillTwoPressed,
+            _ => false,
+        };
+    }
+
     public virtual void ActivateInput()
     {
         playerInput.ActivateInput();
@@ -77,6 +99,7 @@ public class InputManager : MonoBehaviour
 
     public void CaptureInput(int tick)
     {
+        if (ignoreLocal) return;
         float x = playerInput.actions["Right"].ReadValue<float>() - playerInput.actions["Left"].ReadValue<float>();
         float y = playerInput.actions["Up"].ReadValue<float>() - playerInput.actions["Down"].ReadValue<float>();
         inputHistory[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = new InputHistory()
@@ -94,6 +117,12 @@ public class InputManager : MonoBehaviour
     {
         return inputHistory[tick % SimulationManager.MAX_ROLLBACK_FRAMES];
     }
+
+    public void ReplaceInputAtTick(int tick, InputHistory newInput)
+    {
+        inputHistory[tick % SimulationManager.MAX_ROLLBACK_FRAMES] = newInput;
+    }
+
 }
 
 public struct InputHistory

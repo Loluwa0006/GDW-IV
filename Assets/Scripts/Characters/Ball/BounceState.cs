@@ -54,7 +54,7 @@ public class BounceState : EchoBaseState, ISimulationSnapshot<BounceSnapshot>, I
         }
         else
         {
-            echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.GetSpeed());
+            echo.velocityManager.OverwriteInternalSpeed((echo.GetTarget().transform.position - transform.position).normalized * echo.CurrentSpeed);
         }
     }
 

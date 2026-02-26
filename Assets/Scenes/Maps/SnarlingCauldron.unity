@@ -15791,6 +15791,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2838498119388948595, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
+      propertyPath: SceneId
+      value: 3588585970
+      objectReference: {fileID: 0}
+    - target: {fileID: -2838498119388948595, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2061934452941719604, guid: 0cb75b178a62b084e8df7edc13ff5669, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15859,6 +15867,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5299144556253321925, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: SceneId
+      value: 2650568954
+      objectReference: {fileID: 0}
+    - target: {fileID: -5299144556253321925, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2051224963757339014, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: field of view
       value: 60.001766
@@ -15870,6 +15886,10 @@ PrefabInstance:
     - target: {fileID: 2709331424827633505, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_LocalPosition.x
       value: -18
+      objectReference: {fileID: 0}
+    - target: {fileID: 3270178778118205959, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: SceneId
+      value: 2516475383
       objectReference: {fileID: 0}
     - target: {fileID: 3270307279104663568, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_AnchorMax.y
@@ -16114,6 +16134,14 @@ PrefabInstance:
     - target: {fileID: 7799424508900264600, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143272061163435783, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: SceneId
+      value: 4260680447
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143272061163435783, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8247070305133231968, guid: af45f0681d8e38f4fa122e1fe8300012, type: 3}
       propertyPath: m_LocalPosition.x

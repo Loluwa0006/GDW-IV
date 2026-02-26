@@ -253,7 +253,7 @@ public class StaminaComponent : MonoBehaviour, ISimulated, ISimulationSnapshot<S
     {
         if (!ForesightEnabled)  return;
 
-        if (gameManager.simulationManager.CurrentTick - lastForesightUnlockTick > MAX_FORESIGHT_DURATION) ForesightEnabled = false;
+        if (gameManager.simulationManager.CurrentTick - lastForesightUnlockTick > MAX_FORESIGHT_DURATION) OnForesightTimeout();
     }
 
     public StaminaSnapshot CaptureState()

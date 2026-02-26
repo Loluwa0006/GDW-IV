@@ -80,7 +80,7 @@ public class EchoSurvivalMode : BaseGameMode
         if (gameEchoes.Count >= MAX_ECHO_COUNT) { return null; }
         var newEcho = Instantiate(echoPrefab);
 
-        HashSet<Transform> speakerList = new()
+        List<Transform> speakerList = new()
         {
             speakerPlayer.transform
         };

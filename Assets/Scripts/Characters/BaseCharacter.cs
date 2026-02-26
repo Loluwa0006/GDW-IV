@@ -1,9 +1,8 @@
-using FishNet.Object;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class BaseCharacter : NetworkBehaviour, ISimulated
+public class BaseCharacter : MonoBehaviour, ISimulated
 {
     public UnityEvent<BaseCharacter> requestedPause =  new();
 
@@ -23,8 +22,6 @@ public class BaseCharacter : NetworkBehaviour, ISimulated
     protected bool init = false;
 
     protected GameManager gameManager;
-
-
     public ISimulated.PriorityIndex Priority { get => ISimulated.PriorityIndex.Speaker; set { } }
     public bool UpdateDuringHitstop { get => false; set { } }
 
@@ -58,7 +55,7 @@ public class BaseCharacter : NetworkBehaviour, ISimulated
     }
     protected virtual void InitStateMachine(MatchData.PlayerInfo info, GameManager manager)
     {
-        inputManager.InitInputComponent(info); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
+        inputManager.InitInputComponent(info, manager); //must do this first for state machine buffers, otherwise they will assume kb 1 speaker controls
         fsm.CreateSkills(info);
         fsm.InitMachine(manager);
         init = true;

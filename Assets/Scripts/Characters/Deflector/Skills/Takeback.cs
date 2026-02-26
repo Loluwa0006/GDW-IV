@@ -146,8 +146,7 @@ public class Takeback : SpeakerBaseSkill, ISimulated
         holdTracker = 0;
         character.unscaledAudioSource.PlayOneShot(catchSFX);
         heldBall = echo;
-
-        previousEchoSpeed = echo.GetSpeed();
+        previousEchoSpeed = echo.CurrentSpeed;
         echo.SuspendProjectile(false, true);
         currentState = TakebackState.Holding;
         echo.transform.parent = ballHolder.transform;

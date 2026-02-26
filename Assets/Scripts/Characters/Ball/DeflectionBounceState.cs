@@ -38,8 +38,8 @@ public class DeflectionBounceState : BounceState
     }
     public override void ApplyBounceVelocity()
     {
-        float t = echoData.deflectStreak / (float)echoData.deflectsUntilMaxSpeed;
-        echoData.deflectStreak += 1;
+        float t = echo.deflectStreak / (float)echoData.deflectsUntilMaxSpeed;
+        echo.deflectStreak += 1;
         echo.UpdateSpeed(Mathf.Lerp(echoData.minSpeed, echoData.maxSpeed, t));
         gameManager.hitstopManager.ApplySpecialStop(deflectStopAmount);
         base.ApplyBounceVelocity();

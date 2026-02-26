@@ -58,16 +58,16 @@ public class LoadoutMenu : MonoBehaviour
 
     void InitMenu()
     {
-        skillOneIcon.texture = MatchData.instance.skillDatabase.prefabDictionary[PlayerLoadout.currentLoadout.skillOne].skillIcon;
-        skillTwoIcon.texture = MatchData.instance.skillDatabase.prefabDictionary[PlayerLoadout.currentLoadout.skillTwo].skillIcon;
+        skillOneIcon.texture = MatchData.instance.skillDatabase.prefabDictionary[LoadoutHelper.currentLoadout.skillOne].skillIcon;
+        skillTwoIcon.texture = MatchData.instance.skillDatabase.prefabDictionary[LoadoutHelper.currentLoadout.skillTwo].skillIcon;
 
-        skillOneName.text = PlayerLoadout.currentLoadout.skillOne.ToString();
-        skillTwoName.text = PlayerLoadout.currentLoadout.skillTwo.ToString();
+        skillOneName.text = LoadoutHelper.currentLoadout.skillOne.ToString();
+        skillTwoName.text = LoadoutHelper.currentLoadout.skillTwo.ToString();
 
-        var stageName = PlayerLoadout.currentLoadout.preferredMap.ToString();
+        var stageName = LoadoutHelper.currentLoadout.preferredMap.ToString();
         stageName = stageName.Replace('_', ' ');
         this.stageName.text = stageName;
-        stageIcon.texture = MatchData.instance.stageDatabase.mapDatabase[PlayerLoadout.currentLoadout.preferredMap].mapThumbnail;
+        stageIcon.texture = MatchData.instance.stageDatabase.mapDatabase[LoadoutHelper.currentLoadout.preferredMap].mapThumbnail;
     }
 
     private void OnDestroy()
@@ -87,17 +87,17 @@ public class LoadoutMenu : MonoBehaviour
         TMP_Text skillNameToUpdate;
         if (skillToChange == 1)
         {
-            if (PlayerLoadout.currentLoadout.skillTwo == skillName) return;
+            if (LoadoutHelper.currentLoadout.skillTwo == skillName) return;
             imageToUpdate = skillOneIcon;
             skillNameToUpdate = skillOneName;
-            PlayerLoadout.currentLoadout.skillOne = skillName;
+            LoadoutHelper.currentLoadout.skillOne = skillName;
         }
         else
         {
-            if (PlayerLoadout.currentLoadout.skillOne == skillName) return;
+            if (LoadoutHelper.currentLoadout.skillOne == skillName) return;
             imageToUpdate = skillTwoIcon;
             skillNameToUpdate = skillTwoName;
-            PlayerLoadout.currentLoadout.skillTwo = skillName;
+            LoadoutHelper.currentLoadout.skillTwo = skillName;
         }
         imageToUpdate.texture = MatchData.instance.skillDatabase.prefabDictionary[skillName].skillIcon;
         skillNameToUpdate.text = skillName.ToString();
@@ -111,7 +111,7 @@ public class LoadoutMenu : MonoBehaviour
     }
     public void SetNewPreferredStage(MapName preferredMap)
     {
-        PlayerLoadout.currentLoadout.preferredMap = preferredMap;
+        LoadoutHelper.currentLoadout.preferredMap = preferredMap;
         stageIcon.texture = MatchData.instance.stageDatabase.mapDatabase[preferredMap].mapThumbnail;
         var stageName = preferredMap.ToString();
         stageName = stageName.Replace('_', ' ');

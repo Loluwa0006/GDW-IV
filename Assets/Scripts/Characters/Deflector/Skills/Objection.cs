@@ -272,4 +272,3 @@ public class Objection : SpeakerBaseSkill
         slashTracker = 0;
     }
 }
- 

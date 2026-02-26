@@ -451,7 +451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b574d7d253cf7494fa1bde56a47431d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Recall
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 0}
   _networkObjectCache: {fileID: 0}
   character: {fileID: 0}
